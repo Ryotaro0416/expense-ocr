@@ -90,7 +90,7 @@ def extract(drive, f, api_key):
         'contents': [{
             'parts': [
                 {'inlineData': {'mimeType': f['mimeType'], 'data': base64.b64encode(blob).decode()}},
-                {'text': 'この領収書/レシートから「日付(YYYY-MM-DD)」「税込合計金額(整数のみ、カンマや円記号は除く)」「店名」を抽出。読み取れない項目はnull。'},
+                {'text': 'この領収書/レシートから以下を抽出してJSON出力。\n- date: 日付(YYYY-MM-DD)。「決済日」「Settlement date」「ご利用日」「お支払い日」など決済が成立した日を最優先。なければ発行日や発生日。注文番号や注文日付と混同しないこと。\n- amount: 税込合計金額(整数のみ、カンマや円記号は除く)\n- store: 店名・事業者名\n読み取れない項目はnull。'},
             ],
         }],
         'generationConfig': {
