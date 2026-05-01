@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import base64
 import datetime
 import requests
@@ -106,7 +107,15 @@ def extract(drive, f, api_key):
         },
     }
     url = f'https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={api_key}'
-    r = requests.post(url, json=payload, timeout=60)
+    last_err = None
+    for attempt in range(4):
+        r = requests.post(url, json=payload, timeout=60)
+        if r.status_code < 500 and r.status_code != 429:
+            break
+        last_err = f'{r.status_code} {r.text[:200]}'
+        time.sleep(2 ** attempt)
+    else:
+        raise RuntimeError(f'Gemini retried 4x, last: {last_err}')
     r.raise_for_status()
     text = r.json()['candidates'][0]['content']['parts'][0]['text']
     return json.loads(text)
