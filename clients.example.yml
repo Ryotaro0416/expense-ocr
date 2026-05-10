@@ -1,0 +1,12 @@
+# これは clients.yml のテンプレートです。
+# SETUP.md の手順に従って、自分の Drive フォルダと Google Sheet の ID を入れてください。
+# 領収書だけ使う場合は invoices: ブロックを削除、請求書だけ使う場合は receipts: を削除して OK です。
+
+clients:
+  - name: myself
+    receipts:
+      folder_id: REPLACE_WITH_YOUR_RECEIPTS_FOLDER_ID
+      sheet_id: REPLACE_WITH_YOUR_RECEIPTS_SHEET_ID
+    invoices:
+      folder_id: REPLACE_WITH_YOUR_INVOICES_FOLDER_ID
+      sheet_id: REPLACE_WITH_YOUR_INVOICES_SHEET_ID
