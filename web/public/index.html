@@ -44,9 +44,16 @@
     --c-primary-600: #3e7cc4;
     --c-primary-soft: #ebf3fb;
     --c-primary-tint: #f4f8fc;
-    /* teal accent */
+    /* teal accent (brand decoration) */
     --c-secondary: #4fb8b0;
     --c-secondary-soft: #e6f4f3;
+    /* 領収書: 青系 / 請求書: アンバー系 で明確に区別 */
+    --c-receipts: #4280c2;
+    --c-receipts-soft: #ebf3fb;
+    --c-receipts-bg: #f4f8fc;
+    --c-invoices: #d97706;
+    --c-invoices-soft: #fdf1de;
+    --c-invoices-bg: #fdf8ec;
     /* status */
     --c-success: #5cb85c;
     --c-success-soft: #ecf7ec;
@@ -225,6 +232,8 @@
   .kpi-icon.danger { background: var(--c-danger-soft); color: var(--c-danger); }
   .kpi-icon.success { background: var(--c-success-soft); color: var(--c-success); }
   .kpi-icon.secondary { background: var(--c-secondary-soft); color: var(--c-secondary); }
+  .kpi-icon.receipts { background: var(--c-receipts-soft); color: var(--c-receipts); }
+  .kpi-icon.invoices { background: var(--c-invoices-soft); color: var(--c-invoices); }
   .kpi-body { margin-top: 14px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .kpi-value {
     font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;
@@ -277,7 +286,8 @@
     width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; color: var(--c-primary); background: var(--c-primary-soft);
   }
-  .activity-icon.invoices { color: var(--c-secondary); background: var(--c-secondary-soft); }
+  .activity-icon { color: var(--c-receipts); background: var(--c-receipts-soft); }
+  .activity-icon.invoices { color: var(--c-invoices); background: var(--c-invoices-soft); }
   .activity-icon.danger { color: var(--c-danger); background: var(--c-danger-soft); }
   .activity-text { flex: 1; min-width: 0; line-height: 1.4; }
   .activity-client { font-weight: 600; }
@@ -290,8 +300,8 @@
   .chart-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .chart-legend { display: flex; gap: 14px; font-size: 12px; color: var(--c-text-muted); }
   .legend-dot { display: inline-flex; align-items: center; gap: 6px; }
-  .legend-dot::before { content: ''; width: 10px; height: 10px; border-radius: 2px; background: var(--c-primary); }
-  .legend-dot.secondary::before { background: var(--c-secondary); }
+  .legend-dot::before { content: ''; width: 10px; height: 10px; border-radius: 2px; background: var(--c-receipts); }
+  .legend-dot.secondary::before { background: var(--c-invoices); }
   .chart-svg { width: 100%; height: 220px; display: block; }
   .chart-foot { font-size: 11px; color: var(--c-text-faint); margin-top: 10px; }
 
@@ -383,20 +393,33 @@
   .private-icon { color: var(--c-purple); }
   .contact { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
 
-  .col-resources { display: flex; gap: 14px; min-width: 0; }
-  .res-block { font-size: 11.5px; min-width: 0; flex: 1; }
-  .res-label {
-    font-size: 10.5px; color: var(--c-text-muted); font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;
-    display: flex; align-items: center; gap: 4px;
+  .col-resources { display: flex; gap: 10px; min-width: 0; }
+  .res-block {
+    font-size: 11.5px; min-width: 0; flex: 1;
+    padding: 10px 12px; border-radius: var(--r-sm);
+    border-left: 3px solid transparent;
+    background: var(--c-surface-2);
   }
+  .res-block.kind-receipts { border-left-color: var(--c-receipts); background: var(--c-receipts-bg); }
+  .res-block.kind-invoices { border-left-color: var(--c-invoices); background: var(--c-invoices-bg); }
+  .res-label {
+    font-size: 11px; font-weight: 700;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .res-block.kind-receipts .res-label { color: var(--c-receipts); }
+  .res-block.kind-invoices .res-label { color: var(--c-invoices); }
+  .res-label svg { width: 14px; height: 14px; }
   .res-links { display: flex; gap: 6px; flex-wrap: wrap; }
   .res-links a {
-    color: var(--c-primary); text-decoration: none; font-size: 11.5px; font-weight: 500;
+    text-decoration: none; font-size: 11.5px; font-weight: 500;
     display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px;
-    background: var(--c-primary-tint); border-radius: 4px;
+    border-radius: 4px;
   }
-  .res-links a:hover { background: var(--c-primary-soft); }
+  .res-block.kind-receipts .res-links a { color: var(--c-receipts); background: rgba(66,128,194,0.10); }
+  .res-block.kind-receipts .res-links a:hover { background: rgba(66,128,194,0.20); }
+  .res-block.kind-invoices .res-links a { color: var(--c-invoices); background: rgba(217,119,6,0.10); }
+  .res-block.kind-invoices .res-links a:hover { background: rgba(217,119,6,0.20); }
   .res-empty { color: var(--c-text-faint); font-style: italic; font-size: 11px; }
   .res-stat { font-size: 11px; color: var(--c-text-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .res-stat.fail { color: var(--c-danger); font-weight: 600; }
@@ -659,6 +682,48 @@
   }
   .video-wrap video { width: 100%; height: 100%; display: block; }
   .video-foot { font-size: 11.5px; color: var(--c-text-faint); margin-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* 勘定科目カード */
+  .cat-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .cat-chip {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 10px 12px; background: var(--c-surface-2);
+    border: 1px solid var(--c-border-soft); border-radius: var(--r-sm);
+    transition: all 0.12s;
+  }
+  .cat-chip:hover { border-color: var(--c-primary); background: var(--c-primary-tint); }
+  .cat-chip-name { font-size: 13px; font-weight: 600; color: var(--c-text); }
+  .cat-chip-hint { font-size: 11px; color: var(--c-text-muted); }
+  .cat-preview {
+    margin-top: 16px; padding: 12px 14px;
+    background: var(--c-surface-2); border-radius: var(--r-sm);
+    border: 1px solid var(--c-border-soft);
+  }
+  .cat-preview-label {
+    font-size: 10.5px; font-weight: 700; color: var(--c-text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .cat-preview table {
+    width: 100%; border-collapse: collapse;
+    font-size: 12px; font-variant-numeric: tabular-nums;
+  }
+  .cat-preview th {
+    text-align: left; padding: 4px 8px;
+    color: var(--c-text-muted); font-weight: 600;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .cat-preview td {
+    padding: 5px 8px; border-bottom: 1px solid var(--c-border-soft);
+  }
+  .cat-preview tr:last-child td { border-bottom: none; }
+  .cat-preview .cat-tag {
+    display: inline-block; padding: 2px 8px; border-radius: var(--r-pill);
+    background: var(--c-primary-soft); color: var(--c-primary);
+    font-size: 11px; font-weight: 600;
+  }
 </style>
 </head>
 <body>
@@ -767,7 +832,7 @@
         <div class="panel kpi">
           <div class="panel-head">
             <div class="panel-label">クライアント<span class="panel-detail">(社)</span></div>
-            <div class="kpi-icon secondary">
+            <div class="kpi-icon secondary" style="background: var(--c-secondary-soft); color: var(--c-secondary);">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
           </div>
@@ -889,6 +954,27 @@
             <span>長さ: 約60秒</span>
             <span>音声なし · 日本語字幕</span>
             <a href="/demo.mp4" download style="color:var(--c-primary);text-decoration:none;">⬇ ダウンロード</a>
+          </div>
+        </div>
+
+        <div class="section-card" id="categories-card">
+          <h3>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            勘定科目 自動仕分け
+          </h3>
+          <p class="desc">領収書・請求書を OCR したあと、Gemini が以下の <b>20 の勘定科目</b>から最適な区分を自動判定してシート末尾列に記録します。</p>
+          <div class="cat-grid" id="cat-grid"></div>
+          <div class="cat-preview">
+            <div class="cat-preview-label">出力イメージ (領収書シート)</div>
+            <table>
+              <thead><tr><th>日付</th><th>金額</th><th>店名</th><th>勘定科目</th></tr></thead>
+              <tbody>
+                <tr><td>2026-05-15</td><td>1,280</td><td>スターバックス</td><td><span class="cat-tag">会議費</span></td></tr>
+                <tr><td>2026-05-14</td><td>8,500</td><td>JR東日本</td><td><span class="cat-tag">旅費交通費</span></td></tr>
+                <tr><td>2026-05-13</td><td>980</td><td>ローソン (文房具)</td><td><span class="cat-tag">消耗品費</span></td></tr>
+                <tr><td>2026-05-12</td><td>4,800</td><td>NTT東日本</td><td><span class="cat-tag">通信費</span></td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -1088,15 +1174,39 @@
 <script>
 // ---------- Colors ----------
 const cs = getComputedStyle(document.documentElement);
-const COLOR_RECEIPTS = cs.getPropertyValue('--c-primary').trim() || '#0017c1';
-const COLOR_RECEIPTS_LIGHT = cs.getPropertyValue('--c-primary-600').trim() || '#2c5fd0';
-const COLOR_INVOICES = cs.getPropertyValue('--c-secondary').trim() || '#008892';
-const COLOR_INVOICES_LIGHT = '#3da9b1';
+const COLOR_RECEIPTS = cs.getPropertyValue('--c-receipts').trim() || '#4280c2';
+const COLOR_RECEIPTS_LIGHT = '#5d96d2';
+const COLOR_INVOICES = cs.getPropertyValue('--c-invoices').trim() || '#d97706';
+const COLOR_INVOICES_LIGHT = '#f59e0b';
 const COLOR_DANGER = cs.getPropertyValue('--c-danger').trim() || '#b91c1c';
 const COLOR_GRID = cs.getPropertyValue('--c-grid').trim() || '#ecf0f4';
 const COLOR_MUTED = cs.getPropertyValue('--c-text-faint').trim() || '#8390a0';
 
-const AVATAR_PALETTE = ['#0017c1', '#008892', '#16803c', '#b35400', '#6840c1', '#0891b2', '#ca8a04', '#dc2626', '#0e7490', '#9333ea'];
+const AVATAR_PALETTE = ['#4280c2', '#4fb8b0', '#5cb85c', '#e6a23c', '#8a6db1', '#0891b2', '#ca8a04', '#db5853', '#0e7490', '#9333ea'];
+
+// 勘定科目セット (Python categories.py と同期)
+const CATEGORIES = [
+  ['旅費交通費', '電車・タクシー・出張'],
+  ['会議費', '打合せの飲食 (1人1万円以下)'],
+  ['接待交際費', '取引先の接待・贈答'],
+  ['通信費', '携帯・ネット・SaaS'],
+  ['消耗品費', '文房具・少額の備品'],
+  ['広告宣伝費', '広告・販促'],
+  ['支払手数料', '振込・士業報酬'],
+  ['新聞図書費', '書籍・新聞'],
+  ['水道光熱費', '電気・ガス・水道'],
+  ['福利厚生費', '健康診断・社員旅行'],
+  ['地代家賃', '事務所家賃・月極駐車場'],
+  ['修繕費', '修理・保守'],
+  ['租税公課', '税金・印紙'],
+  ['外注費', '業務委託'],
+  ['研修費', 'セミナー・資格'],
+  ['車両費', 'ガソリン・車検'],
+  ['諸会費', '組合費・年会費'],
+  ['保険料', '事業者向け保険'],
+  ['支払利息', '借入金利息'],
+  ['雑費', 'その他'],
+];
 
 // ---------- Icons ----------
 const ICONS = {
@@ -1641,9 +1751,10 @@ function renderList() {
     const weeklyTotal = weekly.reduce((a, b) => a + b, 0);
     const av = avatarFor(c.name);
 
-    const resBlock = (folder, sheet, run, icon, label) => {
+    const resBlock = (folder, sheet, run, icon, label, kind) => {
+      const klass = `res-block kind-${kind}`;
       if (!folder && !sheet) {
-        return `<div class="res-block"><div class="res-label">${icon} ${label}</div><div class="res-empty">未登録</div></div>`;
+        return `<div class="${klass}"><div class="res-label">${icon} ${label}</div><div class="res-empty">未登録</div></div>`;
       }
       const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank" rel="noopener">${ICONS.folder} Drive</a>` : '';
       const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank" rel="noopener">${ICONS.sheet} Sheet</a>` : '';
@@ -1657,7 +1768,7 @@ function renderList() {
       } else {
         stat = `<div class="res-stat">処理履歴なし</div>`;
       }
-      return `<div class="res-block"><div class="res-label">${icon} ${label}</div><div class="res-links">${f}${s}</div>${stat}</div>`;
+      return `<div class="${klass}"><div class="res-label">${icon} ${label}</div><div class="res-links">${f}${s}</div>${stat}</div>`;
     };
 
     const row = document.createElement('div');
@@ -1673,8 +1784,8 @@ function renderList() {
         ${c.contact ? `<div class="contact">${esc(c.contact)}</div>` : ''}
       </div>
       <div class="col-resources">
-        ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, ICONS.receipt, '領収書')}
-        ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, ICONS.invoice, '請求書')}
+        ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, ICONS.receipt, '領収書', 'receipts')}
+        ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, ICONS.invoice, '請求書', 'invoices')}
       </div>
       <div class="col-trend">
         <div class="trend-label">過去7日</div>
@@ -1811,7 +1922,18 @@ async function boot() {
 function setToggle(el, on) { el.classList.toggle('on', !!on); el.setAttribute('aria-checked', !!on); }
 function getToggle(el) { return el.classList.contains('on'); }
 
+function renderCategories() {
+  const grid = $('#cat-grid');
+  if (!grid) return;
+  grid.innerHTML = CATEGORIES.map(([name, hint]) => `
+    <div class="cat-chip">
+      <div class="cat-chip-name">${esc(name)}</div>
+      <div class="cat-chip-hint">${esc(hint)}</div>
+    </div>`).join('');
+}
+
 async function loadSettings() {
+  renderCategories();
   try {
     const d = await api('/api/admin/settings');
     $('#set-webhook').value = d.settings.discord_webhook_url || '';

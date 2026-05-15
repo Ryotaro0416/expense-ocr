@@ -33,7 +33,10 @@ async function main() {
     recordVideo: { dir: recDir, size: { width: 1440, height: 900 } },
   });
 
-  // Caption overlay injected on every page
+  // Skip onboarding for demo, and inject caption overlay
+  await context.addInitScript(() => {
+    try { localStorage.setItem('onb_done', '1'); } catch {}
+  });
   await context.addInitScript(() => {
     const setup = () => {
       if (!document.body) return setTimeout(setup, 20);
@@ -202,14 +205,34 @@ async function main() {
   await sleep(1600);
 
   // Scene 7: Settings
-  await setCap(page, '設定タブで Discord 通知の Webhook URL を設定');
+  await setCap(page, '設定タブへ');
   await page.click('button[data-tab="settings"]');
   await page.waitForSelector('section[data-panel="settings"].show');
-  await sleep(2000);
+  await sleep(1400);
+
+  // Scene 7a: 勘定科目自動仕分け
+  await page.evaluate(() => {
+    const el = document.querySelector('#categories-card');
+    if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+  });
+  await sleep(700);
+  await page.evaluate(() => window._spot('#categories-card'));
+  await setCap(page, 'OCR と同時に 20 の勘定科目から自動で仕分け');
+  await sleep(4500);
+  await page.evaluate(() => window._spot('.cat-preview'));
+  await setCap(page, 'シート末尾列に勘定科目が自動で記録される');
+  await sleep(4500);
+  await page.evaluate(() => window._unspot());
+  await sleep(500);
+
+  // Scene 7b: Discord webhook
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await sleep(600);
+  await setCap(page, 'Discord 通知の Webhook URL も設定可能');
   await page.evaluate(() => window._spot('#set-webhook'));
   await sleep(3800);
   await page.evaluate(() => window._unspot());
-  await sleep(600);
+  await sleep(500);
 
   // Scene 8: End
   await setCap(page, '毎日 23:00 JST に自動で OCR 処理が走ります');
