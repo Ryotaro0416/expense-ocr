@@ -513,8 +513,16 @@
     background: var(--c-surface); border-radius: var(--r-lg); padding: 22px 24px;
     box-shadow: var(--shadow-1);
   }
-  .section-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+  .section-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .section-card .desc { font-size: 12.5px; color: var(--c-text-muted); margin: 0 0 18px; }
+
+  .video-wrap {
+    background: #000; border-radius: var(--r-md); overflow: hidden;
+    aspect-ratio: 16 / 10;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.16);
+  }
+  .video-wrap video { width: 100%; height: 100%; display: block; }
+  .video-foot { font-size: 11.5px; color: var(--c-text-faint); margin-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -725,6 +733,25 @@
       </div>
 
       <div class="settings-grid">
+        <div class="section-card">
+          <h3>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            使い方デモ
+          </h3>
+          <p class="desc">ログインからクライアント追加・編集・削除・Discord 通知設定までの一連の流れを 1 分程度で紹介します。</p>
+          <div class="video-wrap">
+            <video controls preload="metadata" playsinline>
+              <source src="/demo.mp4" type="video/mp4">
+              お使いのブラウザは video タグに対応していません。
+            </video>
+          </div>
+          <div class="video-foot">
+            <span>長さ: 約60秒</span>
+            <span>音声なし · 日本語字幕</span>
+            <a href="/demo.mp4" download style="color:var(--c-primary);text-decoration:none;">⬇ ダウンロード</a>
+          </div>
+        </div>
+
         <div class="section-card">
           <h3>サービスアカウント</h3>
           <p class="desc">登録するDriveフォルダとシートを、以下のSAに「編集者」として共有してください。</p>
