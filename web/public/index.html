@@ -6,59 +6,73 @@
 <title>バックオフィスOCR Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   :root {
     color-scheme: light only;
-    /* デジタル庁カラー */
-    --c-bg: #f2f3f5;          /* 薄いグレー(背景) */
-    --c-surface: #ffffff;      /* カード白 */
-    --c-surface-2: #f7f8fa;
-    --c-border: #d8dce0;
-    --c-border-strong: #c4c9cf;
-    --c-text: #1a1a1c;
-    --c-text-muted: #5c6066;
-    --c-text-faint: #8a8f96;
+    --c-bg: #f3f5f7;
+    --c-surface: #ffffff;
+    --c-surface-2: #f8fafc;
+    --c-border: #d8dde4;
+    --c-border-soft: #e6ebf0;
+    --c-border-strong: #c1c7cf;
+    --c-text: #0f1419;
+    --c-text-muted: #4b5763;
+    --c-text-faint: #8b939c;
 
-    /* セマンティックカラー */
-    --c-primary: #0017c1;       /* デジタル庁 Blue 800 */
+    --c-primary: #0017c1;
     --c-primary-700: #1c4abd;
-    --c-primary-soft: #e8edf9;
-    --c-secondary: #0066bf;     /* Light Blue 700 */
-    --c-secondary-soft: #e0eef8;
-    --c-success: #1c8b34;       /* Green 700 */
-    --c-success-soft: #e6f4e9;
-    --c-warning: #b85c00;       /* Orange 700 */
+    --c-primary-600: #2c5fd0;
+    --c-primary-soft: #e8edfb;
+    --c-primary-tint: #f3f5fd;
+    --c-secondary: #008892;
+    --c-secondary-soft: #e0f3f5;
+    --c-success: #1c8b34;
+    --c-success-soft: #e6f5ea;
+    --c-warning: #b85c00;
     --c-warning-soft: #fdefe0;
-    --c-danger: #c8232c;        /* Red 700 */
+    --c-danger: #c8232c;
     --c-danger-soft: #fbe7e9;
-    --c-grid: #e6e9ed;
+    --c-grid: #eaeef2;
 
-    --r-lg: 12px;
-    --r-md: 8px;
-    --r-sm: 6px;
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+    --r-lg: 14px;
+    --r-md: 10px;
+    --r-sm: 8px;
+
+    --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.04);
+    --shadow-2: 0 4px 10px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+    --shadow-3: 0 8px 20px rgba(15, 23, 42, 0.10);
+
+    --gradient-accent: linear-gradient(90deg, #0017c1 0%, #1c4abd 45%, #008892 100%);
   }
+
   html, body { margin: 0; padding: 0; height: 100%; }
   body {
     font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--c-bg); color: var(--c-text); line-height: 1.6;
-    -webkit-font-smoothing: antialiased; font-feature-settings: "palt";
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "palt", "tnum";
+  }
+  /* アクセント帯 (top) */
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--gradient-accent); z-index: 50;
   }
   button, input, select { font-family: inherit; }
+  a { color: inherit; }
 
   /* ===== Lock screen ===== */
   .lock { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .lock-card {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 16px;
-    padding: 40px 32px; max-width: 380px; width: 100%; box-shadow: var(--shadow-md); text-align: center;
+    background: var(--c-surface); border-radius: 16px;
+    padding: 40px 32px; max-width: 380px; width: 100%;
+    box-shadow: var(--shadow-3); text-align: center;
   }
   .lock-icon {
-    width: 48px; height: 48px; margin: 0 auto 16px;
+    width: 56px; height: 56px; margin: 0 auto 16px;
     background: var(--c-primary-soft); color: var(--c-primary);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;
+    border-radius: 14px; display: flex; align-items: center; justify-content: center;
   }
   .lock-card h1 { font-size: 20px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
   .lock-card p { color: var(--c-text-muted); font-size: 14px; margin: 0 0 24px; }
@@ -66,169 +80,281 @@
   /* ===== App ===== */
   .app { display: none; }
   .app.show { display: block; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 20px 20px 80px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
 
   /* Header */
-  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
-  .brand { display: flex; align-items: center; gap: 10px; }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; gap: 12px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
   .brand-mark {
-    width: 32px; height: 32px; border-radius: 8px; background: var(--c-primary); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--gradient-accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; letter-spacing: -0.03em;
+    box-shadow: var(--shadow-1);
   }
   .brand h1 { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .brand-sub { font-size: 11px; color: var(--c-text-muted); margin-top: 1px; }
+  .brand-sub { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
   .header-actions { display: flex; gap: 6px; align-items: center; }
-  .updated {
-    font-size: 11px; color: var(--c-text-faint);
-    padding: 0 8px;
-  }
+  .updated { font-size: 11px; color: var(--c-text-faint); padding: 0 8px; }
 
-  /* SA banner — compact */
+  /* SA banner */
   .sa-banner {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-left: 3px solid var(--c-warning);
-    border-radius: var(--r-md); padding: 8px 14px; margin-bottom: 16px;
+    background: var(--c-surface); border-radius: var(--r-md);
+    padding: 10px 14px; margin-bottom: 18px;
     display: flex; align-items: center; gap: 12px; font-size: 13px;
+    box-shadow: var(--shadow-1);
+    border-left: 3px solid var(--c-warning);
   }
-  .sa-banner-label { color: var(--c-text-muted); font-size: 12px; }
+  .sa-banner-label { color: var(--c-text-muted); font-size: 12px; white-space: nowrap; }
   .sa-banner-email {
-    flex: 1; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px;
+    flex: 1; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px;
     color: var(--c-text); word-break: break-all;
   }
 
-  /* ===== Top grid: KPI 3 + Run panel ===== */
-  .grid-top {
-    display: grid; grid-template-columns: 2.4fr 1fr; gap: 12px; margin-bottom: 12px;
+  /* ===== Grids ===== */
+  .grid-kpi {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px;
   }
-  @media (max-width: 900px) { .grid-top { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .grid-kpi { grid-template-columns: 1fr; } }
 
-  .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  @media (max-width: 560px) { .kpi-row { grid-template-columns: 1fr; } }
+  .grid-mid {
+    display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; margin-bottom: 14px;
+  }
+  @media (max-width: 900px) { .grid-mid { grid-template-columns: 1fr; } }
 
+  /* ===== Panel (base card) ===== */
   .panel {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg);
-    padding: 16px 18px;
+    background: var(--c-surface); border-radius: var(--r-lg);
+    padding: 18px 20px; box-shadow: var(--shadow-1);
+    border: 1px solid var(--c-border-soft);
+    position: relative; overflow: hidden;
   }
-  .panel-title { font-size: 12px; font-weight: 600; color: var(--c-text-muted); margin: 0 0 4px; }
-  .panel-title-detail { font-size: 11px; font-weight: 400; color: var(--c-text-faint); margin-left: 6px; }
+  .panel-head {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+  }
+  .panel-label {
+    font-size: 11.5px; font-weight: 600; color: var(--c-text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .panel-detail {
+    font-size: 11px; font-weight: 400; color: var(--c-text-faint); margin-left: 6px;
+  }
 
-  .kpi-value-row { display: flex; align-items: baseline; gap: 8px; }
-  .kpi-value { font-size: 32px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  /* KPI card */
+  .kpi { padding: 16px 18px; min-height: 130px; display: flex; flex-direction: column; }
+  .kpi-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--c-primary-soft); color: var(--c-primary); flex-shrink: 0;
+  }
+  .kpi-icon.danger { background: var(--c-danger-soft); color: var(--c-danger); }
+  .kpi-icon.success { background: var(--c-success-soft); color: var(--c-success); }
+  .kpi-icon.secondary { background: var(--c-secondary-soft); color: var(--c-secondary); }
+
+  .kpi-body { margin-top: 14px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .kpi-value {
+    font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;
+    font-variant-numeric: tabular-nums; color: var(--c-text);
+  }
+  .kpi-value.bad { color: var(--c-danger); }
+  .kpi-value.ok { color: var(--c-success); }
   .kpi-unit { font-size: 13px; color: var(--c-text-muted); font-weight: 500; }
-  .kpi-delta { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .kpi-delta {
+    font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-variant-numeric: tabular-nums;
+  }
   .kpi-delta.up { background: var(--c-success-soft); color: var(--c-success); }
   .kpi-delta.down { background: var(--c-danger-soft); color: var(--c-danger); }
   .kpi-delta.flat { background: var(--c-surface-2); color: var(--c-text-muted); }
-  .kpi-sub { font-size: 12px; color: var(--c-text-faint); margin-top: 6px; }
+  .kpi-sub {
+    font-size: 11.5px; color: var(--c-text-faint); margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-spark { margin-top: auto; padding-top: 12px; height: 36px; }
+  .kpi-spark svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
-  .kpi-value.bad { color: var(--c-danger); }
-  .kpi-value.ok { color: var(--c-success); }
+  .kpi-bar { margin-top: auto; padding-top: 12px; }
+  .kpi-bar-track {
+    height: 8px; background: var(--c-surface-2); border-radius: 4px;
+    overflow: hidden; display: flex; gap: 2px;
+  }
+  .kpi-bar-on { background: var(--c-success); height: 100%; border-radius: 4px 0 0 4px; }
+  .kpi-bar-off { background: var(--c-border-strong); height: 100%; border-radius: 0 4px 4px 0; }
+  .kpi-bar-legend { font-size: 10.5px; color: var(--c-text-muted); margin-top: 6px; display: flex; gap: 14px; }
+  .kpi-bar-legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .kpi-bar-legend i { width: 8px; height: 8px; border-radius: 2px; background: var(--c-success); }
+  .kpi-bar-legend i.off { background: var(--c-border-strong); }
 
   /* Run panel */
-  .run-panel { display: flex; flex-direction: column; }
-  .run-panel .panel-title { margin-bottom: 8px; }
-  .run-status { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot.success { background: var(--c-success); }
-  .dot.failure { background: var(--c-danger); }
-  .dot.running { background: var(--c-warning); animation: pulse 1.5s infinite; }
+  .run-status { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 14px; font-weight: 600; }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(0,0,0,0); transition: box-shadow 0.2s;
+  }
+  .dot.success { background: var(--c-success); box-shadow: 0 0 0 4px var(--c-success-soft); }
+  .dot.failure { background: var(--c-danger); box-shadow: 0 0 0 4px var(--c-danger-soft); }
+  .dot.running { background: var(--c-warning); box-shadow: 0 0 0 4px var(--c-warning-soft); animation: pulse 1.5s infinite; }
   .dot.queued { background: var(--c-text-muted); animation: pulse 1.5s infinite; }
   .dot.idle { background: var(--c-text-faint); }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
   .run-time { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
-  .run-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .run-actions { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
 
-  /* ===== Trend chart ===== */
-  .chart-panel { margin-bottom: 12px; }
-  .chart-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-  .chart-legend { display: flex; gap: 14px; font-size: 12px; color: var(--c-text-muted); }
-  .legend-swatch { display: inline-flex; align-items: center; gap: 6px; }
-  .legend-swatch::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--c-primary); }
-  .legend-swatch.secondary::before { background: var(--c-secondary); }
-  .chart-svg { width: 100%; height: 200px; display: block; }
-  .chart-foot { font-size: 11px; color: var(--c-text-faint); margin-top: 8px; }
-
-  /* ===== Alert section ===== */
-  .alert-panel {
-    margin-bottom: 12px; padding: 14px 16px;
-    border-radius: var(--r-lg);
-    background: var(--c-danger-soft); border: 1px solid var(--c-danger);
+  /* Activity feed */
+  .activity {
+    margin-top: 12px;
+    border-top: 1px solid var(--c-border-soft); padding-top: 12px;
   }
-  .alert-head { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--c-danger); margin-bottom: 8px; }
-  .alert-list { display: flex; flex-direction: column; gap: 4px; }
-  .alert-item { font-size: 13px; color: var(--c-text); display: flex; gap: 8px; }
+  .activity-label {
+    font-size: 11.5px; font-weight: 600; color: var(--c-text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
+  }
+  .activity-item {
+    display: flex; align-items: center; gap: 10px; padding: 6px 0;
+    font-size: 12.5px; border-bottom: 1px dashed var(--c-border-soft);
+  }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-icon {
+    width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--c-primary); background: var(--c-primary-soft);
+  }
+  .activity-icon.invoices { color: var(--c-secondary); background: var(--c-secondary-soft); }
+  .activity-icon.danger { color: var(--c-danger); background: var(--c-danger-soft); }
+  .activity-text { flex: 1; min-width: 0; line-height: 1.4; }
+  .activity-client { font-weight: 600; }
+  .activity-detail { color: var(--c-text-muted); }
+  .activity-detail.fail { color: var(--c-danger); font-weight: 600; }
+  .activity-time { font-size: 11px; color: var(--c-text-faint); white-space: nowrap; }
+
+  /* Chart */
+  .chart-panel { margin-bottom: 14px; }
+  .chart-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chart-title { font-size: 14px; font-weight: 700; color: var(--c-text); }
+  .chart-legend { display: flex; gap: 14px; font-size: 12px; color: var(--c-text-muted); }
+  .legend-dot { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-dot::before { content: ''; width: 10px; height: 10px; border-radius: 2px; background: var(--c-primary); }
+  .legend-dot.secondary::before { background: var(--c-secondary); }
+  .chart-svg { width: 100%; height: 220px; display: block; }
+  .chart-foot { font-size: 11px; color: var(--c-text-faint); margin-top: 10px; }
+
+  /* Alert */
+  .alert-panel {
+    margin-bottom: 14px; padding: 14px 18px;
+    border-radius: var(--r-lg);
+    background: var(--c-danger-soft);
+    border-left: 4px solid var(--c-danger);
+    box-shadow: var(--shadow-1);
+  }
+  .alert-head {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 700; color: var(--c-danger); margin-bottom: 8px;
+  }
+  .alert-list { display: flex; flex-direction: column; gap: 6px; }
+  .alert-item { font-size: 13px; color: var(--c-text); display: flex; gap: 8px; flex-wrap: wrap; }
   .alert-item .alert-name { font-weight: 600; }
   .alert-item .alert-detail { color: var(--c-text-muted); }
 
-  /* ===== Clients section ===== */
+  /* Section head */
   .section-head {
-    display: flex; align-items: center; justify-content: space-between; margin: 8px 0 12px; gap: 12px; flex-wrap: wrap;
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 18px 0 12px; gap: 12px; flex-wrap: wrap;
   }
-  .section-title-row { display: flex; align-items: baseline; gap: 12px; }
-  .section-title { font-size: 14px; font-weight: 700; color: var(--c-text); }
-  .section-count { font-size: 12px; color: var(--c-text-muted); }
+  .section-title-row { display: flex; align-items: baseline; gap: 10px; }
+  .section-title { font-size: 15px; font-weight: 700; color: var(--c-text); }
+  .section-count { font-size: 12px; color: var(--c-text-muted); font-variant-numeric: tabular-nums; }
   .section-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .search-box {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm);
-    padding: 7px 10px; font-size: 13px; width: 200px; color: var(--c-text);
-  }
-  .search-box:focus, .filter-select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft); }
-  .filter-select {
+  .search-box, .filter-select {
     background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm);
     padding: 7px 10px; font-size: 13px; color: var(--c-text);
   }
-
-  /* Cards */
-  .card-list { display: grid; gap: 8px; }
-  .card {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg);
-    padding: 14px 16px; position: relative; transition: border-color 0.15s;
+  .search-box { width: 220px; }
+  .search-box:focus, .filter-select:focus {
+    outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft);
   }
-  .card:hover { border-color: var(--c-border-strong); }
-  .card.has-fail { border-left: 3px solid var(--c-danger); }
-  .card.has-fatal { border-left: 3px solid var(--c-danger); background: var(--c-danger-soft); }
-  .card.inactive { opacity: 0.6; }
+
+  /* Card */
+  .card-list { display: grid; gap: 10px; }
+  .card {
+    background: var(--c-surface); border-radius: var(--r-lg);
+    padding: 16px 18px; box-shadow: var(--shadow-1);
+    border: 1px solid var(--c-border-soft);
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-1px); box-shadow: var(--shadow-2);
+    border-color: var(--c-border);
+  }
+  .card.has-fail::before, .card.has-fatal::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+    background: var(--c-danger);
+  }
+  .card.inactive { opacity: 0.7; }
 
   .card-grid {
-    display: grid; grid-template-columns: 1.4fr 1.6fr 1fr auto; gap: 16px; align-items: center;
+    display: grid; grid-template-columns: 1.4fr 1.6fr 1fr auto; gap: 18px; align-items: center;
   }
-  @media (max-width: 800px) {
-    .card-grid { grid-template-columns: 1fr; gap: 8px; }
+  @media (max-width: 820px) {
+    .card-grid { grid-template-columns: 1fr; gap: 10px; }
   }
 
   .card-main { min-width: 0; }
-  .card-name-row { display: flex; align-items: center; gap: 8px; }
   .card-id { font-size: 10px; color: var(--c-text-faint); font-family: ui-monospace, monospace; }
-  .card-name { font-size: 15px; font-weight: 600; }
-  .card-contact { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; }
+  .card-name { font-size: 15.5px; font-weight: 700; margin-top: 2px; color: var(--c-text); }
+  .card-contact { font-size: 11.5px; color: var(--c-text-muted); margin-top: 3px; }
 
   .card-resources { display: flex; gap: 16px; min-width: 0; }
-  .res-block { font-size: 11px; min-width: 0; flex: 1; }
-  .res-label { font-size: 10px; color: var(--c-text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
-  .res-links { display: flex; gap: 6px; }
-  .res-links a { color: var(--c-primary); text-decoration: none; font-size: 11px; font-weight: 500; }
-  .res-links a:hover { text-decoration: underline; }
-  .res-empty { color: var(--c-text-faint); font-style: italic; font-size: 11px; }
-  .res-stat {
-    font-size: 11px; color: var(--c-text-muted); margin-top: 3px;
+  .res-block { font-size: 11.5px; min-width: 0; flex: 1; }
+  .res-label {
+    font-size: 10.5px; color: var(--c-text-muted); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 4px;
   }
+  .res-label svg { width: 12px; height: 12px; }
+  .res-links { display: flex; gap: 8px; }
+  .res-links a {
+    color: var(--c-primary); text-decoration: none; font-size: 11.5px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px;
+    background: var(--c-primary-tint); border-radius: 4px;
+  }
+  .res-links a:hover { background: var(--c-primary-soft); }
+  .res-empty { color: var(--c-text-faint); font-style: italic; font-size: 11px; }
+  .res-stat { font-size: 11.5px; color: var(--c-text-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .res-stat.fail { color: var(--c-danger); font-weight: 600; }
 
   .card-trend { min-width: 0; }
-  .card-trend-label { font-size: 10px; color: var(--c-text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-  .spark-svg { width: 100%; height: 26px; display: block; }
-  .card-trend-summary { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; }
+  .card-trend-label { font-size: 10.5px; color: var(--c-text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .spark-svg { width: 100%; height: 32px; display: block; }
+  .card-trend-summary { font-size: 11.5px; color: var(--c-text-muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
 
   .card-meta-col { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1.6; }
-  .badge.on { background: var(--c-success-soft); color: var(--c-success); border: 1px solid var(--c-success); }
-  .badge.off { background: var(--c-surface-2); color: var(--c-text-muted); border: 1px solid var(--c-border-strong); }
-  .card-date { font-size: 10px; color: var(--c-text-faint); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+  .badge.on { background: var(--c-success-soft); color: var(--c-success); }
+  .badge.on::before { background: var(--c-success); }
+  .badge.off { background: var(--c-surface-2); color: var(--c-text-muted); }
+  .badge.off::before { background: var(--c-text-faint); }
+  .card-date { font-size: 10.5px; color: var(--c-text-faint); font-variant-numeric: tabular-nums; }
 
-  .card-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--c-border); }
+  .card-actions {
+    display: flex; gap: 6px; margin-top: 12px; padding-top: 12px;
+    border-top: 1px dashed var(--c-border-soft);
+  }
 
   /* Form */
-  .edit-form { padding: 16px; background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: var(--r-lg); margin-bottom: 12px; }
-  .edit-form h3 { font-size: 14px; font-weight: 600; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+  .edit-form {
+    padding: 18px; background: var(--c-surface);
+    border-radius: var(--r-lg); margin-bottom: 12px;
+    box-shadow: var(--shadow-1); border: 1px solid var(--c-border-soft);
+  }
+  .edit-form h3 { font-size: 14px; font-weight: 700; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
   .form-row { display: grid; gap: 12px; }
   .form-row.two { grid-template-columns: 1fr 1fr; }
   @media (max-width: 640px) { .form-row.two { grid-template-columns: 1fr; } }
@@ -241,76 +367,93 @@
   }
   .form-field input:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft); }
   .form-field input::placeholder { color: var(--c-text-faint); }
-  .pair-group { background: var(--c-surface); border: 1px dashed var(--c-border); border-radius: var(--r-sm); padding: 12px; margin-top: 8px; }
-  .pair-group-title { font-size: 12px; font-weight: 600; margin: 0 0 10px; display: flex; gap: 6px; align-items: center; }
+  .pair-group {
+    background: var(--c-surface-2); border: 1px dashed var(--c-border-soft);
+    border-radius: var(--r-sm); padding: 12px; margin-top: 8px;
+  }
+  .pair-group-title { font-size: 12.5px; font-weight: 700; margin: 0 0 10px; display: flex; gap: 6px; align-items: center; color: var(--c-text); }
   .form-actions { display: flex; gap: 8px; margin-top: 16px; }
 
   /* Buttons */
   .btn {
-    padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: var(--r-sm);
+    padding: 7px 14px; font-size: 12.5px; font-weight: 500; border-radius: var(--r-sm);
     border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text);
     cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
-    text-decoration: none;
+    text-decoration: none; line-height: 1;
   }
-  .btn:hover:not(:disabled) { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); }
+  .btn:hover:not(:disabled) { background: var(--c-primary-tint); border-color: var(--c-primary); color: var(--c-primary); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn.primary { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
-  .btn.primary:hover:not(:disabled) { filter: brightness(1.1); color: #fff; }
+  .btn.primary:hover:not(:disabled) { background: var(--c-primary-700); border-color: var(--c-primary-700); color: #fff; }
   .btn.danger { color: var(--c-danger); border-color: var(--c-danger); }
   .btn.danger:hover:not(:disabled) { background: var(--c-danger-soft); }
   .btn.ghost { border-color: transparent; background: transparent; }
-  .btn.ghost:hover:not(:disabled) { background: var(--c-surface-2); }
+  .btn.ghost:hover:not(:disabled) { background: var(--c-surface-2); color: var(--c-text); }
   .btn.sm { padding: 5px 10px; font-size: 12px; }
+  .btn svg { width: 13px; height: 13px; }
 
   /* Empty / toast */
   .empty {
-    text-align: center; padding: 48px 20px; color: var(--c-text-muted);
-    background: var(--c-surface); border: 1px dashed var(--c-border); border-radius: var(--r-lg);
+    text-align: center; padding: 56px 20px; color: var(--c-text-muted);
+    background: var(--c-surface); border-radius: var(--r-lg);
+    border: 1px dashed var(--c-border); box-shadow: var(--shadow-1);
   }
-  .empty-icon { font-size: 28px; margin-bottom: 8px; }
+  .empty-icon { color: var(--c-text-faint); margin-bottom: 10px; }
+  .empty-icon svg { width: 36px; height: 36px; }
   .empty h3 { margin: 0 0 4px; font-size: 14px; color: var(--c-text); }
-  .empty p { margin: 0; font-size: 12px; }
+  .empty p { margin: 0; font-size: 12.5px; }
 
   .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--c-text); color: var(--c-bg); padding: 10px 18px; border-radius: 24px;
-    font-size: 13px; font-weight: 500; box-shadow: var(--shadow-md);
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--c-text); color: #fff; padding: 11px 20px; border-radius: 999px;
+    font-size: 13px; font-weight: 500; box-shadow: var(--shadow-3);
     opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 1000; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.err { background: var(--c-danger); color: #fff; }
+  .toast.err { background: var(--c-danger); }
 
   /* Modal */
   .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100;
-    display: none; align-items: center; justify-content: center; padding: 20px;
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
+    z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(2px);
   }
   .modal-overlay.show { display: flex; }
   .modal {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 16px;
+    background: var(--c-surface); border-radius: 16px;
     max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
-    padding: 24px; box-shadow: var(--shadow-md);
+    padding: 26px; box-shadow: var(--shadow-3);
   }
   .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .modal-head h2 { font-size: 17px; font-weight: 700; margin: 0; }
-  .modal-close { background: none; border: none; font-size: 20px; color: var(--c-text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
-  .modal-close:hover { background: var(--c-surface-2); }
+  .modal-close { background: none; border: none; font-size: 22px; color: var(--c-text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; line-height: 1; }
+  .modal-close:hover { background: var(--c-surface-2); color: var(--c-text); }
 
-  .switch { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--c-border); }
+  .switch { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--c-border-soft); }
   .switch:first-of-type { border-top: none; }
-  .switch-label { font-size: 13px; }
-  .switch-label-main { font-weight: 600; }
-  .switch-label-sub { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; }
+  .switch-label-main { font-weight: 600; font-size: 13px; }
+  .switch-label-sub { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
   .toggle {
-    position: relative; width: 36px; height: 20px; background: var(--c-border-strong);
-    border-radius: 20px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+    position: relative; width: 40px; height: 22px; background: var(--c-border-strong);
+    border-radius: 22px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
   }
   .toggle::after {
-    content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
-    background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+    background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.25);
   }
   .toggle.on { background: var(--c-primary); }
-  .toggle.on::after { transform: translateX(16px); }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* fade-in */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .app.show > .container > * { animation: fadeIn 0.35s ease-out backwards; }
+  .app.show > .container > *:nth-child(1) { animation-delay: 0.00s; }
+  .app.show > .container > *:nth-child(2) { animation-delay: 0.04s; }
+  .app.show > .container > *:nth-child(3) { animation-delay: 0.08s; }
+  .app.show > .container > *:nth-child(4) { animation-delay: 0.12s; }
+  .app.show > .container > *:nth-child(5) { animation-delay: 0.16s; }
+  .app.show > .container > *:nth-child(6) { animation-delay: 0.20s; }
+  .app.show > .container > *:nth-child(7) { animation-delay: 0.24s; }
 </style>
 </head>
 <body>
@@ -318,7 +461,9 @@
 <!-- ============== Lock ============== -->
 <div class="lock" id="lock">
   <div class="lock-card">
-    <div class="lock-icon">🔒</div>
+    <div class="lock-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
     <h1>バックオフィスOCR Console</h1>
     <p>管理者パスを入力してください</p>
     <form id="lock-form" autocomplete="off">
@@ -344,72 +489,120 @@
       </div>
       <div class="header-actions">
         <span class="updated" id="updated"></span>
-        <button class="btn ghost sm" id="reload-all">↻ 更新</button>
-        <button class="btn ghost sm" id="open-settings">⚙ 設定</button>
+        <button class="btn ghost sm" id="reload-all" title="再読み込み">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+          更新
+        </button>
+        <button class="btn ghost sm" id="open-settings" title="設定">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          設定
+        </button>
         <button class="btn ghost sm" id="logout">ログアウト</button>
       </div>
     </header>
 
     <div class="sa-banner">
-      <div class="sa-banner-label">SA共有先:</div>
+      <div class="sa-banner-label">SA共有先 (編集者として共有)</div>
       <div class="sa-banner-email" id="sa-email">読み込み中…</div>
       <button class="btn sm" id="copy-sa">コピー</button>
     </div>
 
-    <!-- Top: KPI + Run -->
-    <div class="grid-top">
-      <div class="kpi-row">
-        <div class="panel">
-          <div class="panel-title">直近24時間の処理件数<span class="panel-title-detail">(枚)</span></div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-processed">—</span>
-            <span class="kpi-delta flat" id="kpi-processed-delta"></span>
+    <!-- KPI row -->
+    <div class="grid-kpi">
+      <div class="panel kpi">
+        <div class="panel-head">
+          <div class="panel-label">直近24時間の処理件数<span class="panel-detail">(枚)</span></div>
+          <div class="kpi-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20l3-2 3 2 3-2 3 2V2H7Z"/><path d="M11 6h6M11 10h6M11 14h4"/></svg>
           </div>
-          <div class="kpi-sub" id="kpi-processed-sub">前日比較</div>
         </div>
-        <div class="panel">
-          <div class="panel-title">直近24時間の失敗<span class="panel-title-detail">(件)</span></div>
-          <div class="kpi-value-row">
-            <span class="kpi-value ok" id="kpi-failed">—</span>
-          </div>
-          <div class="kpi-sub" id="kpi-failed-sub">通常: 失敗なし</div>
+        <div class="kpi-body">
+          <span class="kpi-value" id="kpi-processed">—</span>
+          <span class="kpi-delta flat" id="kpi-processed-delta"></span>
         </div>
-        <div class="panel">
-          <div class="panel-title">アクティブなクライアント<span class="panel-title-detail">(社)</span></div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-clients">—</span>
-          </div>
-          <div class="kpi-sub" id="kpi-clients-sub"></div>
-        </div>
+        <div class="kpi-sub" id="kpi-processed-sub">前24時間と比較</div>
+        <div class="kpi-spark"><svg id="kpi-spark-processed"></svg></div>
       </div>
 
-      <div class="panel run-panel">
-        <div class="panel-title">直近の実行</div>
+      <div class="panel kpi">
+        <div class="panel-head">
+          <div class="panel-label">直近24時間の失敗<span class="panel-detail">(件)</span></div>
+          <div class="kpi-icon" id="kpi-failed-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-value ok" id="kpi-failed">—</span>
+        </div>
+        <div class="kpi-sub" id="kpi-failed-sub">通常: 失敗なし</div>
+        <div class="kpi-spark"><svg id="kpi-spark-failed"></svg></div>
+      </div>
+
+      <div class="panel kpi">
+        <div class="panel-head">
+          <div class="panel-label">クライアント<span class="panel-detail">(社)</span></div>
+          <div class="kpi-icon secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-value" id="kpi-clients">—</span>
+        </div>
+        <div class="kpi-sub" id="kpi-clients-sub"></div>
+        <div class="kpi-bar">
+          <div class="kpi-bar-track">
+            <div class="kpi-bar-on" id="kpi-bar-on" style="width: 0%;"></div>
+            <div class="kpi-bar-off" id="kpi-bar-off" style="width: 0%;"></div>
+          </div>
+          <div class="kpi-bar-legend">
+            <span><i></i>有効</span><span><i class="off"></i>停止</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mid: chart + run panel -->
+    <div class="grid-mid">
+      <div class="panel chart-panel">
+        <div class="chart-head">
+          <div>
+            <div class="chart-title">過去7日間の処理件数</div>
+            <div class="panel-label" style="margin-top:4px;font-weight:500;letter-spacing:0;text-transform:none;">日次・領収書 / 請求書 別</div>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-dot">領収書</span>
+            <span class="legend-dot secondary">請求書</span>
+          </div>
+        </div>
+        <svg class="chart-svg" id="chart" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="過去7日間の処理件数推移"></svg>
+        <div class="chart-foot" id="chart-foot">データソース: 各クライアントの処理レポート</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-label">最新の実行</div>
+        </div>
         <div class="run-status" id="run-status"><span class="dot idle"></span>読み込み中…</div>
         <div class="run-time" id="run-time"></div>
         <div class="run-actions">
-          <button class="btn primary sm" id="dispatch">▶ 今すぐ実行</button>
-          <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener" style="display:none;">GitHub で見る</a>
+          <button class="btn primary sm" id="dispatch">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            今すぐ実行
+          </button>
+          <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.111.82-.261.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22v3.293c0 .322.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            GitHub
+          </a>
+        </div>
+
+        <div class="activity">
+          <div class="activity-label">直近のアクティビティ</div>
+          <div id="activity-list"></div>
         </div>
       </div>
     </div>
 
-    <!-- Trend chart -->
-    <div class="panel chart-panel">
-      <div class="chart-head">
-        <div>
-          <div class="panel-title" style="margin:0;">過去7日間の処理件数<span class="panel-title-detail">日次・領収書/請求書別</span></div>
-        </div>
-        <div class="chart-legend">
-          <span class="legend-swatch">領収書</span>
-          <span class="legend-swatch secondary">請求書</span>
-        </div>
-      </div>
-      <svg class="chart-svg" id="chart" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="過去7日間の処理件数推移"></svg>
-      <div class="chart-foot" id="chart-foot">データソース: 各クライアントの処理レポート / 期間: 過去7日</div>
-    </div>
-
-    <!-- Alert (failure-bearing clients) -->
+    <!-- Alert -->
     <div id="alert-area"></div>
 
     <!-- Clients -->
@@ -419,7 +612,7 @@
         <span class="section-count" id="section-count"></span>
       </div>
       <div class="section-tools">
-        <input type="text" class="search-box" id="search" placeholder="🔍 名前/連絡先で検索">
+        <input type="text" class="search-box" id="search" placeholder="🔍 名前 / 連絡先で検索">
         <select class="filter-select" id="filter">
           <option value="all">並び: 注意必要順</option>
           <option value="recent">並び: 直近の処理量</option>
@@ -431,7 +624,10 @@
           <option value="active">有効のみ</option>
           <option value="inactive">停止のみ</option>
         </select>
-        <button class="btn primary sm" id="add-toggle">+ 新規追加</button>
+        <button class="btn primary sm" id="add-toggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          新規追加
+        </button>
       </div>
     </div>
 
@@ -446,36 +642,34 @@
 <div class="modal-overlay" id="settings-modal">
   <div class="modal">
     <div class="modal-head">
-      <h2>⚙ 設定</h2>
+      <h2>Discord 通知設定</h2>
       <button class="modal-close" id="settings-close" aria-label="閉じる">×</button>
     </div>
 
-    <h3 style="font-size:13px;font-weight:600;color:var(--c-text-muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">Discord 通知</h3>
-
-    <div class="form-field" style="margin-bottom: 12px;">
+    <div class="form-field" style="margin-bottom: 16px;">
       <label style="font-size:12px;font-weight:600;color:var(--c-text-muted);margin-bottom:4px;display:block;">Webhook URL</label>
       <input type="url" id="set-webhook"
              placeholder="https://discord.com/api/webhooks/..."
              style="width:100%;padding:9px 11px;font-size:12px;border:1px solid var(--c-border);border-radius:6px;background:var(--c-surface);color:var(--c-text);font-family:ui-monospace,monospace;">
-      <div style="font-size:11px;color:var(--c-text-faint);margin-top:4px;">Discord サーバーで「サーバー設定」→「連携サービス」→「ウェブフック」から発行</div>
+      <div style="font-size:11.5px;color:var(--c-text-faint);margin-top:6px;">Discord サーバーで「サーバー設定」→「連携サービス」→「ウェブフック」から発行</div>
     </div>
 
     <div class="switch">
-      <div class="switch-label">
-        <div class="switch-label-main">✅ 成功時に通知</div>
-        <div class="switch-label-sub">処理が成功(失敗なし、1件以上処理)した時に通知</div>
+      <div>
+        <div class="switch-label-main">成功時に通知</div>
+        <div class="switch-label-sub">処理成功(1件以上、失敗なし)で送信</div>
       </div>
       <div class="toggle" id="set-success" role="switch" aria-checked="false"></div>
     </div>
     <div class="switch">
-      <div class="switch-label">
-        <div class="switch-label-main">⚠️ 失敗時に通知</div>
-        <div class="switch-label-sub">失敗 / FATAL がある時に通知 (推奨)</div>
+      <div>
+        <div class="switch-label-main">失敗時に通知</div>
+        <div class="switch-label-sub">失敗 / FATAL がある時に送信 (推奨)</div>
       </div>
       <div class="toggle" id="set-failure" role="switch" aria-checked="false"></div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;">
+    <div style="display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;">
       <button class="btn primary" id="settings-save">保存</button>
       <button class="btn" id="settings-test">テスト送信</button>
       <button class="btn ghost" id="settings-cancel" style="margin-left:auto;">キャンセル</button>
@@ -498,7 +692,10 @@
       </div>
     </div>
     <div class="pair-group">
-      <h4 class="pair-group-title">🧾 領収書 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">片方だけでも可</span></h4>
+      <h4 class="pair-group-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20l3-2 3 2 3-2 3 2V2H7Z"/><path d="M11 6h6M11 10h6M11 14h4"/></svg>
+        領収書 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">片方だけでも可</span>
+      </h4>
       <div class="form-row two">
         <div class="form-field">
           <label>フォルダURL</label>
@@ -511,7 +708,10 @@
       </div>
     </div>
     <div class="pair-group">
-      <h4 class="pair-group-title">📄 請求書 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">片方だけでも可</span></h4>
+      <h4 class="pair-group-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        請求書 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">片方だけでも可</span>
+      </h4>
       <div class="form-row two">
         <div class="form-field">
           <label>フォルダURL</label>
@@ -531,23 +731,33 @@
 </template>
 
 <script>
-// ---------- Constants ----------
-const COLOR_RECEIPTS = getComputedStyle(document.documentElement).getPropertyValue('--c-primary').trim() || '#1c4abd';
-const COLOR_INVOICES = getComputedStyle(document.documentElement).getPropertyValue('--c-secondary').trim() || '#0891b2';
-const COLOR_GRID = getComputedStyle(document.documentElement).getPropertyValue('--c-grid').trim() || '#ececea';
-const COLOR_MUTED = getComputedStyle(document.documentElement).getPropertyValue('--c-text-faint').trim() || '#9a9a9a';
+// ---------- Color tokens ----------
+const cs = getComputedStyle(document.documentElement);
+const COLOR_RECEIPTS = cs.getPropertyValue('--c-primary').trim() || '#0017c1';
+const COLOR_RECEIPTS_LIGHT = cs.getPropertyValue('--c-primary-600').trim() || '#2c5fd0';
+const COLOR_INVOICES = cs.getPropertyValue('--c-secondary').trim() || '#008892';
+const COLOR_INVOICES_LIGHT = '#3da9b1';
+const COLOR_DANGER = cs.getPropertyValue('--c-danger').trim() || '#c8232c';
+const COLOR_DANGER_LIGHT = '#e26770';
+const COLOR_GRID = cs.getPropertyValue('--c-grid').trim() || '#eaeef2';
+const COLOR_MUTED = cs.getPropertyValue('--c-text-faint').trim() || '#8b939c';
+
+// ---------- Icons (inline SVG) ----------
+const ICONS = {
+  receipt: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20l3-2 3 2 3-2 3 2V2H7Z"/><path d="M11 6h6M11 10h6M11 14h4"/></svg>',
+  invoice: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>',
+  folder: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h5l2 3h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>',
+  sheet: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>',
+  alert: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  empty: '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+};
 
 // ---------- State ----------
 const state = {
   key: sessionStorage.getItem('admin_key') || '',
-  clients: [],
-  runs: [],
-  ghRuns: [],
-  search: '',
-  sort: 'all',
-  statusFilter: 'all',
-  editingId: null,
-  adding: false,
+  clients: [], runs: [], ghRuns: [],
+  search: '', sort: 'all', statusFilter: 'all',
+  editingId: null, adding: false,
 };
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -591,14 +801,12 @@ function unlock(ok) {
     boot();
   } else {
     state.key = ''; sessionStorage.removeItem('admin_key');
-    $('#lock').style.display = 'flex';
-    $('#app').classList.remove('show');
+    $('#lock').style.display = 'flex'; $('#app').classList.remove('show');
   }
 }
 
 $('#lock-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  state.key = $('#lock-key').value;
+  e.preventDefault(); state.key = $('#lock-key').value;
   try { await api('/api/admin/clients'); unlock(true); }
   catch { toast('ADMIN_KEY が違います', true); }
 });
@@ -616,8 +824,7 @@ $('#copy-sa').addEventListener('click', async () => {
 
 // ---------- Aggregations ----------
 function last7Days() {
-  const days = [];
-  const today = new Date(); today.setHours(0,0,0,0);
+  const days = []; const today = new Date(); today.setHours(0,0,0,0);
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today); d.setDate(today.getDate() - i);
     days.push(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`);
@@ -628,8 +835,7 @@ function last7Days() {
 function trendByDay(runs, days) {
   const map = Object.fromEntries(days.map(d => [d, { receipts: 0, invoices: 0, failed: 0, fatal: 0 }]));
   for (const r of runs) {
-    const d = parseUTC(r.started_at);
-    if (!d) continue;
+    const d = parseUTC(r.started_at); if (!d) continue;
     const key = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
     if (!map[key]) continue;
     if (r.kind === 'receipts') map[key].receipts += r.processed || 0;
@@ -649,9 +855,9 @@ function kpi24h(runs) {
   };
   const cur = runs.filter(r => inWindow(r, 0, 24));
   const prev = runs.filter(r => inWindow(r, 24, 48));
-  const sumP = (rs) => rs.reduce((a, r) => a + (r.processed || 0), 0);
-  const sumF = (rs) => rs.reduce((a, r) => a + (r.failed || 0), 0);
-  const fatal = (rs) => rs.filter(r => r.fatal_error).length;
+  const sumP = rs => rs.reduce((a, r) => a + (r.processed || 0), 0);
+  const sumF = rs => rs.reduce((a, r) => a + (r.failed || 0), 0);
+  const fatal = rs => rs.filter(r => r.fatal_error).length;
   return {
     processed: sumP(cur), prevProcessed: sumP(prev),
     failed: sumF(cur), fatal: fatal(cur),
@@ -663,9 +869,7 @@ function latestRunPerClient(runs, clientName) {
   const result = { receipts: null, invoices: null };
   for (const r of runs) {
     if (r.client_name !== clientName) continue;
-    if (!result[r.kind] || (parseUTC(r.started_at) > parseUTC(result[r.kind].started_at))) {
-      result[r.kind] = r;
-    }
+    if (!result[r.kind] || (parseUTC(r.started_at) > parseUTC(result[r.kind].started_at))) result[r.kind] = r;
   }
   return result;
 }
@@ -676,14 +880,13 @@ function clientWeeklyTotal(runs, days, clientName) {
     if (r.client_name !== clientName) continue;
     const d = parseUTC(r.started_at); if (!d) continue;
     const key = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-    const idx = days.indexOf(key);
-    if (idx < 0) continue;
+    const idx = days.indexOf(key); if (idx < 0) continue;
     totals[idx] += r.processed || 0;
   }
   return totals;
 }
 
-// ---------- Rendering: KPI ----------
+// ---------- KPI ----------
 function renderKPIs() {
   const k = kpi24h(state.runs);
   $('#kpi-processed').textContent = k.hasAnyRun ? k.processed : '—';
@@ -693,89 +896,139 @@ function renderKPIs() {
   else if (delta > 0) { dEl.textContent = `▲ +${delta}`; dEl.className = 'kpi-delta up'; }
   else if (delta < 0) { dEl.textContent = `▼ ${delta}`; dEl.className = 'kpi-delta down'; }
   else { dEl.textContent = '± 0'; dEl.className = 'kpi-delta flat'; }
-  $('#kpi-processed-sub').textContent = k.hasAnyRun ? `前24h: ${k.prevProcessed} 枚` : 'データなし';
+  $('#kpi-processed-sub').textContent = k.hasAnyRun ? `前24時間: ${k.prevProcessed} 枚` : 'データなし';
 
   const failEl = $('#kpi-failed');
-  failEl.textContent = k.hasAnyRun ? (k.failed + k.fatal) : '—';
-  failEl.classList.toggle('bad', (k.failed + k.fatal) > 0);
-  failEl.classList.toggle('ok', k.hasAnyRun && (k.failed + k.fatal) === 0);
+  const failIcon = $('#kpi-failed-icon');
+  const failTotal = k.failed + k.fatal;
+  failEl.textContent = k.hasAnyRun ? failTotal : '—';
+  failEl.classList.toggle('bad', failTotal > 0);
+  failEl.classList.toggle('ok', k.hasAnyRun && failTotal === 0);
+  failIcon.classList.toggle('danger', failTotal > 0);
+  failIcon.classList.toggle('success', k.hasAnyRun && failTotal === 0);
   $('#kpi-failed-sub').textContent =
     !k.hasAnyRun ? 'データなし' :
-    (k.fatal ? `FATAL ${k.fatal}件 / 個別失敗 ${k.failed}件` :
+    (k.fatal ? `FATAL ${k.fatal}件 · 個別失敗 ${k.failed}件` :
      k.failed ? `個別失敗 ${k.failed}件` : '失敗なし');
 
   const activeCount = state.clients.filter(c => c.active).length;
+  const inactiveCount = state.clients.length - activeCount;
   $('#kpi-clients').textContent = activeCount;
-  $('#kpi-clients-sub').textContent = `全 ${state.clients.length} 社中 (停止 ${state.clients.length - activeCount})`;
+  $('#kpi-clients-sub').textContent = `全 ${state.clients.length} 社中 (停止 ${inactiveCount})`;
+  if (state.clients.length > 0) {
+    const onPct = (activeCount / state.clients.length) * 100;
+    $('#kpi-bar-on').style.width = onPct + '%';
+    $('#kpi-bar-off').style.width = (100 - onPct) + '%';
+  } else {
+    $('#kpi-bar-on').style.width = '0%';
+    $('#kpi-bar-off').style.width = '100%';
+  }
+
+  // Sparklines on processed/failed (per day)
+  const days = last7Days();
+  const trend = trendByDay(state.runs, days);
+  renderInlineSpark($('#kpi-spark-processed'), trend.map(d => d.receipts + d.invoices), COLOR_RECEIPTS);
+  renderInlineSpark($('#kpi-spark-failed'), trend.map(d => d.failed + d.fatal), failTotal > 0 ? COLOR_DANGER : COLOR_MUTED);
 }
 
-// ---------- Rendering: Chart ----------
+function renderInlineSpark(svgEl, values, color) {
+  const W = 120, H = 36;
+  const max = Math.max(1, ...values);
+  const slot = W / values.length;
+  const barW = slot * 0.55;
+  let s = '';
+  values.forEach((v, i) => {
+    const x = i * slot + (slot - barW) / 2;
+    if (v > 0) {
+      const h = Math.max(2, (v / max) * (H - 4));
+      s += `<rect x="${x}" y="${H - h}" width="${barW}" height="${h}" fill="${color}" rx="2" opacity="0.85"/>`;
+    } else {
+      s += `<rect x="${x}" y="${H - 2}" width="${barW}" height="2" fill="${COLOR_GRID}" rx="1"/>`;
+    }
+  });
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('preserveAspectRatio', 'none');
+  svgEl.innerHTML = s;
+}
+
+// ---------- Chart ----------
 function niceCeil(n) {
   if (n <= 5) return 5;
   if (n <= 10) return 10;
-  const pow = Math.pow(10, Math.floor(Math.log10(n)));
-  return Math.ceil(n / pow) * pow;
+  const p = Math.pow(10, Math.floor(Math.log10(n)));
+  return Math.ceil(n / p) * p;
 }
 
 function renderChart() {
   const days = last7Days();
   const data = trendByDay(state.runs, days);
   const svg = $('#chart');
-  const W = 700, H = 200;
-  const pad = { t: 16, r: 12, b: 32, l: 36 };
-  const innerW = W - pad.l - pad.r;
-  const innerH = H - pad.t - pad.b;
+  const W = 700, H = 220;
+  const pd = { t: 16, r: 14, b: 36, l: 38 };
+  const innerW = W - pd.l - pd.r;
+  const innerH = H - pd.t - pd.b;
   const max = Math.max(1, ...data.map(d => d.receipts + d.invoices));
   const niceMax = niceCeil(max);
   const slot = innerW / data.length;
-  const barW = slot * 0.55;
+  const barW = slot * 0.5;
 
-  let s = '';
+  let defs = `
+    <defs>
+      <linearGradient id="gradReceipts" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="${COLOR_RECEIPTS_LIGHT}"/>
+        <stop offset="100%" stop-color="${COLOR_RECEIPTS}"/>
+      </linearGradient>
+      <linearGradient id="gradInvoices" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="${COLOR_INVOICES_LIGHT}"/>
+        <stop offset="100%" stop-color="${COLOR_INVOICES}"/>
+      </linearGradient>
+    </defs>`;
+
+  let s = defs;
   // Y gridlines + labels
   for (let i = 0; i <= 4; i++) {
-    const y = pad.t + innerH - (i / 4) * innerH;
+    const y = pd.t + innerH - (i / 4) * innerH;
     const v = Math.round((i / 4) * niceMax);
-    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y}" y2="${y}" stroke="${COLOR_GRID}" stroke-width="1"/>`;
-    s += `<text x="${pad.l - 6}" y="${y + 3}" text-anchor="end" font-size="10" fill="${COLOR_MUTED}">${v}</text>`;
+    s += `<line x1="${pd.l}" x2="${W - pd.r}" y1="${y}" y2="${y}" stroke="${COLOR_GRID}" stroke-width="1"/>`;
+    s += `<text x="${pd.l - 8}" y="${y + 3}" text-anchor="end" font-size="10.5" fill="${COLOR_MUTED}" font-family="Inter">${v}</text>`;
   }
   // Bars
   data.forEach((d, i) => {
-    const x = pad.l + slot * i + (slot - barW) / 2;
-    const y0 = pad.t + innerH;
+    const x = pd.l + slot * i + (slot - barW) / 2;
+    const y0 = pd.t + innerH;
     const recH = (d.receipts / niceMax) * innerH;
     const invH = (d.invoices / niceMax) * innerH;
     if (d.receipts > 0) {
-      s += `<rect x="${x}" y="${y0 - recH}" width="${barW}" height="${recH}" fill="${COLOR_RECEIPTS}" rx="2"><title>${d.date.slice(5)} 領収書 ${d.receipts}件</title></rect>`;
+      s += `<rect x="${x}" y="${y0 - recH}" width="${barW}" height="${recH}" fill="url(#gradReceipts)" rx="3"><title>${d.date.slice(5)} 領収書 ${d.receipts}件</title></rect>`;
     }
     if (d.invoices > 0) {
-      s += `<rect x="${x}" y="${y0 - recH - invH}" width="${barW}" height="${invH}" fill="${COLOR_INVOICES}" rx="2"><title>${d.date.slice(5)} 請求書 ${d.invoices}件</title></rect>`;
+      s += `<rect x="${x}" y="${y0 - recH - invH}" width="${barW}" height="${invH}" fill="url(#gradInvoices)" rx="3"><title>${d.date.slice(5)} 請求書 ${d.invoices}件</title></rect>`;
     }
-    // x label (M/D)
     const lab = d.date.slice(5).replace('-', '/');
-    s += `<text x="${x + barW / 2}" y="${H - pad.b + 14}" text-anchor="middle" font-size="10" fill="${COLOR_MUTED}">${lab}</text>`;
+    s += `<text x="${x + barW / 2}" y="${H - pd.b + 16}" text-anchor="middle" font-size="11" fill="${COLOR_MUTED}" font-family="Inter">${lab}</text>`;
   });
   svg.innerHTML = s;
 
-  // freshness note
   const latestRun = state.runs[0];
   if (latestRun) {
     $('#chart-foot').textContent = `データソース: 各クライアントの処理レポート · 最終更新: ${fmtAgo(parseUTC(latestRun.started_at))}`;
+  } else {
+    $('#chart-foot').textContent = 'データソース: 各クライアントの処理レポート';
   }
 }
 
-// Sparkline (per-client)
 function sparkSVG(values) {
   if (!values.length) return '';
-  const W = 100, H = 26;
+  const W = 100, H = 32;
   const max = Math.max(1, ...values);
   const slot = W / values.length;
-  const barW = slot * 0.65;
+  const barW = slot * 0.6;
   let s = `<svg class="spark-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`;
   values.forEach((v, i) => {
     const x = i * slot + (slot - barW) / 2;
     if (v > 0) {
       const h = Math.max(2, (v / max) * (H - 2));
-      s += `<rect x="${x}" y="${H - h}" width="${barW}" height="${h}" fill="${COLOR_RECEIPTS}" rx="1"><title>${v}件</title></rect>`;
+      s += `<rect x="${x}" y="${H - h}" width="${barW}" height="${h}" fill="${COLOR_RECEIPTS}" rx="1.5" opacity="0.85"><title>${v}件</title></rect>`;
     } else {
       s += `<rect x="${x}" y="${H - 1}" width="${barW}" height="1" fill="${COLOR_GRID}"/>`;
     }
@@ -784,7 +1037,7 @@ function sparkSVG(values) {
   return s;
 }
 
-// ---------- Run panel ----------
+// ---------- Run / Activity ----------
 function renderRun() {
   const dotEl = $('#run-status');
   const timeEl = $('#run-time');
@@ -806,21 +1059,47 @@ function renderRun() {
   ghLink.href = run.html_url; ghLink.style.display = '';
 }
 
+function renderActivity() {
+  const list = $('#activity-list');
+  const recent = state.runs.slice(0, 6);
+  if (!recent.length) {
+    list.innerHTML = `<div style="font-size:12px;color:var(--c-text-faint);padding:8px 0;">アクティビティなし</div>`;
+    return;
+  }
+  list.innerHTML = recent.map(r => {
+    const isInvoice = r.kind === 'invoices';
+    const hasFail = r.failed > 0 || r.fatal_error;
+    const iconCls = hasFail ? 'danger' : (isInvoice ? 'invoices' : '');
+    const icon = hasFail ? ICONS.alert : (isInvoice ? ICONS.invoice : ICONS.receipt);
+    const detail = r.fatal_error ? 'FATAL: ' + (r.fatal_error || '').slice(0, 40)
+                 : `${r.processed} 件処理${r.failed ? ` · 失敗 ${r.failed}` : ''}`;
+    return `
+      <div class="activity-item">
+        <div class="activity-icon ${iconCls}">${icon}</div>
+        <div class="activity-text">
+          <span class="activity-client">${esc(r.client_name)}</span>
+          <span class="activity-detail${hasFail ? ' fail' : ''}"> · ${detail}</span>
+        </div>
+        <div class="activity-time">${fmtAgo(parseUTC(r.started_at))}</div>
+      </div>`;
+  }).join('');
+}
+
 $('#dispatch').addEventListener('click', async () => {
-  const btn = $('#dispatch'); btn.disabled = true; btn.textContent = '起動中…';
+  const btn = $('#dispatch'); btn.disabled = true;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '起動中…';
   try {
     await api('/api/admin/dispatch', { method: 'POST' });
     toast('▶ ワークフローを起動しました');
     setTimeout(refreshAll, 2500);
   } catch (e) { toast('起動失敗: ' + e.message, true); }
-  finally { btn.disabled = false; btn.textContent = '▶ 今すぐ実行'; }
+  finally { btn.disabled = false; btn.innerHTML = orig; }
 });
 
-// ---------- Alert section ----------
+// ---------- Alert ----------
 function renderAlert() {
-  const days = last7Days();
   const now = Date.now();
-  // failures in last 36h
   const recentFails = state.runs.filter(r => {
     const t = parseUTC(r.started_at); if (!t) return false;
     if ((now - t.getTime()) / 3600000 > 36) return false;
@@ -839,7 +1118,7 @@ function renderAlert() {
   if (!items.length) { el.innerHTML = ''; return; }
   el.innerHTML = `
     <div class="alert-panel">
-      <div class="alert-head">⚠️ 直近で問題が発生したクライアント (${items.length}社)</div>
+      <div class="alert-head">${ICONS.alert} 直近で問題が発生したクライアント (${items.length}社)</div>
       <div class="alert-list">
         ${items.map(i => `
           <div class="alert-item">
@@ -853,24 +1132,18 @@ function renderAlert() {
 // ---------- Client list ----------
 function sortClients(list) {
   const days = last7Days();
-  const computeWeekly = c => clientWeeklyTotal(state.runs, days, c.name).reduce((a,b)=>a+b, 0);
-
+  const weekly = c => clientWeeklyTotal(state.runs, days, c.name).reduce((a,b)=>a+b, 0);
   if (state.sort === 'name') return [...list].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
   if (state.sort === 'new') return [...list].sort((a, b) => b.id - a.id);
-  if (state.sort === 'recent') return [...list].sort((a, b) => computeWeekly(b) - computeWeekly(a));
-
-  // default: 注意必要順
+  if (state.sort === 'recent') return [...list].sort((a, b) => weekly(b) - weekly(a));
   return [...list].sort((a, b) => {
     const ar = latestRunPerClient(state.runs, a.name);
     const br = latestRunPerClient(state.runs, b.name);
-    const ascore = (ar.receipts?.fatal_error || ar.invoices?.fatal_error) ? 100 :
-                   ((ar.receipts?.failed || 0) + (ar.invoices?.failed || 0)) > 0 ? 50 :
-                   computeWeekly(a);
-    const bscore = (br.receipts?.fatal_error || br.invoices?.fatal_error) ? 100 :
-                   ((br.receipts?.failed || 0) + (br.invoices?.failed || 0)) > 0 ? 50 :
-                   computeWeekly(b);
+    const score = (rs, c) =>
+      (rs.receipts?.fatal_error || rs.invoices?.fatal_error) ? 100 :
+      ((rs.receipts?.failed || 0) + (rs.invoices?.failed || 0)) > 0 ? 50 : weekly(c);
     if (b.active !== a.active) return (b.active ? 1 : 0) - (a.active ? 1 : 0);
-    return bscore - ascore;
+    return score(br, b) - score(ar, a);
   });
 }
 
@@ -886,14 +1159,14 @@ function renderList() {
     return true;
   });
   filtered = sortClients(filtered);
-  $('#section-count').textContent = `${filtered.length} 件表示中 / 全 ${state.clients.length} 件`;
+  $('#section-count').textContent = `${filtered.length} 件表示 / 全 ${state.clients.length} 件`;
 
   if (!state.clients.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><h3>クライアントがまだ登録されていません</h3><p>「+ 新規追加」から1件目を登録</p></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">${ICONS.empty}</div><h3>クライアントがまだ登録されていません</h3><p>「+ 新規追加」から1件目を登録</p></div>`;
     return;
   }
   if (!filtered.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>該当なし</h3><p>条件を変えてください</p></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">${ICONS.empty}</div><h3>該当なし</h3><p>条件を変えてください</p></div>`;
     return;
   }
 
@@ -904,7 +1177,7 @@ function renderList() {
   for (const c of filtered) {
     if (state.editingId === c.id) {
       const formEl = buildForm({
-        title: `✏️ #${c.id} ${c.name} を編集`,
+        title: `#${c.id} ${c.name} を編集`,
         values: c,
         onSave: async (data) => {
           await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id: c.id, ...data, active: c.active }) });
@@ -926,17 +1199,15 @@ function renderList() {
       if (!folder && !sheet) {
         return `<div class="res-block"><div class="res-label">${icon} ${label}</div><div class="res-empty">未登録</div></div>`;
       }
-      const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank" rel="noopener">📁</a>` : '';
-      const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank" rel="noopener">📊</a>` : '';
+      const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank" rel="noopener">${ICONS.folder} Drive</a>` : '';
+      const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank" rel="noopener">${ICONS.sheet} Sheet</a>` : '';
       let stat = '';
       if (run) {
         const failCls = (run.failed > 0 || run.fatal_error) ? ' fail' : '';
         const t = parseUTC(run.started_at);
-        if (run.fatal_error) {
-          stat = `<div class="res-stat fail">⚠️ FATAL · ${fmtAgo(t)}</div>`;
-        } else {
-          stat = `<div class="res-stat${failCls}">${run.processed} 件処理${run.failed ? ` · ${run.failed} 件失敗` : ''} · ${fmtAgo(t)}</div>`;
-        }
+        stat = run.fatal_error
+          ? `<div class="res-stat fail">⚠ FATAL · ${fmtAgo(t)}</div>`
+          : `<div class="res-stat${failCls}">${run.processed} 件処理${run.failed ? ` · ${run.failed} 件失敗` : ''} · ${fmtAgo(t)}</div>`;
       } else {
         stat = `<div class="res-stat">処理履歴なし</div>`;
       }
@@ -949,17 +1220,15 @@ function renderList() {
       <div class="card-grid">
         <div class="card-main">
           <div class="card-id">#${c.id}</div>
-          <div class="card-name-row">
-            <span class="card-name">${esc(c.name)}</span>
-          </div>
+          <div class="card-name">${esc(c.name)}</div>
           ${c.contact ? `<div class="card-contact">${esc(c.contact)}</div>` : ''}
         </div>
         <div class="card-resources">
-          ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, '🧾', '領収書')}
-          ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, '📄', '請求書')}
+          ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, ICONS.receipt, '領収書')}
+          ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, ICONS.invoice, '請求書')}
         </div>
         <div class="card-trend">
-          <div class="card-trend-label">過去7日</div>
+          <div class="card-trend-label">過去7日 処理量</div>
           ${sparkSVG(weekly)}
           <div class="card-trend-summary">${weeklyTotal} 件</div>
         </div>
@@ -975,8 +1244,7 @@ function renderList() {
       </div>`;
     cl.appendChild(card);
   }
-  list.innerHTML = '';
-  list.appendChild(cl);
+  list.innerHTML = ''; list.appendChild(cl);
 }
 
 // ---------- Form ----------
@@ -985,8 +1253,7 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
   const root = tpl.querySelector('.edit-form');
   root.querySelector('[data-title]').textContent = title;
   const setVal = (k, v) => { const el = root.querySelector(`[data-field="${k}"]`); if (el) el.value = v || ''; };
-  setVal('name', values.name);
-  setVal('contact', values.contact);
+  setVal('name', values.name); setVal('contact', values.contact);
   setVal('receipts_folder_url', values.receipts_folder_id ? `https://drive.google.com/drive/folders/${values.receipts_folder_id}` : '');
   setVal('receipts_sheet_url', values.receipts_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.receipts_sheet_id}` : '');
   setVal('invoices_folder_url', values.invoices_folder_id ? `https://drive.google.com/drive/folders/${values.invoices_folder_id}` : '');
@@ -1005,17 +1272,17 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
 
 $('#add-toggle').addEventListener('click', () => {
   if (state.adding) {
-    state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').textContent = '+ 新規追加'; return;
+    state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`; return;
   }
-  state.adding = true; $('#add-toggle').textContent = '✕ 閉じる';
+  state.adding = true; $('#add-toggle').innerHTML = '✕ 閉じる';
   const formEl = buildForm({
-    title: '➕ 新規クライアント追加',
+    title: '新規クライアント追加',
     onSave: async (data) => {
       await api('/api/admin/clients', { method: 'POST', body: JSON.stringify(data) });
-      state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').textContent = '+ 新規追加';
+      state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`;
       await loadClients(); renderAll(); toast('追加しました');
     },
-    onCancel: () => { state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').textContent = '+ 新規追加'; },
+    onCancel: () => { state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`; },
   });
   $('#add-area').innerHTML = ''; $('#add-area').appendChild(formEl);
 });
@@ -1029,8 +1296,7 @@ $('#list').addEventListener('click', async (e) => {
   else if (act === 'toggle') {
     const active = btn.dataset.active === '1' ? 0 : 1;
     await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id, active }) });
-    await loadClients(); renderAll();
-    toast(active ? '再開しました' : '停止しました');
+    await loadClients(); renderAll(); toast(active ? '再開しました' : '停止しました');
   } else if (act === 'delete') {
     const c = state.clients.find(x => x.id === id);
     if (!confirm(`「${c.name}」を削除しますか?\n復元はできません。`)) return;
@@ -1049,8 +1315,8 @@ async function loadRuns()    { try { const d = await api('/api/admin/runs?limit=
 async function loadGhRuns()  { try { const d = await api('/api/admin/dispatch'); state.ghRuns = d.runs || []; } catch { state.ghRuns = []; } }
 
 function renderAll() {
-  renderKPIs(); renderChart(); renderRun(); renderAlert(); renderList();
-  $('#updated').textContent = `最終更新: ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;
+  renderKPIs(); renderChart(); renderRun(); renderActivity(); renderAlert(); renderList();
+  $('#updated').textContent = `更新: ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;
 }
 
 async function refreshAll() {
@@ -1060,17 +1326,11 @@ async function refreshAll() {
 
 $('#reload-all').addEventListener('click', async () => { await refreshAll(); toast('更新しました'); });
 
-async function boot() {
-  loadSA();
-  await refreshAll();
-}
+async function boot() { loadSA(); await refreshAll(); }
 
-// ---------- Settings modal ----------
+// ---------- Settings ----------
 const settingsModal = $('#settings-modal');
-function setToggle(el, on) {
-  el.classList.toggle('on', !!on);
-  el.setAttribute('aria-checked', !!on);
-}
+function setToggle(el, on) { el.classList.toggle('on', !!on); el.setAttribute('aria-checked', !!on); }
 function getToggle(el) { return el.classList.contains('on'); }
 
 async function openSettings() {
@@ -1103,8 +1363,7 @@ $('#settings-save').addEventListener('click', async () => {
         notify_on_failure: getToggle($('#set-failure')) ? '1' : '0',
       }),
     });
-    toast('保存しました');
-    closeSettings();
+    toast('保存しました'); closeSettings();
   } catch (e) { toast('保存失敗: ' + e.message, true); }
   finally { btn.disabled = false; }
 });
