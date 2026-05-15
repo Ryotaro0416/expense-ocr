@@ -11,40 +11,48 @@
   *, *::before, *::after { box-sizing: border-box; }
   :root {
     color-scheme: light only;
-    --c-bg: #f3f5f7;
+    --c-bg: #f5f7fa;
     --c-surface: #ffffff;
-    --c-surface-2: #f8fafc;
-    --c-border: #d8dde4;
-    --c-border-soft: #e6ebf0;
-    --c-border-strong: #c1c7cf;
-    --c-text: #0f1419;
-    --c-text-muted: #4b5763;
-    --c-text-faint: #8b939c;
+    --c-surface-2: #f9fafc;
+    --c-surface-hover: #f4f6f9;
+    --c-border: #dde2e8;
+    --c-border-soft: #e8ecf1;
+    --c-border-strong: #c8cfd6;
+    --c-text: #0d1217;
+    --c-text-muted: #4a5460;
+    --c-text-faint: #8390a0;
 
     --c-primary: #0017c1;
     --c-primary-700: #1c4abd;
     --c-primary-600: #2c5fd0;
-    --c-primary-soft: #e8edfb;
-    --c-primary-tint: #f3f5fd;
+    --c-primary-soft: #e8ecfa;
+    --c-primary-tint: #f1f3fb;
     --c-secondary: #008892;
-    --c-secondary-soft: #e0f3f5;
-    --c-success: #1c8b34;
-    --c-success-soft: #e6f5ea;
-    --c-warning: #b85c00;
-    --c-warning-soft: #fdefe0;
-    --c-danger: #c8232c;
+    --c-secondary-soft: #def2f4;
+    --c-success: #16803c;
+    --c-success-soft: #e3f5e9;
+    --c-warning: #b35400;
+    --c-warning-soft: #fdeede;
+    --c-danger: #b91c1c;
     --c-danger-soft: #fbe7e9;
-    --c-grid: #eaeef2;
+    --c-purple: #6840c1;
+    --c-purple-soft: #ede4fa;
+    --c-grid: #ecf0f4;
 
-    --r-lg: 14px;
+    --r-lg: 12px;
     --r-md: 10px;
-    --r-sm: 8px;
+    --r-sm: 7px;
+    --r-pill: 999px;
 
     --shadow-1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.04);
-    --shadow-2: 0 4px 10px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
-    --shadow-3: 0 8px 20px rgba(15, 23, 42, 0.10);
+    --shadow-2: 0 4px 12px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+    --shadow-3: 0 12px 24px rgba(15, 23, 42, 0.12);
+    --shadow-pop: 0 8px 20px rgba(15, 23, 42, 0.08);
 
-    --gradient-accent: linear-gradient(90deg, #0017c1 0%, #1c4abd 45%, #008892 100%);
+    --gradient-accent: linear-gradient(90deg, #0017c1 0%, #1c4abd 50%, #008892 100%);
+
+    --h-topbar: 56px;
+    --h-tabbar: 44px;
   }
 
   html, body { margin: 0; padding: 0; height: 100%; }
@@ -54,13 +62,13 @@
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "palt", "tnum";
   }
-  /* アクセント帯 (top) */
   body::before {
     content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px;
-    background: var(--gradient-accent); z-index: 50;
+    background: var(--gradient-accent); z-index: 100;
   }
-  button, input, select { font-family: inherit; }
+  button, input, select, textarea { font-family: inherit; }
   a { color: inherit; }
+  ::selection { background: var(--c-primary-soft); color: var(--c-primary); }
 
   /* ===== Lock screen ===== */
   .lock { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -75,73 +83,117 @@
     border-radius: 14px; display: flex; align-items: center; justify-content: center;
   }
   .lock-card h1 { font-size: 20px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
-  .lock-card p { color: var(--c-text-muted); font-size: 14px; margin: 0 0 24px; }
+  .lock-card p { color: var(--c-text-muted); font-size: 13.5px; margin: 0 0 24px; }
+  .lock-hint { font-size: 11px; color: var(--c-text-faint); margin-top: 14px; }
 
-  /* ===== App ===== */
-  .app { display: none; }
-  .app.show { display: block; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
+  /* ===== App layout ===== */
+  .app { display: none; flex-direction: column; min-height: 100vh; }
+  .app.show { display: flex; }
 
-  /* Header */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 18px; gap: 12px; flex-wrap: wrap;
+  /* Topbar */
+  .topbar {
+    position: sticky; top: 0; z-index: 80;
+    background: var(--c-surface); border-bottom: 1px solid var(--c-border-soft);
+    height: var(--h-topbar); display: flex; align-items: center;
+    padding: 0 20px;
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
+  .topbar-inner {
+    width: 100%; max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .brand-mark {
-    width: 38px; height: 38px; border-radius: 10px;
+    width: 32px; height: 32px; border-radius: 8px;
     background: var(--gradient-accent); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 16px; letter-spacing: -0.03em;
-    box-shadow: var(--shadow-1);
+    font-weight: 800; font-size: 14px; letter-spacing: -0.03em;
+    box-shadow: var(--shadow-1); flex-shrink: 0;
   }
-  .brand h1 { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .brand-sub { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
-  .header-actions { display: flex; gap: 6px; align-items: center; }
-  .updated { font-size: 11px; color: var(--c-text-faint); padding: 0 8px; }
+  .brand h1 { font-size: 14.5px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .brand-sub { font-size: 11px; color: var(--c-text-muted); margin-top: 1px; }
 
-  /* SA banner */
-  .sa-banner {
-    background: var(--c-surface); border-radius: var(--r-md);
-    padding: 10px 14px; margin-bottom: 18px;
-    display: flex; align-items: center; gap: 12px; font-size: 13px;
-    box-shadow: var(--shadow-1);
-    border-left: 3px solid var(--c-warning);
+  .top-actions { display: flex; gap: 8px; align-items: center; }
+  .health-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px;
+    background: var(--c-success-soft); color: var(--c-success);
+    border-radius: var(--r-pill); font-size: 12px; font-weight: 600;
   }
-  .sa-banner-label { color: var(--c-text-muted); font-size: 12px; white-space: nowrap; }
-  .sa-banner-email {
+  .health-chip.bad { background: var(--c-danger-soft); color: var(--c-danger); }
+  .health-chip.warn { background: var(--c-warning-soft); color: var(--c-warning); }
+  .health-chip::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor;
+    box-shadow: 0 0 0 3px currentColor; opacity: 0.25;
+  }
+  .role-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px;
+    background: var(--c-purple-soft); color: var(--c-purple);
+    border-radius: var(--r-pill); font-size: 11.5px; font-weight: 600;
+  }
+  .role-chip.admin { background: var(--c-surface-2); color: var(--c-text-muted); }
+
+  /* Tabbar */
+  .tabbar {
+    position: sticky; top: var(--h-topbar); z-index: 70;
+    background: var(--c-surface); border-bottom: 1px solid var(--c-border-soft);
+    height: var(--h-tabbar); padding: 0 20px;
+  }
+  .tabbar-inner {
+    width: 100%; max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: stretch; gap: 4px; height: 100%;
+  }
+  .tab {
+    display: inline-flex; align-items: center; gap: 6px; padding: 0 14px;
+    font-size: 13px; font-weight: 500; color: var(--c-text-muted);
+    background: transparent; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab svg { width: 14px; height: 14px; }
+  .tab:hover { color: var(--c-text); }
+  .tab.active { color: var(--c-primary); border-bottom-color: var(--c-primary); font-weight: 600; }
+
+  /* Container */
+  .container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 24px 20px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.show { display: block; animation: fadeIn 0.25s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* SA bar (Settings tab) */
+  .sa-row {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    padding: 14px 18px;
+    background: var(--c-warning-soft); border-radius: var(--r-md);
+    border-left: 3px solid var(--c-warning);
+    margin-bottom: 18px;
+  }
+  .sa-label { font-size: 12px; color: var(--c-warning); font-weight: 600; }
+  .sa-email {
     flex: 1; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px;
     color: var(--c-text); word-break: break-all;
   }
 
-  /* ===== Grids ===== */
+  /* ===== Cards / Panels ===== */
   .grid-kpi {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px;
   }
   @media (max-width: 720px) { .grid-kpi { grid-template-columns: 1fr; } }
-
   .grid-mid {
-    display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; margin-bottom: 14px;
+    display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; margin-bottom: 14px;
   }
   @media (max-width: 900px) { .grid-mid { grid-template-columns: 1fr; } }
 
-  /* ===== Panel (base card) ===== */
   .panel {
     background: var(--c-surface); border-radius: var(--r-lg);
     padding: 18px 20px; box-shadow: var(--shadow-1);
-    border: 1px solid var(--c-border-soft);
     position: relative; overflow: hidden;
   }
-  .panel-head {
-    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
-  }
+  .panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
   .panel-label {
     font-size: 11.5px; font-weight: 600; color: var(--c-text-muted);
     text-transform: uppercase; letter-spacing: 0.06em;
   }
-  .panel-detail {
-    font-size: 11px; font-weight: 400; color: var(--c-text-faint); margin-left: 6px;
-  }
+  .panel-detail { font-size: 11px; font-weight: 400; color: var(--c-text-faint); margin-left: 6px; }
+  .panel-title { font-size: 14px; font-weight: 700; color: var(--c-text); }
 
   /* KPI card */
   .kpi { padding: 16px 18px; min-height: 130px; display: flex; flex-direction: column; }
@@ -153,35 +205,26 @@
   .kpi-icon.danger { background: var(--c-danger-soft); color: var(--c-danger); }
   .kpi-icon.success { background: var(--c-success-soft); color: var(--c-success); }
   .kpi-icon.secondary { background: var(--c-secondary-soft); color: var(--c-secondary); }
-
   .kpi-body { margin-top: 14px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .kpi-value {
-    font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;
     font-variant-numeric: tabular-nums; color: var(--c-text);
   }
   .kpi-value.bad { color: var(--c-danger); }
   .kpi-value.ok { color: var(--c-success); }
   .kpi-unit { font-size: 13px; color: var(--c-text-muted); font-weight: 500; }
   .kpi-delta {
-    font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
-    display: inline-flex; align-items: center; gap: 4px;
-    font-variant-numeric: tabular-nums;
+    font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: var(--r-pill);
+    display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums;
   }
   .kpi-delta.up { background: var(--c-success-soft); color: var(--c-success); }
   .kpi-delta.down { background: var(--c-danger-soft); color: var(--c-danger); }
   .kpi-delta.flat { background: var(--c-surface-2); color: var(--c-text-muted); }
-  .kpi-sub {
-    font-size: 11.5px; color: var(--c-text-faint); margin-top: 6px;
-    font-variant-numeric: tabular-nums;
-  }
+  .kpi-sub { font-size: 11.5px; color: var(--c-text-faint); margin-top: 6px; font-variant-numeric: tabular-nums; }
   .kpi-spark { margin-top: auto; padding-top: 12px; height: 36px; }
   .kpi-spark svg { width: 100%; height: 100%; display: block; overflow: visible; }
-
   .kpi-bar { margin-top: auto; padding-top: 12px; }
-  .kpi-bar-track {
-    height: 8px; background: var(--c-surface-2); border-radius: 4px;
-    overflow: hidden; display: flex; gap: 2px;
-  }
+  .kpi-bar-track { height: 8px; background: var(--c-surface-2); border-radius: 4px; overflow: hidden; display: flex; gap: 2px; }
   .kpi-bar-on { background: var(--c-success); height: 100%; border-radius: 4px 0 0 4px; }
   .kpi-bar-off { background: var(--c-border-strong); height: 100%; border-radius: 0 4px 4px 0; }
   .kpi-bar-legend { font-size: 10.5px; color: var(--c-text-muted); margin-top: 6px; display: flex; gap: 14px; }
@@ -189,7 +232,7 @@
   .kpi-bar-legend i { width: 8px; height: 8px; border-radius: 2px; background: var(--c-success); }
   .kpi-bar-legend i.off { background: var(--c-border-strong); }
 
-  /* Run panel */
+  /* Run + Activity */
   .run-status { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 14px; font-weight: 600; }
   .dot {
     width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
@@ -204,22 +247,14 @@
   .run-time { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
   .run-actions { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
 
-  /* Activity feed */
-  .activity {
-    margin-top: 12px;
-    border-top: 1px solid var(--c-border-soft); padding-top: 12px;
-  }
-  .activity-label {
-    font-size: 11.5px; font-weight: 600; color: var(--c-text-muted);
-    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
-  }
+  .activity { margin-top: 14px; border-top: 1px solid var(--c-border-soft); padding-top: 14px; }
   .activity-item {
-    display: flex; align-items: center; gap: 10px; padding: 6px 0;
+    display: flex; align-items: center; gap: 10px; padding: 7px 0;
     font-size: 12.5px; border-bottom: 1px dashed var(--c-border-soft);
   }
   .activity-item:last-child { border-bottom: none; }
   .activity-icon {
-    width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; color: var(--c-primary); background: var(--c-primary-soft);
   }
   .activity-icon.invoices { color: var(--c-secondary); background: var(--c-secondary-soft); }
@@ -233,7 +268,6 @@
   /* Chart */
   .chart-panel { margin-bottom: 14px; }
   .chart-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .chart-title { font-size: 14px; font-weight: 700; color: var(--c-text); }
   .chart-legend { display: flex; gap: 14px; font-size: 12px; color: var(--c-text-muted); }
   .legend-dot { display: inline-flex; align-items: center; gap: 6px; }
   .legend-dot::before { content: ''; width: 10px; height: 10px; border-radius: 2px; background: var(--c-primary); }
@@ -258,15 +292,15 @@
   .alert-item .alert-name { font-weight: 600; }
   .alert-item .alert-detail { color: var(--c-text-muted); }
 
-  /* Section head */
-  .section-head {
+  /* ===== Clients view ===== */
+  .toolbar {
     display: flex; align-items: center; justify-content: space-between;
-    margin: 18px 0 12px; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
   }
-  .section-title-row { display: flex; align-items: baseline; gap: 10px; }
-  .section-title { font-size: 15px; font-weight: 700; color: var(--c-text); }
-  .section-count { font-size: 12px; color: var(--c-text-muted); font-variant-numeric: tabular-nums; }
-  .section-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .toolbar-left { display: flex; align-items: baseline; gap: 12px; }
+  .toolbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .page-title { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .page-count { font-size: 12px; color: var(--c-text-muted); font-variant-numeric: tabular-nums; }
   .search-box, .filter-select {
     background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm);
     padding: 7px 10px; font-size: 13px; color: var(--c-text);
@@ -276,85 +310,116 @@
     outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft);
   }
 
-  /* Card */
-  .card-list { display: grid; gap: 10px; }
-  .card {
+  .chip-row { display: flex; gap: 6px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+    border-radius: var(--r-pill); font-size: 11.5px; font-weight: 500;
+    background: var(--c-surface); border: 1px solid var(--c-border-soft);
+    color: var(--c-text-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .chip:hover { color: var(--c-text); border-color: var(--c-border); }
+  .chip.active { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); }
+  .chip-count { color: var(--c-text-faint); font-variant-numeric: tabular-nums; font-weight: 400; }
+
+  /* Client row (table-like) */
+  .client-table {
     background: var(--c-surface); border-radius: var(--r-lg);
-    padding: 16px 18px; box-shadow: var(--shadow-1);
-    border: 1px solid var(--c-border-soft);
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-    position: relative; overflow: hidden;
+    box-shadow: var(--shadow-1); overflow: hidden;
   }
-  .card:hover {
-    transform: translateY(-1px); box-shadow: var(--shadow-2);
-    border-color: var(--c-border);
+  .client-row {
+    display: grid;
+    grid-template-columns: 38px 1.6fr 1.6fr 0.9fr 0.7fr auto;
+    gap: 12px; align-items: center;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--c-border-soft);
+    position: relative;
+    transition: background 0.12s;
   }
-  .card.has-fail::before, .card.has-fatal::before {
+  .client-row:last-child { border-bottom: none; }
+  .client-row:hover { background: var(--c-surface-hover); }
+  .client-row.has-fail::before, .client-row.has-fatal::before {
     content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
     background: var(--c-danger);
   }
-  .card.inactive { opacity: 0.7; }
+  .client-row.inactive { opacity: 0.6; }
 
-  .card-grid {
-    display: grid; grid-template-columns: 1.4fr 1.6fr 1fr auto; gap: 18px; align-items: center;
+  @media (max-width: 920px) {
+    .client-row { grid-template-columns: 38px 1fr; gap: 10px; padding: 14px; }
+    .client-row > .col-resources, .client-row > .col-trend, .client-row > .col-status, .client-row > .col-actions {
+      grid-column: 1 / -1; padding-left: 50px;
+    }
   }
-  @media (max-width: 820px) {
-    .card-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  .avatar {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 0;
+    flex-shrink: 0; box-shadow: var(--shadow-1);
   }
+  .col-main { min-width: 0; }
+  .name-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .name-text { font-size: 14.5px; font-weight: 600; color: var(--c-text); }
+  .name-id { font-size: 10.5px; color: var(--c-text-faint); font-family: ui-monospace, monospace; }
+  .private-icon { color: var(--c-purple); }
+  .contact { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
 
-  .card-main { min-width: 0; }
-  .card-id { font-size: 10px; color: var(--c-text-faint); font-family: ui-monospace, monospace; }
-  .card-name { font-size: 15.5px; font-weight: 700; margin-top: 2px; color: var(--c-text); }
-  .card-contact { font-size: 11.5px; color: var(--c-text-muted); margin-top: 3px; }
-
-  .card-resources { display: flex; gap: 16px; min-width: 0; }
+  .col-resources { display: flex; gap: 14px; min-width: 0; }
   .res-block { font-size: 11.5px; min-width: 0; flex: 1; }
   .res-label {
     font-size: 10.5px; color: var(--c-text-muted); font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;
     display: flex; align-items: center; gap: 4px;
   }
-  .res-label svg { width: 12px; height: 12px; }
-  .res-links { display: flex; gap: 8px; }
+  .res-links { display: flex; gap: 6px; flex-wrap: wrap; }
   .res-links a {
     color: var(--c-primary); text-decoration: none; font-size: 11.5px; font-weight: 500;
-    display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px;
+    display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px;
     background: var(--c-primary-tint); border-radius: 4px;
   }
   .res-links a:hover { background: var(--c-primary-soft); }
   .res-empty { color: var(--c-text-faint); font-style: italic; font-size: 11px; }
-  .res-stat { font-size: 11.5px; color: var(--c-text-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .res-stat { font-size: 11px; color: var(--c-text-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .res-stat.fail { color: var(--c-danger); font-weight: 600; }
 
-  .card-trend { min-width: 0; }
-  .card-trend-label { font-size: 10.5px; color: var(--c-text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .spark-svg { width: 100%; height: 32px; display: block; }
-  .card-trend-summary { font-size: 11.5px; color: var(--c-text-muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .col-trend { min-width: 0; }
+  .trend-label { font-size: 10.5px; color: var(--c-text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .spark-svg { width: 100%; height: 28px; display: block; }
+  .trend-summary { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
-  .card-meta-col { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .col-status { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
   .badge {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: var(--r-pill); font-size: 11px; font-weight: 600;
   }
   .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
   .badge.on { background: var(--c-success-soft); color: var(--c-success); }
   .badge.on::before { background: var(--c-success); }
   .badge.off { background: var(--c-surface-2); color: var(--c-text-muted); }
   .badge.off::before { background: var(--c-text-faint); }
-  .card-date { font-size: 10.5px; color: var(--c-text-faint); font-variant-numeric: tabular-nums; }
+  .badge.private { background: var(--c-purple-soft); color: var(--c-purple); }
+  .badge.private::before { display: none; }
 
-  .card-actions {
-    display: flex; gap: 6px; margin-top: 12px; padding-top: 12px;
-    border-top: 1px dashed var(--c-border-soft);
+  .row-date { font-size: 10.5px; color: var(--c-text-faint); font-variant-numeric: tabular-nums; }
+
+  .col-actions { display: flex; gap: 4px; justify-content: flex-end; }
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: var(--r-sm); background: transparent;
+    border: 1px solid transparent; color: var(--c-text-muted);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.12s;
   }
+  .icon-btn:hover { background: var(--c-surface-hover); color: var(--c-primary); border-color: var(--c-border-soft); }
+  .icon-btn.danger:hover { color: var(--c-danger); border-color: var(--c-danger-soft); background: var(--c-danger-soft); }
+  .icon-btn svg { width: 14px; height: 14px; }
 
   /* Form */
-  .edit-form {
-    padding: 18px; background: var(--c-surface);
-    border-radius: var(--r-lg); margin-bottom: 12px;
-    box-shadow: var(--shadow-1); border: 1px solid var(--c-border-soft);
+  .edit-card {
+    background: var(--c-surface); border-radius: var(--r-lg);
+    padding: 20px; margin-bottom: 14px;
+    box-shadow: var(--shadow-2);
+    border: 1px solid var(--c-primary-soft); border-left: 3px solid var(--c-primary);
   }
-  .edit-form h3 { font-size: 14px; font-weight: 700; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+  .edit-card h3 { font-size: 14px; font-weight: 700; margin: 0 0 16px; display: flex; align-items: center; gap: 8px; }
   .form-row { display: grid; gap: 12px; }
   .form-row.two { grid-template-columns: 1fr 1fr; }
   @media (max-width: 640px) { .form-row.two { grid-template-columns: 1fr; } }
@@ -369,10 +434,29 @@
   .form-field input::placeholder { color: var(--c-text-faint); }
   .pair-group {
     background: var(--c-surface-2); border: 1px dashed var(--c-border-soft);
-    border-radius: var(--r-sm); padding: 12px; margin-top: 8px;
+    border-radius: var(--r-sm); padding: 14px; margin-top: 12px;
   }
   .pair-group-title { font-size: 12.5px; font-weight: 700; margin: 0 0 10px; display: flex; gap: 6px; align-items: center; color: var(--c-text); }
-  .form-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+  .switch-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; gap: 12px;
+  }
+  .switch-row + .switch-row { border-top: 1px solid var(--c-border-soft); }
+  .switch-label-main { font-weight: 600; font-size: 13px; }
+  .switch-label-sub { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
+  .toggle {
+    position: relative; width: 36px; height: 20px; background: var(--c-border-strong);
+    border-radius: 20px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+    background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  }
+  .toggle.on { background: var(--c-primary); }
+  .toggle.on::after { transform: translateX(16px); }
+
+  .form-actions { display: flex; gap: 8px; margin-top: 18px; }
 
   /* Buttons */
   .btn {
@@ -381,7 +465,7 @@
     cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
     text-decoration: none; line-height: 1;
   }
-  .btn:hover:not(:disabled) { background: var(--c-primary-tint); border-color: var(--c-primary); color: var(--c-primary); }
+  .btn:hover:not(:disabled) { background: var(--c-surface-hover); border-color: var(--c-border-strong); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn.primary { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
   .btn.primary:hover:not(:disabled) { background: var(--c-primary-700); border-color: var(--c-primary-700); color: #fff; }
@@ -394,66 +478,43 @@
 
   /* Empty / toast */
   .empty {
-    text-align: center; padding: 56px 20px; color: var(--c-text-muted);
+    text-align: center; padding: 60px 20px; color: var(--c-text-muted);
     background: var(--c-surface); border-radius: var(--r-lg);
-    border: 1px dashed var(--c-border); box-shadow: var(--shadow-1);
+    box-shadow: var(--shadow-1);
   }
   .empty-icon { color: var(--c-text-faint); margin-bottom: 10px; }
   .empty-icon svg { width: 36px; height: 36px; }
-  .empty h3 { margin: 0 0 4px; font-size: 14px; color: var(--c-text); }
+  .empty h3 { margin: 0 0 4px; font-size: 14.5px; color: var(--c-text); font-weight: 600; }
   .empty p { margin: 0; font-size: 12.5px; }
+  .empty-cta { margin-top: 16px; }
 
+  /* Skeleton */
+  .skel {
+    background: linear-gradient(90deg, var(--c-surface-2) 0%, var(--c-border-soft) 50%, var(--c-surface-2) 100%);
+    background-size: 200% 100%; animation: shimmer 1.4s infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skel-card { height: 130px; margin-bottom: 14px; }
+
+  /* Toast */
   .toast {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--c-text); color: #fff; padding: 11px 20px; border-radius: 999px;
+    background: var(--c-text); color: #fff; padding: 11px 20px; border-radius: var(--r-pill);
     font-size: 13px; font-weight: 500; box-shadow: var(--shadow-3);
     opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 1000; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.err { background: var(--c-danger); }
 
-  /* Modal */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
-    z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
-    backdrop-filter: blur(2px);
+  /* Settings tab specific */
+  .settings-grid { display: grid; grid-template-columns: 1fr; gap: 14px; max-width: 720px; }
+  .section-card {
+    background: var(--c-surface); border-radius: var(--r-lg); padding: 22px 24px;
+    box-shadow: var(--shadow-1);
   }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: var(--c-surface); border-radius: 16px;
-    max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
-    padding: 26px; box-shadow: var(--shadow-3);
-  }
-  .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .modal-head h2 { font-size: 17px; font-weight: 700; margin: 0; }
-  .modal-close { background: none; border: none; font-size: 22px; color: var(--c-text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; line-height: 1; }
-  .modal-close:hover { background: var(--c-surface-2); color: var(--c-text); }
-
-  .switch { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--c-border-soft); }
-  .switch:first-of-type { border-top: none; }
-  .switch-label-main { font-weight: 600; font-size: 13px; }
-  .switch-label-sub { font-size: 11.5px; color: var(--c-text-muted); margin-top: 2px; }
-  .toggle {
-    position: relative; width: 40px; height: 22px; background: var(--c-border-strong);
-    border-radius: 22px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
-  }
-  .toggle::after {
-    content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
-    background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.25);
-  }
-  .toggle.on { background: var(--c-primary); }
-  .toggle.on::after { transform: translateX(18px); }
-
-  /* fade-in */
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-  .app.show > .container > * { animation: fadeIn 0.35s ease-out backwards; }
-  .app.show > .container > *:nth-child(1) { animation-delay: 0.00s; }
-  .app.show > .container > *:nth-child(2) { animation-delay: 0.04s; }
-  .app.show > .container > *:nth-child(3) { animation-delay: 0.08s; }
-  .app.show > .container > *:nth-child(4) { animation-delay: 0.12s; }
-  .app.show > .container > *:nth-child(5) { animation-delay: 0.16s; }
-  .app.show > .container > *:nth-child(6) { animation-delay: 0.20s; }
-  .app.show > .container > *:nth-child(7) { animation-delay: 0.24s; }
+  .section-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+  .section-card .desc { font-size: 12.5px; color: var(--c-text-muted); margin: 0 0 18px; }
 </style>
 </head>
 <body>
@@ -464,222 +525,266 @@
     <div class="lock-icon">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
     </div>
-    <h1>バックオフィスOCR Console</h1>
+    <h1>バックオフィスOCR</h1>
     <p>管理者パスを入力してください</p>
     <form id="lock-form" autocomplete="off">
       <div class="form-field" style="margin-bottom: 16px;">
-        <input type="password" id="lock-key" placeholder="ADMIN_KEY" required style="text-align: center;">
+        <input type="password" id="lock-key" placeholder="ADMIN_KEY または OWNER_KEY" required style="text-align: center;">
       </div>
       <button type="submit" class="btn primary" style="width: 100%; justify-content: center; padding: 11px;">ログイン</button>
     </form>
+    <div class="lock-hint">OWNER でログインするとプライベートなクライアントも編集できます</div>
   </div>
 </div>
 
 <!-- ============== App ============== -->
 <div class="app" id="app">
-  <div class="container">
 
-    <header class="header">
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-inner">
       <div class="brand">
         <div class="brand-mark">¥</div>
         <div>
-          <h1>バックオフィスOCR Console</h1>
-          <div class="brand-sub">領収書・請求書 自動OCR · 毎日 23:00 JST 実行</div>
+          <h1>バックオフィスOCR</h1>
+          <div class="brand-sub">領収書・請求書 自動OCR コンソール</div>
         </div>
       </div>
-      <div class="header-actions">
-        <span class="updated" id="updated"></span>
+      <div class="top-actions">
+        <span class="health-chip" id="health-chip">稼働中</span>
+        <span class="role-chip" id="role-chip">—</span>
         <button class="btn ghost sm" id="reload-all" title="再読み込み">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
-          更新
-        </button>
-        <button class="btn ghost sm" id="open-settings" title="設定">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          設定
         </button>
         <button class="btn ghost sm" id="logout">ログアウト</button>
       </div>
-    </header>
-
-    <div class="sa-banner">
-      <div class="sa-banner-label">SA共有先 (編集者として共有)</div>
-      <div class="sa-banner-email" id="sa-email">読み込み中…</div>
-      <button class="btn sm" id="copy-sa">コピー</button>
     </div>
+  </header>
 
-    <!-- KPI row -->
-    <div class="grid-kpi">
-      <div class="panel kpi">
-        <div class="panel-head">
-          <div class="panel-label">直近24時間の処理件数<span class="panel-detail">(枚)</span></div>
-          <div class="kpi-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20l3-2 3 2 3-2 3 2V2H7Z"/><path d="M11 6h6M11 10h6M11 14h4"/></svg>
-          </div>
-        </div>
-        <div class="kpi-body">
-          <span class="kpi-value" id="kpi-processed">—</span>
-          <span class="kpi-delta flat" id="kpi-processed-delta"></span>
-        </div>
-        <div class="kpi-sub" id="kpi-processed-sub">前24時間と比較</div>
-        <div class="kpi-spark"><svg id="kpi-spark-processed"></svg></div>
-      </div>
-
-      <div class="panel kpi">
-        <div class="panel-head">
-          <div class="panel-label">直近24時間の失敗<span class="panel-detail">(件)</span></div>
-          <div class="kpi-icon" id="kpi-failed-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
-        </div>
-        <div class="kpi-body">
-          <span class="kpi-value ok" id="kpi-failed">—</span>
-        </div>
-        <div class="kpi-sub" id="kpi-failed-sub">通常: 失敗なし</div>
-        <div class="kpi-spark"><svg id="kpi-spark-failed"></svg></div>
-      </div>
-
-      <div class="panel kpi">
-        <div class="panel-head">
-          <div class="panel-label">クライアント<span class="panel-detail">(社)</span></div>
-          <div class="kpi-icon secondary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-        </div>
-        <div class="kpi-body">
-          <span class="kpi-value" id="kpi-clients">—</span>
-        </div>
-        <div class="kpi-sub" id="kpi-clients-sub"></div>
-        <div class="kpi-bar">
-          <div class="kpi-bar-track">
-            <div class="kpi-bar-on" id="kpi-bar-on" style="width: 0%;"></div>
-            <div class="kpi-bar-off" id="kpi-bar-off" style="width: 0%;"></div>
-          </div>
-          <div class="kpi-bar-legend">
-            <span><i></i>有効</span><span><i class="off"></i>停止</span>
-          </div>
-        </div>
-      </div>
+  <!-- Tab bar -->
+  <nav class="tabbar">
+    <div class="tabbar-inner">
+      <button class="tab active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        ダッシュボード
+      </button>
+      <button class="tab" data-tab="clients">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        クライアント
+      </button>
+      <button class="tab" data-tab="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        設定
+      </button>
     </div>
+  </nav>
 
-    <!-- Mid: chart + run panel -->
-    <div class="grid-mid">
-      <div class="panel chart-panel">
-        <div class="chart-head">
-          <div>
-            <div class="chart-title">過去7日間の処理件数</div>
-            <div class="panel-label" style="margin-top:4px;font-weight:500;letter-spacing:0;text-transform:none;">日次・領収書 / 請求書 別</div>
+  <!-- Main content -->
+  <main class="container">
+
+    <!-- ===== Dashboard tab ===== -->
+    <section class="tab-panel show" data-panel="dashboard">
+
+      <!-- KPI row -->
+      <div class="grid-kpi" id="kpi-row">
+        <div class="panel kpi">
+          <div class="panel-head">
+            <div class="panel-label">直近24時間の処理<span class="panel-detail">(枚)</span></div>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20l3-2 3 2 3-2 3 2V2H7Z"/><path d="M11 6h6M11 10h6M11 14h4"/></svg>
+            </div>
           </div>
-          <div class="chart-legend">
-            <span class="legend-dot">領収書</span>
-            <span class="legend-dot secondary">請求書</span>
+          <div class="kpi-body">
+            <span class="kpi-value" id="kpi-processed">—</span>
+            <span class="kpi-delta flat" id="kpi-processed-delta"></span>
+          </div>
+          <div class="kpi-sub" id="kpi-processed-sub">前24時間と比較</div>
+          <div class="kpi-spark"><svg id="kpi-spark-processed"></svg></div>
+        </div>
+
+        <div class="panel kpi">
+          <div class="panel-head">
+            <div class="panel-label">直近24時間の失敗<span class="panel-detail">(件)</span></div>
+            <div class="kpi-icon" id="kpi-failed-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-value ok" id="kpi-failed">—</span>
+          </div>
+          <div class="kpi-sub" id="kpi-failed-sub">通常: 失敗なし</div>
+          <div class="kpi-spark"><svg id="kpi-spark-failed"></svg></div>
+        </div>
+
+        <div class="panel kpi">
+          <div class="panel-head">
+            <div class="panel-label">クライアント<span class="panel-detail">(社)</span></div>
+            <div class="kpi-icon secondary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-value" id="kpi-clients">—</span>
+          </div>
+          <div class="kpi-sub" id="kpi-clients-sub"></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-track">
+              <div class="kpi-bar-on" id="kpi-bar-on" style="width: 0%;"></div>
+              <div class="kpi-bar-off" id="kpi-bar-off" style="width: 0%;"></div>
+            </div>
+            <div class="kpi-bar-legend">
+              <span><i></i>有効</span><span><i class="off"></i>停止</span>
+            </div>
           </div>
         </div>
-        <svg class="chart-svg" id="chart" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="過去7日間の処理件数推移"></svg>
-        <div class="chart-foot" id="chart-foot">データソース: 各クライアントの処理レポート</div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-label">最新の実行</div>
+      <!-- Mid: chart + run panel -->
+      <div class="grid-mid">
+        <div class="panel chart-panel">
+          <div class="chart-head">
+            <div>
+              <div class="panel-title">過去7日間の処理件数</div>
+              <div class="panel-label" style="margin-top:4px;font-weight:500;letter-spacing:0;text-transform:none;">日次・領収書 / 請求書 別</div>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-dot">領収書</span>
+              <span class="legend-dot secondary">請求書</span>
+            </div>
+          </div>
+          <svg class="chart-svg" id="chart" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="過去7日間の処理件数推移"></svg>
+          <div class="chart-foot" id="chart-foot">データソース: 各クライアントの処理レポート</div>
         </div>
-        <div class="run-status" id="run-status"><span class="dot idle"></span>読み込み中…</div>
-        <div class="run-time" id="run-time"></div>
-        <div class="run-actions">
-          <button class="btn primary sm" id="dispatch">
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-            今すぐ実行
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-label">最新の実行</div>
+          </div>
+          <div class="run-status" id="run-status"><span class="dot idle"></span>読み込み中…</div>
+          <div class="run-time" id="run-time"></div>
+          <div class="run-actions">
+            <button class="btn primary sm" id="dispatch">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+              今すぐ実行
+            </button>
+            <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.111.82-.261.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22v3.293c0 .322.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+              GitHub
+            </a>
+          </div>
+
+          <div class="activity">
+            <div class="panel-label" style="margin-bottom:10px;">直近のアクティビティ</div>
+            <div id="activity-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="alert-area"></div>
+    </section>
+
+    <!-- ===== Clients tab ===== -->
+    <section class="tab-panel" data-panel="clients">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h2 class="page-title">クライアント</h2>
+          <span class="page-count" id="page-count">— 件</span>
+        </div>
+        <div class="toolbar-right">
+          <input type="text" class="search-box" id="search" placeholder="🔍 名前 / 連絡先で検索">
+          <select class="filter-select" id="filter">
+            <option value="all">並び: 注意必要順</option>
+            <option value="recent">並び: 直近の処理量</option>
+            <option value="name">並び: 名前順</option>
+            <option value="new">並び: 登録新着</option>
+          </select>
+          <button class="btn primary sm" id="add-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            新規追加
           </button>
-          <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener" style="display:none;">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.111.82-.261.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22v3.293c0 .322.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-            GitHub
-          </a>
-        </div>
-
-        <div class="activity">
-          <div class="activity-label">直近のアクティビティ</div>
-          <div id="activity-list"></div>
         </div>
       </div>
-    </div>
 
-    <!-- Alert -->
-    <div id="alert-area"></div>
-
-    <!-- Clients -->
-    <div class="section-head">
-      <div class="section-title-row">
-        <h2 class="section-title">クライアント一覧</h2>
-        <span class="section-count" id="section-count"></span>
+      <div class="chip-row" id="chip-row">
+        <button class="chip active" data-chip="all">すべて <span class="chip-count" id="chip-all-count"></span></button>
+        <button class="chip" data-chip="active">有効 <span class="chip-count" id="chip-active-count"></span></button>
+        <button class="chip" data-chip="inactive">停止 <span class="chip-count" id="chip-inactive-count"></span></button>
+        <button class="chip" data-chip="failing">失敗あり <span class="chip-count" id="chip-failing-count"></span></button>
       </div>
-      <div class="section-tools">
-        <input type="text" class="search-box" id="search" placeholder="🔍 名前 / 連絡先で検索">
-        <select class="filter-select" id="filter">
-          <option value="all">並び: 注意必要順</option>
-          <option value="recent">並び: 直近の処理量</option>
-          <option value="name">並び: 名前順</option>
-          <option value="new">並び: 登録新着</option>
-        </select>
-        <select class="filter-select" id="status-filter">
-          <option value="all">すべて</option>
-          <option value="active">有効のみ</option>
-          <option value="inactive">停止のみ</option>
-        </select>
-        <button class="btn primary sm" id="add-toggle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          新規追加
-        </button>
-      </div>
-    </div>
 
-    <div id="add-area"></div>
-    <div id="list"></div>
-  </div>
+      <div id="add-area"></div>
+      <div id="list"></div>
+    </section>
+
+    <!-- ===== Settings tab ===== -->
+    <section class="tab-panel" data-panel="settings">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h2 class="page-title">設定</h2>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="section-card">
+          <h3>サービスアカウント</h3>
+          <p class="desc">登録するDriveフォルダとシートを、以下のSAに「編集者」として共有してください。</p>
+          <div class="sa-row" style="margin-bottom: 0;">
+            <div class="sa-label">SA Email</div>
+            <div class="sa-email" id="sa-email">読み込み中…</div>
+            <button class="btn sm" id="copy-sa">コピー</button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3>Discord 通知</h3>
+          <p class="desc">処理の成功/失敗を Discord に送信します。Webhook URL は Discord のサーバー設定 → 連携サービス → ウェブフックで発行。</p>
+
+          <div class="form-field" style="margin-bottom: 16px;">
+            <label>Webhook URL</label>
+            <input type="url" id="set-webhook" placeholder="https://discord.com/api/webhooks/..."
+                   style="font-family:ui-monospace,monospace;font-size:12px;">
+          </div>
+
+          <div class="switch-row">
+            <div>
+              <div class="switch-label-main">成功時に通知</div>
+              <div class="switch-label-sub">処理成功(1件以上、失敗なし)で送信</div>
+            </div>
+            <div class="toggle" id="set-success" role="switch" aria-checked="false"></div>
+          </div>
+          <div class="switch-row">
+            <div>
+              <div class="switch-label-main">失敗時に通知</div>
+              <div class="switch-label-sub">失敗 / FATAL がある時に送信 (推奨)</div>
+            </div>
+            <div class="toggle" id="set-failure" role="switch" aria-checked="false"></div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn primary" id="settings-save">保存</button>
+            <button class="btn" id="settings-test">テスト送信</button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3>アカウント</h3>
+          <p class="desc">現在のロールと利用情報。</p>
+          <div style="font-size:13px;display:grid;grid-template-columns:120px 1fr;gap:8px 16px;">
+            <div style="color:var(--c-text-muted);">ロール</div><div id="account-role">—</div>
+            <div style="color:var(--c-text-muted);">権限</div><div id="account-perms">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- Settings modal -->
-<div class="modal-overlay" id="settings-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>Discord 通知設定</h2>
-      <button class="modal-close" id="settings-close" aria-label="閉じる">×</button>
-    </div>
-
-    <div class="form-field" style="margin-bottom: 16px;">
-      <label style="font-size:12px;font-weight:600;color:var(--c-text-muted);margin-bottom:4px;display:block;">Webhook URL</label>
-      <input type="url" id="set-webhook"
-             placeholder="https://discord.com/api/webhooks/..."
-             style="width:100%;padding:9px 11px;font-size:12px;border:1px solid var(--c-border);border-radius:6px;background:var(--c-surface);color:var(--c-text);font-family:ui-monospace,monospace;">
-      <div style="font-size:11.5px;color:var(--c-text-faint);margin-top:6px;">Discord サーバーで「サーバー設定」→「連携サービス」→「ウェブフック」から発行</div>
-    </div>
-
-    <div class="switch">
-      <div>
-        <div class="switch-label-main">成功時に通知</div>
-        <div class="switch-label-sub">処理成功(1件以上、失敗なし)で送信</div>
-      </div>
-      <div class="toggle" id="set-success" role="switch" aria-checked="false"></div>
-    </div>
-    <div class="switch">
-      <div>
-        <div class="switch-label-main">失敗時に通知</div>
-        <div class="switch-label-sub">失敗 / FATAL がある時に送信 (推奨)</div>
-      </div>
-      <div class="toggle" id="set-failure" role="switch" aria-checked="false"></div>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;">
-      <button class="btn primary" id="settings-save">保存</button>
-      <button class="btn" id="settings-test">テスト送信</button>
-      <button class="btn ghost" id="settings-cancel" style="margin-left:auto;">キャンセル</button>
-    </div>
-  </div>
-</div>
-
 <!-- Form template -->
 <template id="form-tpl">
-  <div class="edit-form">
+  <div class="edit-card">
     <h3 data-title>新規追加</h3>
     <div class="form-row two">
       <div class="form-field">
@@ -723,6 +828,15 @@
         </div>
       </div>
     </div>
+
+    <div class="switch-row owner-only" data-private-switch style="margin-top:14px;border-top:1px solid var(--c-border-soft);padding-top:14px;">
+      <div>
+        <div class="switch-label-main">🔒 プライベート</div>
+        <div class="switch-label-sub">OWNER のみが閲覧・編集可能(他の管理者には表示されません)</div>
+      </div>
+      <div class="toggle" data-field="private" role="switch" aria-checked="false"></div>
+    </div>
+
     <div class="form-actions">
       <button class="btn primary" data-act="save">保存</button>
       <button class="btn" data-act="cancel">キャンセル</button>
@@ -731,18 +845,19 @@
 </template>
 
 <script>
-// ---------- Color tokens ----------
+// ---------- Colors ----------
 const cs = getComputedStyle(document.documentElement);
 const COLOR_RECEIPTS = cs.getPropertyValue('--c-primary').trim() || '#0017c1';
 const COLOR_RECEIPTS_LIGHT = cs.getPropertyValue('--c-primary-600').trim() || '#2c5fd0';
 const COLOR_INVOICES = cs.getPropertyValue('--c-secondary').trim() || '#008892';
 const COLOR_INVOICES_LIGHT = '#3da9b1';
-const COLOR_DANGER = cs.getPropertyValue('--c-danger').trim() || '#c8232c';
-const COLOR_DANGER_LIGHT = '#e26770';
-const COLOR_GRID = cs.getPropertyValue('--c-grid').trim() || '#eaeef2';
-const COLOR_MUTED = cs.getPropertyValue('--c-text-faint').trim() || '#8b939c';
+const COLOR_DANGER = cs.getPropertyValue('--c-danger').trim() || '#b91c1c';
+const COLOR_GRID = cs.getPropertyValue('--c-grid').trim() || '#ecf0f4';
+const COLOR_MUTED = cs.getPropertyValue('--c-text-faint').trim() || '#8390a0';
 
-// ---------- Icons (inline SVG) ----------
+const AVATAR_PALETTE = ['#0017c1', '#008892', '#16803c', '#b35400', '#6840c1', '#0891b2', '#ca8a04', '#dc2626', '#0e7490', '#9333ea'];
+
+// ---------- Icons ----------
 const ICONS = {
   receipt: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20l3-2 3 2 3-2 3 2V2H7Z"/><path d="M11 6h6M11 10h6M11 14h4"/></svg>',
   invoice: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>',
@@ -750,17 +865,25 @@ const ICONS = {
   sheet: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>',
   alert: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
   empty: '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>',
+  lock: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
 };
 
 // ---------- State ----------
 const state = {
   key: sessionStorage.getItem('admin_key') || '',
+  role: null,
   clients: [], runs: [], ghRuns: [],
-  search: '', sort: 'all', statusFilter: 'all',
+  search: '', sort: 'all', chipFilter: 'all',
+  activeTab: localStorage.getItem('active_tab') || 'dashboard',
   editingId: null, adding: false,
 };
 
 const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function parseUTC(s) { if (!s) return null; return new Date(s.replace(' ', 'T') + 'Z'); }
 function pad(n) { return String(n).padStart(2, '0'); }
@@ -774,6 +897,16 @@ function fmtAgo(d) {
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}時間前`;
   return `${Math.floor(h / 24)}日前`;
+}
+
+function avatarFor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  const color = AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+  let initials;
+  if (/^[぀-ゟ゠-ヿ一-鿿]/.test(name)) initials = name.slice(0, 1);
+  else initials = name.slice(0, 2).toUpperCase();
+  return { color, initials };
 }
 
 function toast(msg, isErr) {
@@ -800,17 +933,30 @@ function unlock(ok) {
     $('#app').classList.add('show');
     boot();
   } else {
-    state.key = ''; sessionStorage.removeItem('admin_key');
+    state.key = ''; state.role = null;
+    sessionStorage.removeItem('admin_key');
     $('#lock').style.display = 'flex'; $('#app').classList.remove('show');
   }
 }
 
 $('#lock-form').addEventListener('submit', async (e) => {
   e.preventDefault(); state.key = $('#lock-key').value;
-  try { await api('/api/admin/clients'); unlock(true); }
-  catch { toast('ADMIN_KEY が違います', true); }
+  try {
+    const d = await api('/api/admin/me');
+    state.role = d.role;
+    unlock(true);
+  } catch { toast('鍵が違います', true); }
 });
 $('#logout').addEventListener('click', () => unlock(false));
+
+// ---------- Tabs ----------
+function switchTab(tab) {
+  state.activeTab = tab;
+  localStorage.setItem('active_tab', tab);
+  $$('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  $$('.tab-panel').forEach(p => p.classList.toggle('show', p.dataset.panel === tab));
+}
+$$('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 
 // ---------- SA ----------
 async function loadSA() {
@@ -886,6 +1032,30 @@ function clientWeeklyTotal(runs, days, clientName) {
   return totals;
 }
 
+// ---------- Health chip / role ----------
+function renderHeader() {
+  const chip = $('#role-chip');
+  if (state.role === 'owner') { chip.textContent = '👑 OWNER'; chip.className = 'role-chip'; }
+  else if (state.role === 'admin') { chip.textContent = 'ADMIN'; chip.className = 'role-chip admin'; }
+  else { chip.textContent = ''; }
+
+  // Health based on last GH run
+  const h = $('#health-chip');
+  const r = state.ghRuns[0];
+  if (!r) { h.textContent = '稼働中'; h.className = 'health-chip'; }
+  else if (r.status !== 'completed') { h.textContent = '実行中'; h.className = 'health-chip warn'; }
+  else if (r.conclusion === 'success') { h.textContent = '正常'; h.className = 'health-chip'; }
+  else { h.textContent = '直近の実行が失敗'; h.className = 'health-chip bad'; }
+
+  // Account info on Settings tab
+  const acctRole = $('#account-role');
+  const acctPerms = $('#account-perms');
+  if (acctRole) acctRole.textContent = state.role === 'owner' ? 'OWNER (フルアクセス)' : 'ADMIN';
+  if (acctPerms) acctPerms.textContent = state.role === 'owner'
+    ? 'すべてのクライアントを閲覧・編集 + プライベート設定'
+    : 'プライベート以外のクライアントを閲覧・編集';
+}
+
 // ---------- KPI ----------
 function renderKPIs() {
   const k = kpi24h(state.runs);
@@ -924,7 +1094,6 @@ function renderKPIs() {
     $('#kpi-bar-off').style.width = '100%';
   }
 
-  // Sparklines on processed/failed (per day)
   const days = last7Days();
   const trend = trendByDay(state.runs, days);
   renderInlineSpark($('#kpi-spark-processed'), trend.map(d => d.receipts + d.invoices), COLOR_RECEIPTS);
@@ -985,14 +1154,12 @@ function renderChart() {
     </defs>`;
 
   let s = defs;
-  // Y gridlines + labels
   for (let i = 0; i <= 4; i++) {
     const y = pd.t + innerH - (i / 4) * innerH;
     const v = Math.round((i / 4) * niceMax);
     s += `<line x1="${pd.l}" x2="${W - pd.r}" y1="${y}" y2="${y}" stroke="${COLOR_GRID}" stroke-width="1"/>`;
     s += `<text x="${pd.l - 8}" y="${y + 3}" text-anchor="end" font-size="10.5" fill="${COLOR_MUTED}" font-family="Inter">${v}</text>`;
   }
-  // Bars
   data.forEach((d, i) => {
     const x = pd.l + slot * i + (slot - barW) / 2;
     const y0 = pd.t + innerH;
@@ -1019,7 +1186,7 @@ function renderChart() {
 
 function sparkSVG(values) {
   if (!values.length) return '';
-  const W = 100, H = 32;
+  const W = 100, H = 28;
   const max = Math.max(1, ...values);
   const slot = W / values.length;
   const barW = slot * 0.6;
@@ -1087,8 +1254,7 @@ function renderActivity() {
 
 $('#dispatch').addEventListener('click', async () => {
   const btn = $('#dispatch'); btn.disabled = true;
-  const orig = btn.innerHTML;
-  btn.innerHTML = '起動中…';
+  const orig = btn.innerHTML; btn.innerHTML = '起動中…';
   try {
     await api('/api/admin/dispatch', { method: 'POST' });
     toast('▶ ワークフローを起動しました');
@@ -1147,37 +1313,75 @@ function sortClients(list) {
   });
 }
 
+function clientPredicate(c, latest, days) {
+  if (state.chipFilter === 'active' && !c.active) return false;
+  if (state.chipFilter === 'inactive' && c.active) return false;
+  if (state.chipFilter === 'failing') {
+    const fails = (latest.receipts?.failed || 0) + (latest.invoices?.failed || 0);
+    const fatal = latest.receipts?.fatal_error || latest.invoices?.fatal_error;
+    if (!fails && !fatal) return false;
+  }
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    if (!(c.name || '').toLowerCase().includes(q) && !(c.contact || '').toLowerCase().includes(q)) return false;
+  }
+  return true;
+}
+
+function renderChipCounts() {
+  const days = last7Days();
+  const all = state.clients.length;
+  let active = 0, inactive = 0, failing = 0;
+  for (const c of state.clients) {
+    const latest = latestRunPerClient(state.runs, c.name);
+    if (c.active) active++; else inactive++;
+    const f = (latest.receipts?.failed || 0) + (latest.invoices?.failed || 0);
+    const fa = latest.receipts?.fatal_error || latest.invoices?.fatal_error;
+    if (f || fa) failing++;
+  }
+  $('#chip-all-count').textContent = all;
+  $('#chip-active-count').textContent = active;
+  $('#chip-inactive-count').textContent = inactive;
+  $('#chip-failing-count').textContent = failing;
+}
+
 function renderList() {
   const list = $('#list');
+  const days = last7Days();
   let filtered = state.clients.filter(c => {
-    if (state.statusFilter === 'active' && !c.active) return false;
-    if (state.statusFilter === 'inactive' && c.active) return false;
-    if (state.search) {
-      const q = state.search.toLowerCase();
-      if (!(c.name || '').toLowerCase().includes(q) && !(c.contact || '').toLowerCase().includes(q)) return false;
-    }
-    return true;
+    const latest = latestRunPerClient(state.runs, c.name);
+    return clientPredicate(c, latest, days);
   });
   filtered = sortClients(filtered);
-  $('#section-count').textContent = `${filtered.length} 件表示 / 全 ${state.clients.length} 件`;
+  $('#page-count').textContent = `${filtered.length} 件 / 全 ${state.clients.length} 件`;
+  renderChipCounts();
 
   if (!state.clients.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">${ICONS.empty}</div><h3>クライアントがまだ登録されていません</h3><p>「+ 新規追加」から1件目を登録</p></div>`;
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${ICONS.empty}</div>
+        <h3>クライアントが登録されていません</h3>
+        <p>「+ 新規追加」から1件目を登録してください</p>
+      </div>`;
     return;
   }
   if (!filtered.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">${ICONS.empty}</div><h3>該当なし</h3><p>条件を変えてください</p></div>`;
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${ICONS.empty}</div>
+        <h3>該当なし</h3>
+        <p>絞り込み条件を変更してください</p>
+      </div>`;
     return;
   }
 
-  const days = last7Days();
-  const cl = document.createElement('div');
-  cl.className = 'card-list';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'client-table';
 
   for (const c of filtered) {
     if (state.editingId === c.id) {
       const formEl = buildForm({
-        title: `#${c.id} ${c.name} を編集`,
+        title: `${c.name} を編集`,
         values: c,
         onSave: async (data) => {
           await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id: c.id, ...data, active: c.active }) });
@@ -1185,7 +1389,7 @@ function renderList() {
         },
         onCancel: () => { state.editingId = null; renderList(); },
       });
-      cl.appendChild(formEl);
+      wrapper.appendChild(formEl);
       continue;
     }
 
@@ -1194,6 +1398,7 @@ function renderList() {
     const hasFatal = latest.receipts?.fatal_error || latest.invoices?.fatal_error;
     const weekly = clientWeeklyTotal(state.runs, days, c.name);
     const weeklyTotal = weekly.reduce((a, b) => a + b, 0);
+    const av = avatarFor(c.name);
 
     const resBlock = (folder, sheet, run, icon, label) => {
       if (!folder && !sheet) {
@@ -1214,43 +1419,45 @@ function renderList() {
       return `<div class="res-block"><div class="res-label">${icon} ${label}</div><div class="res-links">${f}${s}</div>${stat}</div>`;
     };
 
-    const card = document.createElement('div');
-    card.className = `card${hasFatal ? ' has-fatal' : hasFail ? ' has-fail' : ''}${!c.active ? ' inactive' : ''}`;
-    card.innerHTML = `
-      <div class="card-grid">
-        <div class="card-main">
-          <div class="card-id">#${c.id}</div>
-          <div class="card-name">${esc(c.name)}</div>
-          ${c.contact ? `<div class="card-contact">${esc(c.contact)}</div>` : ''}
+    const row = document.createElement('div');
+    row.className = `client-row${hasFatal ? ' has-fatal' : hasFail ? ' has-fail' : ''}${!c.active ? ' inactive' : ''}`;
+    row.innerHTML = `
+      <div class="avatar" style="background:${av.color};">${esc(av.initials)}</div>
+      <div class="col-main">
+        <div class="name-line">
+          <span class="name-text">${esc(c.name)}</span>
+          ${c.private ? `<span class="private-icon" title="プライベート">${ICONS.lock}</span>` : ''}
+          <span class="name-id">#${c.id}</span>
         </div>
-        <div class="card-resources">
-          ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, ICONS.receipt, '領収書')}
-          ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, ICONS.invoice, '請求書')}
-        </div>
-        <div class="card-trend">
-          <div class="card-trend-label">過去7日 処理量</div>
-          ${sparkSVG(weekly)}
-          <div class="card-trend-summary">${weeklyTotal} 件</div>
-        </div>
-        <div class="card-meta-col">
-          <span class="badge ${c.active ? 'on' : 'off'}">${c.active ? '有効' : '停止'}</span>
-          <span class="card-date">${(c.created_at || '').slice(0, 10)}</span>
-        </div>
+        ${c.contact ? `<div class="contact">${esc(c.contact)}</div>` : ''}
       </div>
-      <div class="card-actions">
-        <button class="btn sm" data-act="edit" data-id="${c.id}">編集</button>
-        <button class="btn sm" data-act="toggle" data-id="${c.id}" data-active="${c.active}">${c.active ? '停止' : '再開'}</button>
-        <button class="btn sm danger" data-act="delete" data-id="${c.id}">削除</button>
+      <div class="col-resources">
+        ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, ICONS.receipt, '領収書')}
+        ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, ICONS.invoice, '請求書')}
+      </div>
+      <div class="col-trend">
+        <div class="trend-label">過去7日</div>
+        ${sparkSVG(weekly)}
+        <div class="trend-summary">${weeklyTotal} 件</div>
+      </div>
+      <div class="col-status">
+        <span class="badge ${c.active ? 'on' : 'off'}">${c.active ? '有効' : '停止'}</span>
+        <span class="row-date">${(c.created_at || '').slice(0, 10)}</span>
+      </div>
+      <div class="col-actions">
+        <button class="icon-btn" data-act="edit" data-id="${c.id}" title="編集">${ICONS.edit}</button>
+        <button class="icon-btn" data-act="toggle" data-id="${c.id}" data-active="${c.active}" title="${c.active ? '停止' : '再開'}">${c.active ? ICONS.pause : ICONS.play}</button>
+        <button class="icon-btn danger" data-act="delete" data-id="${c.id}" title="削除">${ICONS.trash}</button>
       </div>`;
-    cl.appendChild(card);
+    wrapper.appendChild(row);
   }
-  list.innerHTML = ''; list.appendChild(cl);
+  list.innerHTML = ''; list.appendChild(wrapper);
 }
 
 // ---------- Form ----------
 function buildForm({ title, values = {}, onSave, onCancel }) {
   const tpl = $('#form-tpl').content.cloneNode(true);
-  const root = tpl.querySelector('.edit-form');
+  const root = tpl.querySelector('.edit-card');
   root.querySelector('[data-title]').textContent = title;
   const setVal = (k, v) => { const el = root.querySelector(`[data-field="${k}"]`); if (el) el.value = v || ''; };
   setVal('name', values.name); setVal('contact', values.contact);
@@ -1259,10 +1466,21 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
   setVal('invoices_folder_url', values.invoices_folder_id ? `https://drive.google.com/drive/folders/${values.invoices_folder_id}` : '');
   setVal('invoices_sheet_url', values.invoices_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.invoices_sheet_id}` : '');
 
+  // Private toggle (only owner)
+  const privSwitch = root.querySelector('[data-private-switch]');
+  const privToggle = root.querySelector('.toggle[data-field="private"]');
+  if (state.role === 'owner') {
+    if (values.private === 1 || values.private === true) privToggle.classList.add('on');
+    privToggle.addEventListener('click', () => privToggle.classList.toggle('on'));
+  } else {
+    privSwitch.style.display = 'none';
+  }
+
   root.querySelector('[data-act="save"]').addEventListener('click', async (e) => {
     const btn = e.currentTarget; btn.disabled = true;
     const data = {};
-    root.querySelectorAll('[data-field]').forEach(el => { data[el.dataset.field] = el.value; });
+    root.querySelectorAll('input[data-field]').forEach(el => { data[el.dataset.field] = el.value; });
+    if (state.role === 'owner') data.private = privToggle.classList.contains('on') ? 1 : 0;
     try { await onSave(data); }
     catch (err) { toast(err.message || '保存失敗', true); btn.disabled = false; }
   });
@@ -1271,21 +1489,24 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
 }
 
 $('#add-toggle').addEventListener('click', () => {
-  if (state.adding) {
-    state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`; return;
-  }
-  state.adding = true; $('#add-toggle').innerHTML = '✕ 閉じる';
+  if (state.adding) { closeAdd(); return; }
+  state.adding = true;
+  $('#add-toggle').innerHTML = '✕ 閉じる';
   const formEl = buildForm({
     title: '新規クライアント追加',
     onSave: async (data) => {
       await api('/api/admin/clients', { method: 'POST', body: JSON.stringify(data) });
-      state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`;
+      closeAdd();
       await loadClients(); renderAll(); toast('追加しました');
     },
-    onCancel: () => { state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`; },
+    onCancel: closeAdd,
   });
   $('#add-area').innerHTML = ''; $('#add-area').appendChild(formEl);
 });
+function closeAdd() {
+  state.adding = false; $('#add-area').innerHTML = '';
+  $('#add-toggle').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新規追加`;
+}
 
 $('#list').addEventListener('click', async (e) => {
   const btn = e.target.closest('button[data-act]');
@@ -1295,28 +1516,39 @@ $('#list').addEventListener('click', async (e) => {
   if (act === 'edit') { state.editingId = id; renderList(); }
   else if (act === 'toggle') {
     const active = btn.dataset.active === '1' ? 0 : 1;
-    await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id, active }) });
-    await loadClients(); renderAll(); toast(active ? '再開しました' : '停止しました');
+    try {
+      await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id, active }) });
+      await loadClients(); renderAll(); toast(active ? '再開しました' : '停止しました');
+    } catch (e) { toast(e.message, true); }
   } else if (act === 'delete') {
     const c = state.clients.find(x => x.id === id);
     if (!confirm(`「${c.name}」を削除しますか?\n復元はできません。`)) return;
-    await api('/api/admin/clients', { method: 'DELETE', body: JSON.stringify({ id }) });
-    await loadClients(); renderAll(); toast('削除しました');
+    try {
+      await api('/api/admin/clients', { method: 'DELETE', body: JSON.stringify({ id }) });
+      await loadClients(); renderAll(); toast('削除しました');
+    } catch (e) { toast(e.message, true); }
   }
 });
 
 $('#search').addEventListener('input', e => { state.search = e.target.value; renderList(); });
 $('#filter').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
-$('#status-filter').addEventListener('change', e => { state.statusFilter = e.target.value; renderList(); });
+$$('.chip').forEach(b => b.addEventListener('click', () => {
+  state.chipFilter = b.dataset.chip;
+  $$('.chip').forEach(x => x.classList.toggle('active', x === b));
+  renderList();
+}));
 
 // ---------- Loaders ----------
-async function loadClients() { const d = await api('/api/admin/clients'); state.clients = d.clients || []; }
+async function loadClients() {
+  const d = await api('/api/admin/clients');
+  state.clients = d.clients || [];
+  if (d.role) state.role = d.role;
+}
 async function loadRuns()    { try { const d = await api('/api/admin/runs?limit=200'); state.runs = d.runs || []; } catch { state.runs = []; } }
 async function loadGhRuns()  { try { const d = await api('/api/admin/dispatch'); state.ghRuns = d.runs || []; } catch { state.ghRuns = []; } }
 
 function renderAll() {
-  renderKPIs(); renderChart(); renderRun(); renderActivity(); renderAlert(); renderList();
-  $('#updated').textContent = `更新: ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;
+  renderHeader(); renderKPIs(); renderChart(); renderRun(); renderActivity(); renderAlert(); renderList();
 }
 
 async function refreshAll() {
@@ -1326,28 +1558,24 @@ async function refreshAll() {
 
 $('#reload-all').addEventListener('click', async () => { await refreshAll(); toast('更新しました'); });
 
-async function boot() { loadSA(); await refreshAll(); }
+async function boot() {
+  switchTab(state.activeTab);
+  loadSA();
+  await refreshAll();
+}
 
-// ---------- Settings ----------
-const settingsModal = $('#settings-modal');
+// ---------- Settings tab ----------
 function setToggle(el, on) { el.classList.toggle('on', !!on); el.setAttribute('aria-checked', !!on); }
 function getToggle(el) { return el.classList.contains('on'); }
 
-async function openSettings() {
+async function loadSettings() {
   try {
     const d = await api('/api/admin/settings');
     $('#set-webhook').value = d.settings.discord_webhook_url || '';
     setToggle($('#set-success'), d.settings.notify_on_success === '1');
     setToggle($('#set-failure'), d.settings.notify_on_failure === '1');
-    settingsModal.classList.add('show');
-  } catch (e) { toast('設定読み込み失敗: ' + e.message, true); }
+  } catch (e) { /* lazy on tab switch */ }
 }
-function closeSettings() { settingsModal.classList.remove('show'); }
-
-$('#open-settings').addEventListener('click', openSettings);
-$('#settings-close').addEventListener('click', closeSettings);
-$('#settings-cancel').addEventListener('click', closeSettings);
-settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettings(); });
 
 $('#set-success').addEventListener('click', () => setToggle($('#set-success'), !getToggle($('#set-success'))));
 $('#set-failure').addEventListener('click', () => setToggle($('#set-failure'), !getToggle($('#set-failure'))));
@@ -1363,7 +1591,7 @@ $('#settings-save').addEventListener('click', async () => {
         notify_on_failure: getToggle($('#set-failure')) ? '1' : '0',
       }),
     });
-    toast('保存しました'); closeSettings();
+    toast('保存しました');
   } catch (e) { toast('保存失敗: ' + e.message, true); }
   finally { btn.disabled = false; }
 });
@@ -1371,17 +1599,25 @@ $('#settings-save').addEventListener('click', async () => {
 $('#settings-test').addEventListener('click', async () => {
   const btn = $('#settings-test'); btn.disabled = true; const orig = btn.textContent; btn.textContent = '送信中…';
   try {
-    await api('/api/admin/discord_test', {
-      method: 'POST',
-      body: JSON.stringify({ webhook_url: $('#set-webhook').value.trim() }),
-    });
+    await api('/api/admin/discord_test', { method: 'POST', body: JSON.stringify({ webhook_url: $('#set-webhook').value.trim() }) });
     toast('テスト通知を送信しました');
   } catch (e) { toast('テスト失敗: ' + e.message, true); }
   finally { btn.disabled = false; btn.textContent = orig; }
 });
 
+// Load settings on tab open
+$$('.tab').forEach(t => t.addEventListener('click', () => {
+  if (t.dataset.tab === 'settings') loadSettings();
+}));
+
 if (state.key) {
-  (async () => { try { await api('/api/admin/clients'); unlock(true); } catch { unlock(false); } })();
+  (async () => {
+    try {
+      const me = await api('/api/admin/me');
+      state.role = me.role;
+      unlock(true);
+    } catch { unlock(false); }
+  })();
 }
 </script>
 </body>

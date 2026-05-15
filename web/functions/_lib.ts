@@ -1,12 +1,15 @@
 export interface Env {
   DB: D1Database;
   ADMIN_KEY: string;
+  OWNER_KEY: string;
   BACKEND_TOKEN: string;
   SA_EMAIL: string;
   GH_TOKEN: string;
   GH_REPO: string;
   GH_WORKFLOW: string;
 }
+
+export type Role = 'owner' | 'admin' | null;
 
 export function json(data: unknown, init: ResponseInit = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -46,9 +49,22 @@ export function safeEq(a: string | undefined | null, b: string | undefined | nul
   return r === 0;
 }
 
-export function isAdmin(req: Request, env: Env): boolean {
+export function getRole(req: Request, env: Env): Role {
   const headerKey = req.headers.get('x-admin-key') || '';
-  return safeEq(headerKey, env.ADMIN_KEY);
+  if (env.OWNER_KEY && safeEq(headerKey, env.OWNER_KEY)) return 'owner';
+  if (safeEq(headerKey, env.ADMIN_KEY)) {
+    // when OWNER_KEY isn't configured, ADMIN_KEY implicitly becomes owner-level
+    return env.OWNER_KEY ? 'admin' : 'owner';
+  }
+  return null;
+}
+
+export function isAdmin(req: Request, env: Env): boolean {
+  return getRole(req, env) !== null;
+}
+
+export function isOwner(req: Request, env: Env): boolean {
+  return getRole(req, env) === 'owner';
 }
 
 export function isBackend(req: Request, env: Env): boolean {
