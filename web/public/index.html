@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>経費OCR | クライアント登録</title>
+<title>経費OCR Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,409 +12,763 @@
   :root {
     --bg: #f7f7f5;
     --surface: #ffffff;
+    --surface-2: #fafaf8;
     --border: #e6e4df;
+    --border-strong: #d4d2cc;
     --text: #1a1a1a;
-    --text-muted: #6b6b6b;
-    --text-faint: #9a9a9a;
+    --muted: #6b6b6b;
+    --faint: #9a9a9a;
     --accent: #2563eb;
     --accent-hover: #1d4ed8;
     --accent-soft: #eff4ff;
-    --warning-bg: #fff8e1;
-    --warning-border: #f0c674;
-    --warning-text: #6b4d0f;
-    --success-bg: #ecfdf5;
-    --success-border: #6ee7b7;
-    --success-text: #065f46;
-    --danger-bg: #fef2f2;
-    --danger-border: #fecaca;
-    --danger-text: #991b1b;
+    --warning-bg: #fffbeb;
+    --warning-border: #fcd34d;
+    --warning-text: #78350f;
+    --on-bg: #ecfdf5; --on-text: #065f46; --on-border: #6ee7b7;
+    --off-bg: #f3f4f6; --off-text: #6b7280; --off-border: #d1d5db;
+    --danger: #dc2626; --danger-soft: #fef2f2; --danger-border: #fecaca;
     --radius: 12px;
+    --radius-sm: 8px;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0f0f10;
-      --surface: #1a1a1c;
-      --border: #2a2a2d;
-      --text: #ededed;
-      --text-muted: #a0a0a0;
-      --text-faint: #6b6b6b;
-      --accent: #60a5fa;
-      --accent-hover: #93c5fd;
-      --accent-soft: #1e2a4a;
-      --warning-bg: #2a2110;
-      --warning-border: #6b5020;
-      --warning-text: #fde68a;
-      --success-bg: #0f2a1f;
-      --success-border: #14532d;
-      --success-text: #86efac;
-      --danger-bg: #2a1414;
-      --danger-border: #5a1f1f;
-      --danger-text: #fca5a5;
+      --bg: #0f0f10; --surface: #1a1a1c; --surface-2: #131315; --border: #2a2a2d; --border-strong: #3a3a3d;
+      --text: #ededed; --muted: #a0a0a0; --faint: #6b6b6b;
+      --accent: #60a5fa; --accent-hover: #93c5fd; --accent-soft: #1e2a4a;
+      --warning-bg: #2a2110; --warning-border: #78350f; --warning-text: #fde68a;
+      --on-bg: #0f2a1f; --on-text: #86efac; --on-border: #14532d;
+      --off-bg: #262629; --off-text: #9ca3af; --off-border: #3a3a3d;
+      --danger: #f87171; --danger-soft: #2a1414; --danger-border: #5a1f1f;
     }
   }
-  html, body { margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; height: 100%; }
   body {
-    font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-    font-feature-settings: "palt";
+    font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    -webkit-font-smoothing: antialiased; font-feature-settings: "palt";
   }
-  .container { max-width: 640px; margin: 0 auto; padding: 32px 20px 80px; }
+  button { font-family: inherit; }
+  input, button, select { font-family: inherit; }
+
+  /* ===== Lock screen ===== */
+  .lock-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .lock-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 40px 32px; max-width: 380px; width: 100%; box-shadow: var(--shadow-md);
+    text-align: center;
+  }
+  .lock-icon {
+    width: 48px; height: 48px; margin: 0 auto 16px;
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .lock-card h1 { font-size: 20px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .lock-card p { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+
+  /* ===== App ===== */
+  .app { display: none; }
+  .app.show { display: block; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px 80px; }
 
   /* Header */
-  .hero { margin-bottom: 32px; }
-  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-  .hero h1 { font-size: 28px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
-  .hero p { color: var(--text-muted); margin: 0; font-size: 15px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-icon {
+    width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;
+  }
+  .brand h1 { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .header-actions { display: flex; gap: 8px; }
 
-  /* Step card */
-  .step {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow-sm);
+  /* SA banner */
+  .sa-banner {
+    background: var(--warning-bg); border: 1px solid var(--warning-border);
+    border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
   }
-  .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .step-num {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--accent); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 600; font-size: 13px; flex-shrink: 0;
-  }
-  .step h2 { margin: 0; font-size: 16px; font-weight: 600; }
-  .step-desc { color: var(--text-muted); font-size: 14px; margin: 0 0 16px; }
-
-  /* SA box */
-  .sa-box {
-    background: var(--warning-bg);
-    border: 1px solid var(--warning-border);
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 12px;
-  }
-  .sa-label { font-size: 12px; font-weight: 600; color: var(--warning-text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .sa-row { display: flex; gap: 8px; align-items: stretch; }
-  .sa-email {
-    flex: 1;
-    background: var(--surface);
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 13px;
-    word-break: break-all;
-    border: 1px solid var(--border);
-    display: flex; align-items: center;
-  }
-  .btn-copy {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0 14px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--text);
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .btn-copy:hover { background: var(--accent-soft); border-color: var(--accent); }
-  .btn-copy.copied { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); }
-
-  /* Permission hint */
-  .perm-hint {
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--text-muted);
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-  }
-  .perm-hint::before { content: '💡'; flex-shrink: 0; }
-
-  /* Form */
-  .field { margin-bottom: 14px; }
-  .field-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .field-label .req { color: #dc2626; margin-left: 2px; }
-  .field-hint { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
-  .input {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 14px;
-    font-family: inherit;
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-  .input::placeholder { color: var(--text-faint); }
-
-  /* Pair (folder+sheet) */
-  .pair { background: var(--bg); border: 1px dashed var(--border); border-radius: 10px; padding: 16px; margin-top: 8px; }
-  .pair-title { font-size: 13px; font-weight: 600; margin: 0 0 12px; display: flex; gap: 8px; align-items: center; }
-  .pair-icon { font-size: 18px; }
-  .pair-optional { font-size: 11px; color: var(--text-faint); font-weight: 400; margin-left: auto; }
-
-  /* Submit */
-  .submit-row { margin-top: 24px; }
-  .btn-submit {
-    width: 100%;
-    padding: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.15s;
-    font-family: inherit;
-  }
-  .btn-submit:hover:not(:disabled) { background: var(--accent-hover); }
-  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-  .submit-foot { font-size: 12px; color: var(--text-faint); text-align: center; margin: 12px 0 0; }
-
-  /* Messages */
-  .msg { padding: 14px 16px; border-radius: 10px; font-size: 14px; margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; }
-  .msg.err { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); }
-  .msg.err::before { content: '⚠️'; }
-
-  /* Success */
-  .success-screen { display: none; text-align: center; padding: 40px 20px; }
-  .success-screen.show { display: block; }
-  .form-screen.hide { display: none; }
-  .success-icon {
-    width: 64px; height: 64px; margin: 0 auto 16px;
-    border-radius: 50%; background: var(--success-bg);
-    color: var(--success-text); border: 2px solid var(--success-border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 32px;
-  }
-  .success-screen h2 { font-size: 22px; margin: 0 0 12px; }
-  .success-screen p { color: var(--text-muted); margin: 8px 0; }
-  .success-detail {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 16px; margin: 24px 0; text-align: left; font-size: 14px;
-  }
-  .success-detail li { margin: 4px 0; }
-  .btn-secondary {
-    background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500;
-    cursor: pointer; font-family: inherit;
+  .sa-banner-icon { font-size: 20px; flex-shrink: 0; }
+  .sa-banner-content { flex: 1; min-width: 0; }
+  .sa-banner-label { font-size: 11px; font-weight: 600; color: var(--warning-text); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .sa-banner-email {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px;
+    color: var(--text); word-break: break-all;
   }
 
-  /* Inline note */
-  .note { font-size: 12px; color: var(--text-muted); background: var(--accent-soft); padding: 10px 12px; border-radius: 6px; margin-top: 8px; line-height: 1.5; }
-  .note strong { color: var(--text); }
-
-  /* Footer */
-  .footer { text-align: center; font-size: 12px; color: var(--text-faint); margin-top: 32px; }
-
-  @media (max-width: 480px) {
-    .container { padding: 20px 16px 60px; }
-    .step { padding: 20px 16px; }
-    .hero h1 { font-size: 24px; }
+  /* Stats / status */
+  .top-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
   }
+  @media (max-width: 640px) { .top-grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  .panel-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+  .stats-row { display: flex; gap: 24px; align-items: baseline; }
+  .stat-num { font-size: 28px; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat-on { color: var(--on-text); }
+  .stat-off { color: var(--off-text); }
+
+  .run-panel { display: flex; flex-direction: column; gap: 8px; }
+  .run-current {
+    display: flex; align-items: center; gap: 10px; font-size: 13px;
+  }
+  .run-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .run-dot.success { background: #10b981; }
+  .run-dot.failure { background: #ef4444; }
+  .run-dot.in_progress { background: #f59e0b; animation: pulse 1.5s infinite; }
+  .run-dot.queued { background: #6b7280; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .run-meta { color: var(--muted); font-size: 12px; }
+  .run-actions { display: flex; gap: 6px; }
+
+  /* Section */
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin: 8px 0 12px; gap: 12px; flex-wrap: wrap; }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .section-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .search-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 7px 10px; font-size: 13px; width: 200px; color: var(--text);
+  }
+  .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .filter-select {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 7px 10px; font-size: 13px; color: var(--text);
+  }
+
+  /* Cards */
+  .card-list { display: grid; gap: 10px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; transition: border-color 0.15s;
+  }
+  .card:hover { border-color: var(--border-strong); }
+  .card-head { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+  .card-id { font-size: 11px; color: var(--faint); font-family: ui-monospace, monospace; }
+  .card-name { font-size: 16px; font-weight: 600; margin-top: 2px; }
+  .card-contact { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .card-main { flex: 1; min-width: 160px; }
+  .card-resources { display: flex; gap: 20px; flex-wrap: wrap; }
+  .res-block { font-size: 12px; }
+  .res-label { font-size: 11px; color: var(--faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .res-links { display: flex; gap: 8px; align-items: center; }
+  .res-links a { color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; }
+  .res-links a:hover { text-decoration: underline; }
+  .res-empty { color: var(--faint); font-style: italic; font-size: 12px; }
+  .res-stats { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .res-stats.has-fail { color: var(--danger); font-weight: 600; }
+
+  .card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .badge.on { background: var(--on-bg); color: var(--on-text); border: 1px solid var(--on-border); }
+  .badge.off { background: var(--off-bg); color: var(--off-text); border: 1px solid var(--off-border); }
+  .card-date { font-size: 11px; color: var(--faint); }
+
+  .card-actions { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+
+  /* Inline edit form */
+  .edit-form { padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; }
+  .edit-form h3 { font-size: 14px; font-weight: 600; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  .form-row { display: grid; gap: 12px; }
+  .form-row.two { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 640px) { .form-row.two { grid-template-columns: 1fr; } }
+  .form-field { display: flex; flex-direction: column; }
+  .form-field label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  .form-field label .req { color: var(--danger); }
+  .form-field input {
+    padding: 9px 11px; font-size: 13px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  }
+  .form-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .form-field input::placeholder { color: var(--faint); }
+  .pair-group { background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 12px; margin-top: 8px; }
+  .pair-group-title { font-size: 12px; font-weight: 600; margin: 0 0 10px; display: flex; gap: 6px; align-items: center; }
+  .form-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+  /* Buttons */
+  .btn {
+    padding: 7px 14px; font-size: 13px; font-weight: 500; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover:not(:disabled) { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+  .btn.danger { color: var(--danger); border-color: var(--danger-border); }
+  .btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
+  .btn.ghost { border-color: transparent; background: transparent; }
+  .btn.ghost:hover:not(:disabled) { background: var(--surface-2); }
+  .btn.sm { padding: 5px 10px; font-size: 12px; }
+
+  /* Empty */
+  .empty {
+    text-align: center; padding: 60px 20px; color: var(--muted);
+    background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 8px; }
+  .empty h3 { margin: 0 0 4px; font-size: 15px; color: var(--text); }
+  .empty p { margin: 0; font-size: 13px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 24px;
+    font-size: 13px; font-weight: 500; box-shadow: var(--shadow-md);
+    opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 1000;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.err { background: var(--danger); color: #fff; }
+
+  /* Misc */
+  .copy-icon { cursor: pointer; color: var(--muted); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .copy-icon:hover { background: var(--accent-soft); color: var(--accent); }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- ============== Form Screen ============== -->
-  <div class="form-screen" id="form-screen">
-
-    <header class="hero">
-      <div class="hero-eyebrow">経費OCR 自動化</div>
-      <h1>クライアント登録</h1>
-      <p>Drive にアップした領収書 / 請求書を、毎日 23:00 JST に自動で OCR してシートに転記します。</p>
-    </header>
-
-    <!-- Step 1: Share SA -->
-    <section class="step">
-      <div class="step-header">
-        <span class="step-num">1</span>
-        <h2>サービスアカウントを Drive とシートに共有</h2>
+<!-- ============== Lock Screen ============== -->
+<div class="lock-screen" id="lock">
+  <div class="lock-card">
+    <div class="lock-icon">🔒</div>
+    <h1>経費OCR Console</h1>
+    <p>管理者パスを入力してください</p>
+    <form id="lock-form" autocomplete="off">
+      <div class="form-field" style="margin-bottom: 16px;">
+        <input type="password" id="lock-key" placeholder="ADMIN_KEY" required style="text-align: center;">
       </div>
-      <p class="step-desc">処理を行うサービスアカウント(下記)を、これから登録する Drive フォルダと スプレッドシートに <strong>「編集者」</strong> として共有してください。</p>
-
-      <div class="sa-box">
-        <div class="sa-label">共有先メールアドレス</div>
-        <div class="sa-row">
-          <div class="sa-email" id="sa">読み込み中…</div>
-          <button type="button" class="btn-copy" id="copy">コピー</button>
-        </div>
-      </div>
-
-      <p class="perm-hint">権限は <strong>「編集者」</strong> を選んでください(閲覧者だとシートに書き込めません)</p>
-    </section>
-
-    <!-- Step 2: Form -->
-    <section class="step">
-      <div class="step-header">
-        <span class="step-num">2</span>
-        <h2>情報を入力する</h2>
-      </div>
-
-      <form id="form" autocomplete="off" novalidate>
-
-        <div class="field">
-          <label class="field-label" for="passcode">登録パスコード<span class="req">*</span></label>
-          <input class="input" type="password" id="passcode" name="passcode" required>
-          <p class="field-hint">管理者から受け取ったパスコードを入力</p>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="name">クライアント名<span class="req">*</span></label>
-          <input class="input" type="text" id="name" name="name" required maxlength="60" placeholder="例: 株式会社サンプル">
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="contact">連絡先メール</label>
-          <input class="input" type="email" id="contact" name="contact" placeholder="taro@example.com">
-          <p class="field-hint">問い合わせ用(任意)</p>
-        </div>
-
-        <p class="note">
-          <strong>領収書 / 請求書 は片方だけでもOK。</strong> 必要な方のフォルダとシートURLを貼ってください。両方使う場合は両方入力。
-        </p>
-
-        <!-- Receipts -->
-        <div class="pair">
-          <h3 class="pair-title"><span class="pair-icon">🧾</span> 領収書 <span class="pair-optional">片方だけでも可</span></h3>
-          <div class="field">
-            <label class="field-label" for="receipts_folder_url">領収書フォルダURL</label>
-            <input class="input" type="url" id="receipts_folder_url" name="receipts_folder_url" placeholder="https://drive.google.com/drive/folders/...">
-          </div>
-          <div class="field">
-            <label class="field-label" for="receipts_sheet_url">領収書スプレッドシートURL</label>
-            <input class="input" type="url" id="receipts_sheet_url" name="receipts_sheet_url" placeholder="https://docs.google.com/spreadsheets/d/...">
-          </div>
-        </div>
-
-        <!-- Invoices -->
-        <div class="pair">
-          <h3 class="pair-title"><span class="pair-icon">📄</span> 請求書 <span class="pair-optional">片方だけでも可</span></h3>
-          <div class="field">
-            <label class="field-label" for="invoices_folder_url">請求書フォルダURL</label>
-            <input class="input" type="url" id="invoices_folder_url" name="invoices_folder_url" placeholder="https://drive.google.com/drive/folders/...">
-          </div>
-          <div class="field">
-            <label class="field-label" for="invoices_sheet_url">請求書スプレッドシートURL</label>
-            <input class="input" type="url" id="invoices_sheet_url" name="invoices_sheet_url" placeholder="https://docs.google.com/spreadsheets/d/...">
-          </div>
-        </div>
-
-        <div class="submit-row">
-          <button type="submit" class="btn-submit" id="submit">登録する</button>
-          <p class="submit-foot">登録すると 翌日 23:00 JST から自動処理が始まります</p>
-        </div>
-        <div id="msg"></div>
-      </form>
-    </section>
-
-    <p class="footer">問題があれば管理者に連絡してください</p>
+      <button type="submit" class="btn primary" style="width: 100%; justify-content: center; padding: 11px;">ログイン</button>
+    </form>
   </div>
-
-  <!-- ============== Success Screen ============== -->
-  <div class="success-screen" id="success-screen">
-    <div class="success-icon">✓</div>
-    <h2>登録完了しました</h2>
-    <p>明日 23:00 JST から自動処理が始まります。</p>
-
-    <div class="success-detail">
-      <strong>次にやること</strong>
-      <ul>
-        <li>領収書 / 請求書を登録した Drive フォルダにアップロード</li>
-        <li>翌日 23:00 JST 以降にシートを確認</li>
-        <li>OCR は <code>PDF / 画像</code> 両方対応しています</li>
-      </ul>
-    </div>
-
-    <button type="button" class="btn-secondary" id="another">もう1件登録する</button>
-  </div>
-
 </div>
 
+<!-- ============== App ============== -->
+<div class="app" id="app">
+  <div class="container">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">¥</div>
+        <h1>経費OCR Console</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn ghost sm" id="reload-all">↻ 更新</button>
+        <button class="btn ghost sm" id="logout">ログアウト</button>
+      </div>
+    </header>
+
+    <!-- SA banner -->
+    <div class="sa-banner">
+      <div class="sa-banner-icon">🔑</div>
+      <div class="sa-banner-content">
+        <div class="sa-banner-label">サービスアカウント(共有先)</div>
+        <div class="sa-banner-email" id="sa-email">読み込み中…</div>
+      </div>
+      <button class="btn sm" id="copy-sa">コピー</button>
+    </div>
+
+    <!-- Top grid: stats + run status -->
+    <div class="top-grid">
+      <div class="panel">
+        <div class="panel-label">クライアント</div>
+        <div class="stats-row">
+          <div>
+            <div class="stat-num" id="stat-total">—</div>
+            <div class="stat-label">登録</div>
+          </div>
+          <div>
+            <div class="stat-num stat-on" id="stat-active">—</div>
+            <div class="stat-label">有効</div>
+          </div>
+          <div>
+            <div class="stat-num stat-off" id="stat-inactive">—</div>
+            <div class="stat-label">停止</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel run-panel">
+        <div class="panel-label">直近の実行 (GitHub Actions)</div>
+        <div class="run-current" id="run-current"><span class="muted" style="color:var(--muted)">読み込み中…</span></div>
+        <div class="run-actions">
+          <button class="btn primary sm" id="dispatch">▶ 今すぐ実行</button>
+          <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener">GitHub で見る</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clients section -->
+    <div class="section-head">
+      <div class="section-title">クライアント一覧</div>
+      <div class="section-tools">
+        <input type="text" class="search-box" id="search" placeholder="🔍 名前/連絡先で検索">
+        <select class="filter-select" id="filter">
+          <option value="all">すべて</option>
+          <option value="active">有効のみ</option>
+          <option value="inactive">停止のみ</option>
+        </select>
+        <button class="btn primary sm" id="add-toggle">+ 新規追加</button>
+      </div>
+    </div>
+
+    <div id="add-area"></div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============== Form template ============== -->
+<template id="form-tpl">
+  <div class="edit-form">
+    <h3 data-title>新規追加</h3>
+    <div class="form-row two">
+      <div class="form-field">
+        <label>クライアント名 <span class="req">*</span></label>
+        <input data-field="name" maxlength="60" placeholder="例: 株式会社サンプル">
+      </div>
+      <div class="form-field">
+        <label>連絡先メール</label>
+        <input data-field="contact" type="email" placeholder="taro@example.com">
+      </div>
+    </div>
+
+    <div class="pair-group">
+      <h4 class="pair-group-title">🧾 領収書 <span style="color:var(--faint);font-weight:400;font-size:11px;">(任意・片方だけでも可)</span></h4>
+      <div class="form-row two">
+        <div class="form-field">
+          <label>フォルダURL</label>
+          <input data-field="receipts_folder_url" type="url" placeholder="https://drive.google.com/drive/folders/...">
+        </div>
+        <div class="form-field">
+          <label>スプレッドシートURL</label>
+          <input data-field="receipts_sheet_url" type="url" placeholder="https://docs.google.com/spreadsheets/d/...">
+        </div>
+      </div>
+    </div>
+
+    <div class="pair-group">
+      <h4 class="pair-group-title">📄 請求書 <span style="color:var(--faint);font-weight:400;font-size:11px;">(任意・片方だけでも可)</span></h4>
+      <div class="form-row two">
+        <div class="form-field">
+          <label>フォルダURL</label>
+          <input data-field="invoices_folder_url" type="url" placeholder="https://drive.google.com/drive/folders/...">
+        </div>
+        <div class="form-field">
+          <label>スプレッドシートURL</label>
+          <input data-field="invoices_sheet_url" type="url" placeholder="https://docs.google.com/spreadsheets/d/...">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn primary" data-act="save">保存</button>
+      <button class="btn" data-act="cancel">キャンセル</button>
+    </div>
+  </div>
+</template>
+
 <script>
-  // Load SA email
-  fetch('/api/config').then(r => r.json()).then(d => {
-    document.getElementById('sa').textContent = d.sa_email || '(未設定)';
-  }).catch(() => {
-    document.getElementById('sa').textContent = '(取得失敗・管理者に連絡)';
-  });
+// ---------- State ----------
+const state = {
+  key: sessionStorage.getItem('admin_key') || '',
+  clients: [],
+  runs: [],          // D1 run records (per client/kind)
+  ghRuns: [],        // GitHub Actions workflow runs
+  search: '',
+  filter: 'all',
+  editingId: null,
+  adding: false,
+};
 
-  // Copy SA
-  document.getElementById('copy').addEventListener('click', async () => {
-    const sa = document.getElementById('sa').textContent;
-    try { await navigator.clipboard.writeText(sa); } catch {}
-    const btn = document.getElementById('copy');
-    btn.classList.add('copied');
-    btn.textContent = 'コピー済';
-    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'コピー'; }, 1600);
-  });
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Submit
-  const form = document.getElementById('form');
-  const msg = document.getElementById('msg');
-  const submit = document.getElementById('submit');
+function esc(s) { return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  function showError(text) {
-    msg.className = 'msg err';
-    msg.textContent = text;
+function toast(msg, isErr) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+async function api(path, opts = {}) {
+  const headers = { 'content-type': 'application/json', ...(opts.headers || {}) };
+  if (!path.startsWith('/api/config')) headers['x-admin-key'] = state.key;
+  const res = await fetch(path, { ...opts, headers });
+  if (res.status === 401) { unlock(false); throw new Error('unauthorized'); }
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+// ---------- Lock ----------
+function unlock(ok) {
+  if (ok) {
+    sessionStorage.setItem('admin_key', state.key);
+    $('#lock').style.display = 'none';
+    $('#app').classList.add('show');
+    boot();
+  } else {
+    state.key = '';
+    sessionStorage.removeItem('admin_key');
+    $('#lock').style.display = 'flex';
+    $('#app').classList.remove('show');
   }
-  function clearMsg() { msg.className = ''; msg.textContent = ''; }
+}
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    clearMsg();
-    submit.disabled = true;
-    submit.textContent = '登録中…';
+$('#lock-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  state.key = $('#lock-key').value;
+  try {
+    await api('/api/admin/clients');
+    unlock(true);
+  } catch {
+    toast('ADMIN_KEY が違います', true);
+  }
+});
 
-    const body = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(body),
+$('#logout').addEventListener('click', () => unlock(false));
+
+// ---------- SA email ----------
+async function loadSA() {
+  try {
+    const d = await fetch('/api/config').then(r => r.json());
+    $('#sa-email').textContent = d.sa_email || '(未設定)';
+  } catch { $('#sa-email').textContent = '(取得失敗)'; }
+}
+$('#copy-sa').addEventListener('click', async () => {
+  await navigator.clipboard.writeText($('#sa-email').textContent);
+  toast('SAメールをコピーしました');
+});
+
+// ---------- Stats ----------
+function renderStats() {
+  $('#stat-total').textContent = state.clients.length;
+  const on = state.clients.filter(c => c.active).length;
+  $('#stat-active').textContent = on;
+  $('#stat-inactive').textContent = state.clients.length - on;
+}
+
+// ---------- GitHub run status ----------
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function fmtAgo(iso) {
+  if (!iso) return '';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'たった今';
+  if (m < 60) return `${m}分前`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}時間前`;
+  return `${Math.floor(h / 24)}日前`;
+}
+
+function renderRun() {
+  const el = $('#run-current');
+  const ghLink = $('#gh-link');
+  if (!state.ghRuns.length) {
+    el.innerHTML = '<span style="color:var(--muted)">実行履歴なし</span>';
+    ghLink.style.display = 'none';
+    return;
+  }
+  const run = state.ghRuns[0];
+  ghLink.href = run.html_url;
+  ghLink.style.display = '';
+
+  const dotClass = run.status === 'completed' ? (run.conclusion === 'success' ? 'success' : 'failure') : run.status;
+  const label = run.status === 'completed' ?
+    (run.conclusion === 'success' ? '成功' : (run.conclusion || '失敗'))
+    : (run.status === 'in_progress' ? '実行中' : (run.status === 'queued' ? '待機中' : run.status));
+
+  // Aggregate processed/failed from D1 runs since this gh run started
+  const since = new Date(run.created_at).getTime();
+  const matched = state.runs.filter(r => new Date(r.started_at + 'Z').getTime() >= since - 60000);
+  const totalProcessed = matched.reduce((a, r) => a + (r.processed || 0), 0);
+  const totalFailed = matched.reduce((a, r) => a + (r.failed || 0), 0);
+  const hasFatal = matched.some(r => r.fatal_error);
+
+  let statsTxt = '';
+  if (matched.length) {
+    statsTxt = ` · ${totalProcessed}件処理`;
+    if (totalFailed) statsTxt += `, ${totalFailed}件失敗`;
+    if (hasFatal) statsTxt += `, FATALあり`;
+  }
+
+  el.innerHTML = `
+    <span class="run-dot ${dotClass}"></span>
+    <strong>${label}</strong>
+    <span class="run-meta">${fmtDate(run.created_at)} (${fmtAgo(run.created_at)})${statsTxt}</span>`;
+}
+
+async function loadGhRuns() {
+  try {
+    const d = await api('/api/admin/dispatch');
+    state.ghRuns = d.runs || [];
+  } catch (e) { state.ghRuns = []; }
+}
+
+async function loadRuns() {
+  try {
+    const d = await api('/api/admin/runs?limit=100');
+    state.runs = d.runs || [];
+  } catch (e) { state.runs = []; }
+}
+
+$('#dispatch').addEventListener('click', async () => {
+  const btn = $('#dispatch');
+  btn.disabled = true;
+  btn.textContent = '起動中…';
+  try {
+    await api('/api/admin/dispatch', { method: 'POST' });
+    toast('▶ ワークフローを起動しました');
+    setTimeout(refreshRuns, 2000);
+  } catch (e) {
+    toast('起動失敗: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ 今すぐ実行';
+  }
+});
+
+async function refreshRuns() {
+  await Promise.all([loadRuns(), loadGhRuns()]);
+  renderRun();
+  renderList();
+}
+
+// ---------- Clients ----------
+async function loadClients() {
+  const d = await api('/api/admin/clients');
+  state.clients = d.clients || [];
+}
+
+function clientStats(c) {
+  // Latest run for receipts/invoices for this client
+  const latest = (kind) => state.runs.find(r => r.client_name === c.name && r.kind === kind);
+  return { receipts: latest('receipts'), invoices: latest('invoices') };
+}
+
+function resBlock(folder, sheet, run, icon, label) {
+  if (!folder && !sheet) return '';
+  const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank" rel="noopener">📁 Drive</a>` : '';
+  const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank" rel="noopener">📊 Sheet</a>` : '';
+  let stats = '';
+  if (run) {
+    const hasFail = run.failed > 0 || run.fatal_error;
+    stats = `<div class="res-stats${hasFail ? ' has-fail' : ''}">${run.fatal_error ? '⚠️ FATAL' : `${run.processed}件処理${run.failed ? `, ${run.failed}件失敗` : ''}`} · ${fmtAgo(run.started_at + 'Z')}</div>`;
+  }
+  return `
+    <div class="res-block">
+      <div class="res-label">${icon} ${label}</div>
+      <div class="res-links">${f}${s}</div>
+      ${stats}
+    </div>`;
+}
+
+function renderList() {
+  const list = $('#list');
+  const filtered = state.clients.filter(c => {
+    if (state.filter === 'active' && !c.active) return false;
+    if (state.filter === 'inactive' && c.active) return false;
+    if (state.search) {
+      const q = state.search.toLowerCase();
+      if (!(c.name || '').toLowerCase().includes(q) && !(c.contact || '').toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+
+  if (!state.clients.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">📋</div>
+        <h3>クライアントがまだ登録されていません</h3>
+        <p>「+ 新規追加」から1件目を登録</p>
+      </div>`;
+    return;
+  }
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>該当なし</h3><p>条件を変えてください</p></div>`;
+    return;
+  }
+
+  const cl = document.createElement('div');
+  cl.className = 'card-list';
+  for (const c of filtered) {
+    if (state.editingId === c.id) {
+      const formEl = buildForm({
+        title: `✏️ #${c.id} ${c.name} を編集`,
+        values: c,
+        onSave: async (data) => {
+          await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id: c.id, ...data, active: c.active }) });
+          state.editingId = null;
+          await loadClients();
+          renderStats(); renderList();
+          toast('保存しました');
+        },
+        onCancel: () => { state.editingId = null; renderList(); },
       });
-      const data = await res.json();
-      if (res.ok) {
-        document.getElementById('form-screen').classList.add('hide');
-        document.getElementById('success-screen').classList.add('show');
-        form.reset();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        showError(data.error || 'エラーが発生しました');
-      }
+      cl.appendChild(formEl);
+      continue;
+    }
+
+    const st = clientStats(c);
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="card-main">
+          <div class="card-id">#${c.id}</div>
+          <div class="card-name">${esc(c.name)}</div>
+          ${c.contact ? `<div class="card-contact">${esc(c.contact)}</div>` : ''}
+        </div>
+        <div class="card-resources">
+          ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, st.receipts, '🧾', '領収書') || '<div class="res-block"><div class="res-label">🧾 領収書</div><div class="res-empty">未登録</div></div>'}
+          ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, st.invoices, '📄', '請求書') || '<div class="res-block"><div class="res-label">📄 請求書</div><div class="res-empty">未登録</div></div>'}
+        </div>
+        <div class="card-meta">
+          <span class="badge ${c.active ? 'on' : 'off'}">${c.active ? '有効' : '停止'}</span>
+          <span class="card-date">${(c.created_at || '').slice(0, 10)}</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn sm" data-act="edit" data-id="${c.id}">編集</button>
+        <button class="btn sm" data-act="toggle" data-id="${c.id}" data-active="${c.active}">${c.active ? '停止' : '再開'}</button>
+        <button class="btn sm danger" data-act="delete" data-id="${c.id}">削除</button>
+      </div>`;
+    cl.appendChild(card);
+  }
+  list.innerHTML = '';
+  list.appendChild(cl);
+}
+
+// ---------- Form (add + edit) ----------
+function buildForm({ title, values = {}, onSave, onCancel }) {
+  const tpl = $('#form-tpl').content.cloneNode(true);
+  const root = tpl.querySelector('.edit-form');
+  root.querySelector('[data-title]').textContent = title;
+  const setVal = (k, v) => { const el = root.querySelector(`[data-field="${k}"]`); if (el) el.value = v || ''; };
+  setVal('name', values.name);
+  setVal('contact', values.contact);
+  setVal('receipts_folder_url', values.receipts_folder_id ? `https://drive.google.com/drive/folders/${values.receipts_folder_id}` : '');
+  setVal('receipts_sheet_url', values.receipts_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.receipts_sheet_id}` : '');
+  setVal('invoices_folder_url', values.invoices_folder_id ? `https://drive.google.com/drive/folders/${values.invoices_folder_id}` : '');
+  setVal('invoices_sheet_url', values.invoices_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.invoices_sheet_id}` : '');
+
+  root.querySelector('[data-act="save"]').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    const data = {};
+    root.querySelectorAll('[data-field]').forEach(el => { data[el.dataset.field] = el.value; });
+    try {
+      await onSave(data);
     } catch (err) {
-      showError('通信エラー: ' + err.message);
-    } finally {
-      submit.disabled = false;
-      submit.textContent = '登録する';
+      toast(err.message || '保存失敗', true);
+      btn.disabled = false;
     }
   });
+  root.querySelector('[data-act="cancel"]').addEventListener('click', onCancel);
+  return root;
+}
 
-  document.getElementById('another').addEventListener('click', () => {
-    document.getElementById('success-screen').classList.remove('show');
-    document.getElementById('form-screen').classList.remove('hide');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+$('#add-toggle').addEventListener('click', () => {
+  if (state.adding) {
+    state.adding = false;
+    $('#add-area').innerHTML = '';
+    $('#add-toggle').textContent = '+ 新規追加';
+    return;
+  }
+  state.adding = true;
+  $('#add-toggle').textContent = '✕ 閉じる';
+  const formEl = buildForm({
+    title: '➕ 新規クライアント追加',
+    onSave: async (data) => {
+      await api('/api/admin/clients', { method: 'POST', body: JSON.stringify(data) });
+      state.adding = false;
+      $('#add-area').innerHTML = '';
+      $('#add-toggle').textContent = '+ 新規追加';
+      await loadClients();
+      renderStats(); renderList();
+      toast('追加しました');
+    },
+    onCancel: () => {
+      state.adding = false;
+      $('#add-area').innerHTML = '';
+      $('#add-toggle').textContent = '+ 新規追加';
+    },
   });
+  $('#add-area').innerHTML = '';
+  $('#add-area').appendChild(formEl);
+});
+
+// ---------- Card action handlers ----------
+$('#list').addEventListener('click', async (e) => {
+  const btn = e.target.closest('button[data-act]');
+  if (!btn) return;
+  const id = Number(btn.dataset.id);
+  const act = btn.dataset.act;
+  if (act === 'edit') {
+    state.editingId = id;
+    renderList();
+  } else if (act === 'toggle') {
+    const active = btn.dataset.active === '1' ? 0 : 1;
+    await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id, active }) });
+    await loadClients();
+    renderStats(); renderList();
+    toast(active ? '再開しました' : '停止しました');
+  } else if (act === 'delete') {
+    const c = state.clients.find(x => x.id === id);
+    if (!confirm(`「${c.name}」を削除しますか?\n復元はできません。`)) return;
+    await api('/api/admin/clients', { method: 'DELETE', body: JSON.stringify({ id }) });
+    await loadClients();
+    renderStats(); renderList();
+    toast('削除しました');
+  }
+});
+
+// ---------- Search / filter ----------
+$('#search').addEventListener('input', (e) => { state.search = e.target.value; renderList(); });
+$('#filter').addEventListener('change', (e) => { state.filter = e.target.value; renderList(); });
+
+// ---------- Reload ----------
+$('#reload-all').addEventListener('click', async () => {
+  await Promise.all([loadClients(), loadRuns(), loadGhRuns()]);
+  renderStats(); renderRun(); renderList();
+  toast('更新しました');
+});
+
+// ---------- Boot ----------
+async function boot() {
+  loadSA();
+  await Promise.all([loadClients(), loadRuns(), loadGhRuns()]);
+  renderStats(); renderRun(); renderList();
+}
+
+// Auto-login if cached
+if (state.key) {
+  (async () => {
+    try {
+      await api('/api/admin/clients');
+      unlock(true);
+    } catch { unlock(false); }
+  })();
+}
 </script>
 </body>
 </html>

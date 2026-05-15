@@ -6,7 +6,7 @@ import datetime
 import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from clients_loader import load_clients
+from clients_loader import load_clients, report_run
 
 PROCESSED_TAB = '_processed'
 GEMINI_MODEL = 'gemini-2.5-flash'
@@ -38,9 +38,11 @@ def main():
             print(f"[{c['name']}] receipts: {n} new, {len(fails)} failed")
             for x in fails:
                 print(f"  - {x}")
+            report_run('receipts', c['name'], n, len(fails))
         except Exception as e:
             summary.append((c['name'], 0, [f"FATAL: {e}"]))
             print(f"[{c['name']}] FATAL: {e}")
+            report_run('receipts', c['name'], 0, 0, fatal_error=str(e))
 
     notify(summary)
 
