@@ -112,7 +112,23 @@ async function main() {
   await setCap(page, '過去7日間のトレンドと最新の実行ステータス');
   await sleep(4500);
   await page.evaluate(() => window._unspot());
-  await sleep(600);
+  await sleep(500);
+
+  // Scene 2.5: 今すぐ実行
+  await setCap(page, '「今すぐ実行」で 手動 でワークフローを起動できる');
+  await page.evaluate(() => window._spot('#dispatch'));
+  await sleep(3800);
+  await page.click('#dispatch');
+  await sleep(700);
+  await page.evaluate(() => window._unspot());
+  // toast and status change should be visible
+  await setCap(page, 'GitHub Actions が起動 → 約30秒で OCR 処理が完了');
+  await sleep(4200);
+  await page.evaluate(() => window._spot('#activity-list'));
+  await setCap(page, '結果は「直近のアクティビティ」と棒グラフに自動反映');
+  await sleep(4500);
+  await page.evaluate(() => window._unspot());
+  await sleep(500);
 
   // Scene 3: Clients tab
   await setCap(page, 'クライアントタブへ');
