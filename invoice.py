@@ -7,6 +7,7 @@ import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from clients_loader import load_clients, report_run, notify_discord
+from categories import prompt_block as category_prompt, normalize as normalize_category, CATEGORY_NAMES
 
 PROCESSED_TAB = '_processed'
 GEMINI_MODEL = 'gemini-2.5-flash'
@@ -82,13 +83,14 @@ def run_for_client(drive, sheets, api_key, folder_id, sheet_id):
                 items_str,
                 link,
                 now,
+                normalize_category(data.get('category')),
             ])
             seen_rows.append([f['id'], now])
         except Exception as e:
             failures.append(f"{f['name']}: {e}")
 
     if new_rows:
-        append(sheets, sheet_id, f"'{main_tab}'!A:K", new_rows)
+        append(sheets, sheet_id, f"'{main_tab}'!A:L", new_rows)
         append(sheets, sheet_id, f"'{PROCESSED_TAB}'!A:B", seen_rows)
 
     return len(new_rows), failures
@@ -131,7 +133,9 @@ def extract(drive, f, api_key):
         '- total: 税込合計金額(整数)\n'
         '- invoice_number: 請求書番号/インボイス番号\n'
         '- items: 品目・摘要の配列(各要素は短い文字列)\n'
-        '読み取れない項目はnull。金額は数値のみ。'
+        '- category: 勘定科目 (下記から選ぶ)\n'
+        '読み取れない項目はnull。金額は数値のみ。\n\n'
+        + category_prompt()
     )
     payload = {
         'contents': [{
@@ -154,6 +158,7 @@ def extract(drive, f, api_key):
                     'total': {'type': 'integer'},
                     'invoice_number': {'type': 'string'},
                     'items': {'type': 'array', 'items': {'type': 'string'}},
+                    'category': {'type': 'string', 'enum': CATEGORY_NAMES},
                 },
             },
         },

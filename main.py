@@ -7,6 +7,7 @@ import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from clients_loader import load_clients, report_run, notify_discord
+from categories import prompt_block as category_prompt, normalize as normalize_category, CATEGORY_NAMES
 
 PROCESSED_TAB = '_processed'
 GEMINI_MODEL = 'gemini-2.5-flash'
@@ -68,13 +69,14 @@ def run_for_client(drive, sheets, api_key, folder_id, sheet_id):
                 data.get('store') or '',
                 link,
                 now,
+                normalize_category(data.get('category')),
             ])
             seen_rows.append([f['id'], now])
         except Exception as e:
             failures.append(f"{f['name']}: {e}")
 
     if new_rows:
-        append(sheets, sheet_id, f"'{main_tab}'!A:E", new_rows)
+        append(sheets, sheet_id, f"'{main_tab}'!A:F", new_rows)
         append(sheets, sheet_id, f"'{PROCESSED_TAB}'!A:B", seen_rows)
 
     return len(new_rows), failures
@@ -110,7 +112,15 @@ def extract(drive, f, api_key):
         'contents': [{
             'parts': [
                 {'inlineData': {'mimeType': f['mimeType'], 'data': base64.b64encode(blob).decode()}},
-                {'text': 'この領収書/レシートから以下を抽出してJSON出力。\n- date: 日付(YYYY-MM-DD)。「決済日」「Settlement date」「ご利用日」「お支払い日」など決済が成立した日を最優先。なければ発行日や発生日。注文番号や注文日付と混同しないこと。\n- amount: 税込合計金額(整数のみ、カンマや円記号は除く)\n- store: 店名・事業者名\n読み取れない項目はnull。'},
+                {'text': (
+                    'この領収書/レシートから以下を抽出してJSON出力。\n'
+                    '- date: 日付(YYYY-MM-DD)。「決済日」「Settlement date」「ご利用日」「お支払い日」など決済が成立した日を最優先。なければ発行日や発生日。注文番号や注文日付と混同しないこと。\n'
+                    '- amount: 税込合計金額(整数のみ、カンマや円記号は除く)\n'
+                    '- store: 店名・事業者名\n'
+                    '- category: 勘定科目 (下記から選ぶ)\n'
+                    '読み取れない項目はnull。\n\n'
+                    + category_prompt()
+                )},
             ],
         }],
         'generationConfig': {
@@ -121,6 +131,7 @@ def extract(drive, f, api_key):
                     'date': {'type': 'string'},
                     'amount': {'type': 'integer'},
                     'store': {'type': 'string'},
+                    'category': {'type': 'string', 'enum': CATEGORY_NAMES},
                 },
             },
         },
