@@ -14,7 +14,7 @@ export const onRequestPost: PagesFunction<Env> = async (ctx) => {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      username: '経費OCR',
+      username: 'バックオフィスOCR',
       content: '✅ テスト通知です — 管理画面の Discord 設定が正しく動作しています',
     }),
   });

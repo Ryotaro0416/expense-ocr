@@ -44,7 +44,7 @@ def main():
             print(f"[{c['name']}] FATAL: {e}")
             report_run('receipts', c['name'], 0, 0, fatal_error=str(e))
 
-    notify_discord('経費OCR', summary)
+    notify_discord('領収書OCR', summary)
 
 
 def run_for_client(drive, sheets, api_key, folder_id, sheet_id):

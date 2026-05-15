@@ -97,6 +97,6 @@ def notify_discord(title: str, summary):
                 lines.append(f"    · {x}")
     msg = '\n'.join(lines)
     try:
-        requests.post(url, json={'content': msg, 'username': '経費OCR'}, timeout=10)
+        requests.post(url, json={'content': msg, 'username': 'バックオフィスOCR'}, timeout=10)
     except Exception as e:
         print(f"Discord notify failed: {e}")

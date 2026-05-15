@@ -3,64 +3,43 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>経費OCR Console</title>
+<title>バックオフィスOCR Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   :root {
-    /* デジタル庁準拠カラー */
-    --c-bg: #f7f7f5;
-    --c-surface: #ffffff;
-    --c-surface-2: #fafaf8;
-    --c-border: #e6e4df;
-    --c-border-strong: #d4d2cc;
-    --c-text: #1a1a1a;
-    --c-text-muted: #6b6b6b;
-    --c-text-faint: #9a9a9a;
+    color-scheme: light only;
+    /* デジタル庁カラー */
+    --c-bg: #f2f3f5;          /* 薄いグレー(背景) */
+    --c-surface: #ffffff;      /* カード白 */
+    --c-surface-2: #f7f8fa;
+    --c-border: #d8dce0;
+    --c-border-strong: #c4c9cf;
+    --c-text: #1a1a1c;
+    --c-text-muted: #5c6066;
+    --c-text-faint: #8a8f96;
 
-    /* セマンティック (3:1以上 / テキスト4.5:1以上) */
-    --c-primary: #1c4abd;        /* Blue 700 — 主役/領収書 */
-    --c-primary-soft: #eaf0fd;
-    --c-secondary: #0891b2;       /* Cyan 600 — 副役/請求書 */
-    --c-secondary-soft: #e0f7fa;
-    --c-success: #1c8b34;         /* Green 700 */
-    --c-success-soft: #e9f7ec;
-    --c-warning: #b85c00;         /* Orange 700(濃) */
-    --c-warning-soft: #fff3e0;
-    --c-danger: #cc1c1c;          /* Red 700 */
-    --c-danger-soft: #fdecec;
-    --c-grid: #ececea;
+    /* セマンティックカラー */
+    --c-primary: #0017c1;       /* デジタル庁 Blue 800 */
+    --c-primary-700: #1c4abd;
+    --c-primary-soft: #e8edf9;
+    --c-secondary: #0066bf;     /* Light Blue 700 */
+    --c-secondary-soft: #e0eef8;
+    --c-success: #1c8b34;       /* Green 700 */
+    --c-success-soft: #e6f4e9;
+    --c-warning: #b85c00;       /* Orange 700 */
+    --c-warning-soft: #fdefe0;
+    --c-danger: #c8232c;        /* Red 700 */
+    --c-danger-soft: #fbe7e9;
+    --c-grid: #e6e9ed;
 
     --r-lg: 12px;
     --r-md: 8px;
     --r-sm: 6px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --c-bg: #0f0f10;
-      --c-surface: #1a1a1c;
-      --c-surface-2: #131315;
-      --c-border: #2a2a2d;
-      --c-border-strong: #3a3a3d;
-      --c-text: #ededed;
-      --c-text-muted: #a0a0a0;
-      --c-text-faint: #6b6b6b;
-      --c-primary: #6f9cf0;
-      --c-primary-soft: #1a2747;
-      --c-secondary: #2cb1cc;
-      --c-secondary-soft: #0c2a32;
-      --c-success: #5dc678;
-      --c-success-soft: #0f2a1f;
-      --c-warning: #f5a35c;
-      --c-warning-soft: #2a1f10;
-      --c-danger: #f87171;
-      --c-danger-soft: #2a1414;
-      --c-grid: #2a2a2d;
-    }
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
   }
   html, body { margin: 0; padding: 0; height: 100%; }
   body {
@@ -340,7 +319,7 @@
 <div class="lock" id="lock">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
-    <h1>経費OCR Console</h1>
+    <h1>バックオフィスOCR Console</h1>
     <p>管理者パスを入力してください</p>
     <form id="lock-form" autocomplete="off">
       <div class="form-field" style="margin-bottom: 16px;">
@@ -359,8 +338,8 @@
       <div class="brand">
         <div class="brand-mark">¥</div>
         <div>
-          <h1>経費OCR Console</h1>
-          <div class="brand-sub">毎日 23:00 JST 自動処理 · 単一運用者向けダッシュボード</div>
+          <h1>バックオフィスOCR Console</h1>
+          <div class="brand-sub">領収書・請求書 自動OCR · 毎日 23:00 JST 実行</div>
         </div>
       </div>
       <div class="header-actions">
