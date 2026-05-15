@@ -10,234 +10,334 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   :root {
-    --bg: #f7f7f5;
-    --surface: #ffffff;
-    --surface-2: #fafaf8;
-    --border: #e6e4df;
-    --border-strong: #d4d2cc;
-    --text: #1a1a1a;
-    --muted: #6b6b6b;
-    --faint: #9a9a9a;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --accent-soft: #eff4ff;
-    --warning-bg: #fffbeb;
-    --warning-border: #fcd34d;
-    --warning-text: #78350f;
-    --on-bg: #ecfdf5; --on-text: #065f46; --on-border: #6ee7b7;
-    --off-bg: #f3f4f6; --off-text: #6b7280; --off-border: #d1d5db;
-    --danger: #dc2626; --danger-soft: #fef2f2; --danger-border: #fecaca;
-    --radius: 12px;
-    --radius-sm: 8px;
+    /* デジタル庁準拠カラー */
+    --c-bg: #f7f7f5;
+    --c-surface: #ffffff;
+    --c-surface-2: #fafaf8;
+    --c-border: #e6e4df;
+    --c-border-strong: #d4d2cc;
+    --c-text: #1a1a1a;
+    --c-text-muted: #6b6b6b;
+    --c-text-faint: #9a9a9a;
+
+    /* セマンティック (3:1以上 / テキスト4.5:1以上) */
+    --c-primary: #1c4abd;        /* Blue 700 — 主役/領収書 */
+    --c-primary-soft: #eaf0fd;
+    --c-secondary: #0891b2;       /* Cyan 600 — 副役/請求書 */
+    --c-secondary-soft: #e0f7fa;
+    --c-success: #1c8b34;         /* Green 700 */
+    --c-success-soft: #e9f7ec;
+    --c-warning: #b85c00;         /* Orange 700(濃) */
+    --c-warning-soft: #fff3e0;
+    --c-danger: #cc1c1c;          /* Red 700 */
+    --c-danger-soft: #fdecec;
+    --c-grid: #ececea;
+
+    --r-lg: 12px;
+    --r-md: 8px;
+    --r-sm: 6px;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0f0f10; --surface: #1a1a1c; --surface-2: #131315; --border: #2a2a2d; --border-strong: #3a3a3d;
-      --text: #ededed; --muted: #a0a0a0; --faint: #6b6b6b;
-      --accent: #60a5fa; --accent-hover: #93c5fd; --accent-soft: #1e2a4a;
-      --warning-bg: #2a2110; --warning-border: #78350f; --warning-text: #fde68a;
-      --on-bg: #0f2a1f; --on-text: #86efac; --on-border: #14532d;
-      --off-bg: #262629; --off-text: #9ca3af; --off-border: #3a3a3d;
-      --danger: #f87171; --danger-soft: #2a1414; --danger-border: #5a1f1f;
+      --c-bg: #0f0f10;
+      --c-surface: #1a1a1c;
+      --c-surface-2: #131315;
+      --c-border: #2a2a2d;
+      --c-border-strong: #3a3a3d;
+      --c-text: #ededed;
+      --c-text-muted: #a0a0a0;
+      --c-text-faint: #6b6b6b;
+      --c-primary: #6f9cf0;
+      --c-primary-soft: #1a2747;
+      --c-secondary: #2cb1cc;
+      --c-secondary-soft: #0c2a32;
+      --c-success: #5dc678;
+      --c-success-soft: #0f2a1f;
+      --c-warning: #f5a35c;
+      --c-warning-soft: #2a1f10;
+      --c-danger: #f87171;
+      --c-danger-soft: #2a1414;
+      --c-grid: #2a2a2d;
     }
   }
   html, body { margin: 0; padding: 0; height: 100%; }
   body {
     font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.6;
+    background: var(--c-bg); color: var(--c-text); line-height: 1.6;
     -webkit-font-smoothing: antialiased; font-feature-settings: "palt";
   }
-  button { font-family: inherit; }
-  input, button, select { font-family: inherit; }
+  button, input, select { font-family: inherit; }
 
   /* ===== Lock screen ===== */
-  .lock-screen {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-  }
+  .lock { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .lock-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-    padding: 40px 32px; max-width: 380px; width: 100%; box-shadow: var(--shadow-md);
-    text-align: center;
+    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 16px;
+    padding: 40px 32px; max-width: 380px; width: 100%; box-shadow: var(--shadow-md); text-align: center;
   }
   .lock-icon {
     width: 48px; height: 48px; margin: 0 auto 16px;
-    background: var(--accent-soft); color: var(--accent);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
+    background: var(--c-primary-soft); color: var(--c-primary);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;
   }
   .lock-card h1 { font-size: 20px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
-  .lock-card p { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+  .lock-card p { color: var(--c-text-muted); font-size: 14px; margin: 0 0 24px; }
 
   /* ===== App ===== */
   .app { display: none; }
   .app.show { display: block; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px 80px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px 20px 80px; }
 
   /* Header */
-  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 10px; }
-  .brand-icon {
-    width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: #fff;
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 8px; background: var(--c-primary); color: #fff;
     display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;
   }
   .brand h1 { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .header-actions { display: flex; gap: 8px; }
+  .brand-sub { font-size: 11px; color: var(--c-text-muted); margin-top: 1px; }
+  .header-actions { display: flex; gap: 6px; align-items: center; }
+  .updated {
+    font-size: 11px; color: var(--c-text-faint);
+    padding: 0 8px;
+  }
 
-  /* SA banner */
+  /* SA banner — compact */
   .sa-banner {
-    background: var(--warning-bg); border: 1px solid var(--warning-border);
-    border-radius: var(--radius); padding: 12px 16px; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 12px;
+    background: var(--c-surface); border: 1px solid var(--c-border); border-left: 3px solid var(--c-warning);
+    border-radius: var(--r-md); padding: 8px 14px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px; font-size: 13px;
   }
-  .sa-banner-icon { font-size: 20px; flex-shrink: 0; }
-  .sa-banner-content { flex: 1; min-width: 0; }
-  .sa-banner-label { font-size: 11px; font-weight: 600; color: var(--warning-text); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .sa-banner-label { color: var(--c-text-muted); font-size: 12px; }
   .sa-banner-email {
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px;
-    color: var(--text); word-break: break-all;
+    flex: 1; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px;
+    color: var(--c-text); word-break: break-all;
   }
 
-  /* Stats / status */
-  .top-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+  /* ===== Top grid: KPI 3 + Run panel ===== */
+  .grid-top {
+    display: grid; grid-template-columns: 2.4fr 1fr; gap: 12px; margin-bottom: 12px;
   }
-  @media (max-width: 640px) { .top-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .grid-top { grid-template-columns: 1fr; } }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 560px) { .kpi-row { grid-template-columns: 1fr; } }
 
   .panel {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 16px 20px;
+    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg);
+    padding: 16px 18px;
   }
-  .panel-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .panel-title { font-size: 12px; font-weight: 600; color: var(--c-text-muted); margin: 0 0 4px; }
+  .panel-title-detail { font-size: 11px; font-weight: 400; color: var(--c-text-faint); margin-left: 6px; }
 
-  .stats-row { display: flex; gap: 24px; align-items: baseline; }
-  .stat-num { font-size: 28px; font-weight: 700; line-height: 1; }
-  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .stat-on { color: var(--on-text); }
-  .stat-off { color: var(--off-text); }
+  .kpi-value-row { display: flex; align-items: baseline; gap: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .kpi-unit { font-size: 13px; color: var(--c-text-muted); font-weight: 500; }
+  .kpi-delta { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .kpi-delta.up { background: var(--c-success-soft); color: var(--c-success); }
+  .kpi-delta.down { background: var(--c-danger-soft); color: var(--c-danger); }
+  .kpi-delta.flat { background: var(--c-surface-2); color: var(--c-text-muted); }
+  .kpi-sub { font-size: 12px; color: var(--c-text-faint); margin-top: 6px; }
 
-  .run-panel { display: flex; flex-direction: column; gap: 8px; }
-  .run-current {
-    display: flex; align-items: center; gap: 10px; font-size: 13px;
+  .kpi-value.bad { color: var(--c-danger); }
+  .kpi-value.ok { color: var(--c-success); }
+
+  /* Run panel */
+  .run-panel { display: flex; flex-direction: column; }
+  .run-panel .panel-title { margin-bottom: 8px; }
+  .run-status { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.success { background: var(--c-success); }
+  .dot.failure { background: var(--c-danger); }
+  .dot.running { background: var(--c-warning); animation: pulse 1.5s infinite; }
+  .dot.queued { background: var(--c-text-muted); animation: pulse 1.5s infinite; }
+  .dot.idle { background: var(--c-text-faint); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .run-time { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
+  .run-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+
+  /* ===== Trend chart ===== */
+  .chart-panel { margin-bottom: 12px; }
+  .chart-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .chart-legend { display: flex; gap: 14px; font-size: 12px; color: var(--c-text-muted); }
+  .legend-swatch { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-swatch::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--c-primary); }
+  .legend-swatch.secondary::before { background: var(--c-secondary); }
+  .chart-svg { width: 100%; height: 200px; display: block; }
+  .chart-foot { font-size: 11px; color: var(--c-text-faint); margin-top: 8px; }
+
+  /* ===== Alert section ===== */
+  .alert-panel {
+    margin-bottom: 12px; padding: 14px 16px;
+    border-radius: var(--r-lg);
+    background: var(--c-danger-soft); border: 1px solid var(--c-danger);
   }
-  .run-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .run-dot.success { background: #10b981; }
-  .run-dot.failure { background: #ef4444; }
-  .run-dot.in_progress { background: #f59e0b; animation: pulse 1.5s infinite; }
-  .run-dot.queued { background: #6b7280; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .run-meta { color: var(--muted); font-size: 12px; }
-  .run-actions { display: flex; gap: 6px; }
+  .alert-head { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--c-danger); margin-bottom: 8px; }
+  .alert-list { display: flex; flex-direction: column; gap: 4px; }
+  .alert-item { font-size: 13px; color: var(--c-text); display: flex; gap: 8px; }
+  .alert-item .alert-name { font-weight: 600; }
+  .alert-item .alert-detail { color: var(--c-text-muted); }
 
-  /* Section */
-  .section-head { display: flex; align-items: center; justify-content: space-between; margin: 8px 0 12px; gap: 12px; flex-wrap: wrap; }
-  .section-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  /* ===== Clients section ===== */
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between; margin: 8px 0 12px; gap: 12px; flex-wrap: wrap;
+  }
+  .section-title-row { display: flex; align-items: baseline; gap: 12px; }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--c-text); }
+  .section-count { font-size: 12px; color: var(--c-text-muted); }
   .section-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .search-box {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 7px 10px; font-size: 13px; width: 200px; color: var(--text);
+    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm);
+    padding: 7px 10px; font-size: 13px; width: 200px; color: var(--c-text);
   }
-  .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .search-box:focus, .filter-select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft); }
   .filter-select {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 7px 10px; font-size: 13px; color: var(--text);
+    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm);
+    padding: 7px 10px; font-size: 13px; color: var(--c-text);
   }
 
   /* Cards */
-  .card-list { display: grid; gap: 10px; }
+  .card-list { display: grid; gap: 8px; }
   .card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 16px 18px; transition: border-color 0.15s;
+    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg);
+    padding: 14px 16px; position: relative; transition: border-color 0.15s;
   }
-  .card:hover { border-color: var(--border-strong); }
-  .card-head { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
-  .card-id { font-size: 11px; color: var(--faint); font-family: ui-monospace, monospace; }
-  .card-name { font-size: 16px; font-weight: 600; margin-top: 2px; }
-  .card-contact { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .card-main { flex: 1; min-width: 160px; }
-  .card-resources { display: flex; gap: 20px; flex-wrap: wrap; }
-  .res-block { font-size: 12px; }
-  .res-label { font-size: 11px; color: var(--faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .res-links { display: flex; gap: 8px; align-items: center; }
-  .res-links a { color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; }
+  .card:hover { border-color: var(--c-border-strong); }
+  .card.has-fail { border-left: 3px solid var(--c-danger); }
+  .card.has-fatal { border-left: 3px solid var(--c-danger); background: var(--c-danger-soft); }
+  .card.inactive { opacity: 0.6; }
+
+  .card-grid {
+    display: grid; grid-template-columns: 1.4fr 1.6fr 1fr auto; gap: 16px; align-items: center;
+  }
+  @media (max-width: 800px) {
+    .card-grid { grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  .card-main { min-width: 0; }
+  .card-name-row { display: flex; align-items: center; gap: 8px; }
+  .card-id { font-size: 10px; color: var(--c-text-faint); font-family: ui-monospace, monospace; }
+  .card-name { font-size: 15px; font-weight: 600; }
+  .card-contact { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; }
+
+  .card-resources { display: flex; gap: 16px; min-width: 0; }
+  .res-block { font-size: 11px; min-width: 0; flex: 1; }
+  .res-label { font-size: 10px; color: var(--c-text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
+  .res-links { display: flex; gap: 6px; }
+  .res-links a { color: var(--c-primary); text-decoration: none; font-size: 11px; font-weight: 500; }
   .res-links a:hover { text-decoration: underline; }
-  .res-empty { color: var(--faint); font-style: italic; font-size: 12px; }
-  .res-stats { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .res-stats.has-fail { color: var(--danger); font-weight: 600; }
+  .res-empty { color: var(--c-text-faint); font-style: italic; font-size: 11px; }
+  .res-stat {
+    font-size: 11px; color: var(--c-text-muted); margin-top: 3px;
+  }
+  .res-stat.fail { color: var(--c-danger); font-weight: 600; }
 
-  .card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-  .badge.on { background: var(--on-bg); color: var(--on-text); border: 1px solid var(--on-border); }
-  .badge.off { background: var(--off-bg); color: var(--off-text); border: 1px solid var(--off-border); }
-  .card-date { font-size: 11px; color: var(--faint); }
+  .card-trend { min-width: 0; }
+  .card-trend-label { font-size: 10px; color: var(--c-text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .spark-svg { width: 100%; height: 26px; display: block; }
+  .card-trend-summary { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; }
 
-  .card-actions { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .card-meta-col { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1.6; }
+  .badge.on { background: var(--c-success-soft); color: var(--c-success); border: 1px solid var(--c-success); }
+  .badge.off { background: var(--c-surface-2); color: var(--c-text-muted); border: 1px solid var(--c-border-strong); }
+  .card-date { font-size: 10px; color: var(--c-text-faint); }
 
-  /* Inline edit form */
-  .edit-form { padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; }
-  .edit-form h3 { font-size: 14px; font-weight: 600; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  .card-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--c-border); }
+
+  /* Form */
+  .edit-form { padding: 16px; background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: var(--r-lg); margin-bottom: 12px; }
+  .edit-form h3 { font-size: 14px; font-weight: 600; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
   .form-row { display: grid; gap: 12px; }
   .form-row.two { grid-template-columns: 1fr 1fr; }
   @media (max-width: 640px) { .form-row.two { grid-template-columns: 1fr; } }
   .form-field { display: flex; flex-direction: column; }
-  .form-field label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-  .form-field label .req { color: var(--danger); }
+  .form-field label { font-size: 12px; font-weight: 600; color: var(--c-text-muted); margin-bottom: 4px; }
+  .form-field label .req { color: var(--c-danger); }
   .form-field input {
-    padding: 9px 11px; font-size: 13px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    padding: 9px 11px; font-size: 13px; border-radius: var(--r-sm);
+    border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text);
   }
-  .form-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .form-field input::placeholder { color: var(--faint); }
-  .pair-group { background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 12px; margin-top: 8px; }
+  .form-field input:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft); }
+  .form-field input::placeholder { color: var(--c-text-faint); }
+  .pair-group { background: var(--c-surface); border: 1px dashed var(--c-border); border-radius: var(--r-sm); padding: 12px; margin-top: 8px; }
   .pair-group-title { font-size: 12px; font-weight: 600; margin: 0 0 10px; display: flex; gap: 6px; align-items: center; }
   .form-actions { display: flex; gap: 8px; margin-top: 16px; }
 
   /* Buttons */
   .btn {
-    padding: 7px 14px; font-size: 13px; font-weight: 500; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: var(--r-sm);
+    border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text);
     cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+    text-decoration: none;
   }
-  .btn:hover:not(:disabled) { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .btn:hover:not(:disabled) { background: var(--c-primary-soft); border-color: var(--c-primary); color: var(--c-primary); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .btn.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
-  .btn.danger { color: var(--danger); border-color: var(--danger-border); }
-  .btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
+  .btn.primary { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+  .btn.primary:hover:not(:disabled) { filter: brightness(1.1); color: #fff; }
+  .btn.danger { color: var(--c-danger); border-color: var(--c-danger); }
+  .btn.danger:hover:not(:disabled) { background: var(--c-danger-soft); }
   .btn.ghost { border-color: transparent; background: transparent; }
-  .btn.ghost:hover:not(:disabled) { background: var(--surface-2); }
+  .btn.ghost:hover:not(:disabled) { background: var(--c-surface-2); }
   .btn.sm { padding: 5px 10px; font-size: 12px; }
 
-  /* Empty */
+  /* Empty / toast */
   .empty {
-    text-align: center; padding: 60px 20px; color: var(--muted);
-    background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+    text-align: center; padding: 48px 20px; color: var(--c-text-muted);
+    background: var(--c-surface); border: 1px dashed var(--c-border); border-radius: var(--r-lg);
   }
-  .empty-icon { font-size: 32px; margin-bottom: 8px; }
-  .empty h3 { margin: 0 0 4px; font-size: 15px; color: var(--text); }
-  .empty p { margin: 0; font-size: 13px; }
+  .empty-icon { font-size: 28px; margin-bottom: 8px; }
+  .empty h3 { margin: 0 0 4px; font-size: 14px; color: var(--c-text); }
+  .empty p { margin: 0; font-size: 12px; }
 
-  /* Toast */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 24px;
+    background: var(--c-text); color: var(--c-bg); padding: 10px 18px; border-radius: 24px;
     font-size: 13px; font-weight: 500; box-shadow: var(--shadow-md);
-    opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 1000;
-    pointer-events: none;
+    opacity: 0; transition: opacity 0.2s, transform 0.2s; z-index: 1000; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.err { background: var(--danger); color: #fff; }
+  .toast.err { background: var(--c-danger); color: #fff; }
 
-  /* Misc */
-  .copy-icon { cursor: pointer; color: var(--muted); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
-  .copy-icon:hover { background: var(--accent-soft); color: var(--accent); }
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 16px;
+    max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
+    padding: 24px; box-shadow: var(--shadow-md);
+  }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .modal-head h2 { font-size: 17px; font-weight: 700; margin: 0; }
+  .modal-close { background: none; border: none; font-size: 20px; color: var(--c-text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+  .modal-close:hover { background: var(--c-surface-2); }
+
+  .switch { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--c-border); }
+  .switch:first-of-type { border-top: none; }
+  .switch-label { font-size: 13px; }
+  .switch-label-main { font-weight: 600; }
+  .switch-label-sub { font-size: 11px; color: var(--c-text-muted); margin-top: 2px; }
+  .toggle {
+    position: relative; width: 36px; height: 20px; background: var(--c-border-strong);
+    border-radius: 20px; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+    background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .toggle.on { background: var(--c-primary); }
+  .toggle.on::after { transform: translateX(16px); }
 </style>
 </head>
 <body>
 
-<!-- ============== Lock Screen ============== -->
-<div class="lock-screen" id="lock">
+<!-- ============== Lock ============== -->
+<div class="lock" id="lock">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
     <h1>経費OCR Console</h1>
@@ -255,64 +355,99 @@
 <div class="app" id="app">
   <div class="container">
 
-    <!-- Header -->
     <header class="header">
       <div class="brand">
-        <div class="brand-icon">¥</div>
-        <h1>経費OCR Console</h1>
+        <div class="brand-mark">¥</div>
+        <div>
+          <h1>経費OCR Console</h1>
+          <div class="brand-sub">毎日 23:00 JST 自動処理 · 単一運用者向けダッシュボード</div>
+        </div>
       </div>
       <div class="header-actions">
+        <span class="updated" id="updated"></span>
         <button class="btn ghost sm" id="reload-all">↻ 更新</button>
+        <button class="btn ghost sm" id="open-settings">⚙ 設定</button>
         <button class="btn ghost sm" id="logout">ログアウト</button>
       </div>
     </header>
 
-    <!-- SA banner -->
     <div class="sa-banner">
-      <div class="sa-banner-icon">🔑</div>
-      <div class="sa-banner-content">
-        <div class="sa-banner-label">サービスアカウント(共有先)</div>
-        <div class="sa-banner-email" id="sa-email">読み込み中…</div>
-      </div>
+      <div class="sa-banner-label">SA共有先:</div>
+      <div class="sa-banner-email" id="sa-email">読み込み中…</div>
       <button class="btn sm" id="copy-sa">コピー</button>
     </div>
 
-    <!-- Top grid: stats + run status -->
-    <div class="top-grid">
-      <div class="panel">
-        <div class="panel-label">クライアント</div>
-        <div class="stats-row">
-          <div>
-            <div class="stat-num" id="stat-total">—</div>
-            <div class="stat-label">登録</div>
+    <!-- Top: KPI + Run -->
+    <div class="grid-top">
+      <div class="kpi-row">
+        <div class="panel">
+          <div class="panel-title">直近24時間の処理件数<span class="panel-title-detail">(枚)</span></div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-processed">—</span>
+            <span class="kpi-delta flat" id="kpi-processed-delta"></span>
           </div>
-          <div>
-            <div class="stat-num stat-on" id="stat-active">—</div>
-            <div class="stat-label">有効</div>
+          <div class="kpi-sub" id="kpi-processed-sub">前日比較</div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">直近24時間の失敗<span class="panel-title-detail">(件)</span></div>
+          <div class="kpi-value-row">
+            <span class="kpi-value ok" id="kpi-failed">—</span>
           </div>
-          <div>
-            <div class="stat-num stat-off" id="stat-inactive">—</div>
-            <div class="stat-label">停止</div>
+          <div class="kpi-sub" id="kpi-failed-sub">通常: 失敗なし</div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">アクティブなクライアント<span class="panel-title-detail">(社)</span></div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-clients">—</span>
           </div>
+          <div class="kpi-sub" id="kpi-clients-sub"></div>
         </div>
       </div>
 
       <div class="panel run-panel">
-        <div class="panel-label">直近の実行 (GitHub Actions)</div>
-        <div class="run-current" id="run-current"><span class="muted" style="color:var(--muted)">読み込み中…</span></div>
+        <div class="panel-title">直近の実行</div>
+        <div class="run-status" id="run-status"><span class="dot idle"></span>読み込み中…</div>
+        <div class="run-time" id="run-time"></div>
         <div class="run-actions">
           <button class="btn primary sm" id="dispatch">▶ 今すぐ実行</button>
-          <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener">GitHub で見る</a>
+          <a class="btn sm" id="gh-link" href="#" target="_blank" rel="noopener" style="display:none;">GitHub で見る</a>
         </div>
       </div>
     </div>
 
-    <!-- Clients section -->
+    <!-- Trend chart -->
+    <div class="panel chart-panel">
+      <div class="chart-head">
+        <div>
+          <div class="panel-title" style="margin:0;">過去7日間の処理件数<span class="panel-title-detail">日次・領収書/請求書別</span></div>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-swatch">領収書</span>
+          <span class="legend-swatch secondary">請求書</span>
+        </div>
+      </div>
+      <svg class="chart-svg" id="chart" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="過去7日間の処理件数推移"></svg>
+      <div class="chart-foot" id="chart-foot">データソース: 各クライアントの処理レポート / 期間: 過去7日</div>
+    </div>
+
+    <!-- Alert (failure-bearing clients) -->
+    <div id="alert-area"></div>
+
+    <!-- Clients -->
     <div class="section-head">
-      <div class="section-title">クライアント一覧</div>
+      <div class="section-title-row">
+        <h2 class="section-title">クライアント一覧</h2>
+        <span class="section-count" id="section-count"></span>
+      </div>
       <div class="section-tools">
         <input type="text" class="search-box" id="search" placeholder="🔍 名前/連絡先で検索">
         <select class="filter-select" id="filter">
+          <option value="all">並び: 注意必要順</option>
+          <option value="recent">並び: 直近の処理量</option>
+          <option value="name">並び: 名前順</option>
+          <option value="new">並び: 登録新着</option>
+        </select>
+        <select class="filter-select" id="status-filter">
           <option value="all">すべて</option>
           <option value="active">有効のみ</option>
           <option value="inactive">停止のみ</option>
@@ -328,7 +463,48 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ============== Form template ============== -->
+<!-- Settings modal -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>⚙ 設定</h2>
+      <button class="modal-close" id="settings-close" aria-label="閉じる">×</button>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:600;color:var(--c-text-muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">Discord 通知</h3>
+
+    <div class="form-field" style="margin-bottom: 12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--c-text-muted);margin-bottom:4px;display:block;">Webhook URL</label>
+      <input type="url" id="set-webhook"
+             placeholder="https://discord.com/api/webhooks/..."
+             style="width:100%;padding:9px 11px;font-size:12px;border:1px solid var(--c-border);border-radius:6px;background:var(--c-surface);color:var(--c-text);font-family:ui-monospace,monospace;">
+      <div style="font-size:11px;color:var(--c-text-faint);margin-top:4px;">Discord サーバーで「サーバー設定」→「連携サービス」→「ウェブフック」から発行</div>
+    </div>
+
+    <div class="switch">
+      <div class="switch-label">
+        <div class="switch-label-main">✅ 成功時に通知</div>
+        <div class="switch-label-sub">処理が成功(失敗なし、1件以上処理)した時に通知</div>
+      </div>
+      <div class="toggle" id="set-success" role="switch" aria-checked="false"></div>
+    </div>
+    <div class="switch">
+      <div class="switch-label">
+        <div class="switch-label-main">⚠️ 失敗時に通知</div>
+        <div class="switch-label-sub">失敗 / FATAL がある時に通知 (推奨)</div>
+      </div>
+      <div class="toggle" id="set-failure" role="switch" aria-checked="false"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;">
+      <button class="btn primary" id="settings-save">保存</button>
+      <button class="btn" id="settings-test">テスト送信</button>
+      <button class="btn ghost" id="settings-cancel" style="margin-left:auto;">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- Form template -->
 <template id="form-tpl">
   <div class="edit-form">
     <h3 data-title>新規追加</h3>
@@ -339,12 +515,11 @@
       </div>
       <div class="form-field">
         <label>連絡先メール</label>
-        <input data-field="contact" type="email" placeholder="taro@example.com">
+        <input data-field="contact" type="email" placeholder="任意">
       </div>
     </div>
-
     <div class="pair-group">
-      <h4 class="pair-group-title">🧾 領収書 <span style="color:var(--faint);font-weight:400;font-size:11px;">(任意・片方だけでも可)</span></h4>
+      <h4 class="pair-group-title">🧾 領収書 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">片方だけでも可</span></h4>
       <div class="form-row two">
         <div class="form-field">
           <label>フォルダURL</label>
@@ -356,9 +531,8 @@
         </div>
       </div>
     </div>
-
     <div class="pair-group">
-      <h4 class="pair-group-title">📄 請求書 <span style="color:var(--faint);font-weight:400;font-size:11px;">(任意・片方だけでも可)</span></h4>
+      <h4 class="pair-group-title">📄 請求書 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">片方だけでも可</span></h4>
       <div class="form-row two">
         <div class="form-field">
           <label>フォルダURL</label>
@@ -370,7 +544,6 @@
         </div>
       </div>
     </div>
-
     <div class="form-actions">
       <button class="btn primary" data-act="save">保存</button>
       <button class="btn" data-act="cancel">キャンセル</button>
@@ -379,28 +552,44 @@
 </template>
 
 <script>
+// ---------- Constants ----------
+const COLOR_RECEIPTS = getComputedStyle(document.documentElement).getPropertyValue('--c-primary').trim() || '#1c4abd';
+const COLOR_INVOICES = getComputedStyle(document.documentElement).getPropertyValue('--c-secondary').trim() || '#0891b2';
+const COLOR_GRID = getComputedStyle(document.documentElement).getPropertyValue('--c-grid').trim() || '#ececea';
+const COLOR_MUTED = getComputedStyle(document.documentElement).getPropertyValue('--c-text-faint').trim() || '#9a9a9a';
+
 // ---------- State ----------
 const state = {
   key: sessionStorage.getItem('admin_key') || '',
   clients: [],
-  runs: [],          // D1 run records (per client/kind)
-  ghRuns: [],        // GitHub Actions workflow runs
+  runs: [],
+  ghRuns: [],
   search: '',
-  filter: 'all',
+  sort: 'all',
+  statusFilter: 'all',
   editingId: null,
   adding: false,
 };
 
-const $ = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-function esc(s) { return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function parseUTC(s) { if (!s) return null; return new Date(s.replace(' ', 'T') + 'Z'); }
+function pad(n) { return String(n).padStart(2, '0'); }
+function fmtDate(d) { if (!d) return ''; return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function fmtAgo(d) {
+  if (!d) return '';
+  const diff = Date.now() - d.getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'たった今';
+  if (m < 60) return `${m}分前`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}時間前`;
+  return `${Math.floor(h / 24)}日前`;
+}
 
 function toast(msg, isErr) {
   const t = $('#toast');
-  t.textContent = msg;
-  t.classList.toggle('err', !!isErr);
-  t.classList.add('show');
+  t.textContent = msg; t.classList.toggle('err', !!isErr); t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2400);
 }
 
@@ -422,8 +611,7 @@ function unlock(ok) {
     $('#app').classList.add('show');
     boot();
   } else {
-    state.key = '';
-    sessionStorage.removeItem('admin_key');
+    state.key = ''; sessionStorage.removeItem('admin_key');
     $('#lock').style.display = 'flex';
     $('#app').classList.remove('show');
   }
@@ -432,175 +620,297 @@ function unlock(ok) {
 $('#lock-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   state.key = $('#lock-key').value;
-  try {
-    await api('/api/admin/clients');
-    unlock(true);
-  } catch {
-    toast('ADMIN_KEY が違います', true);
-  }
+  try { await api('/api/admin/clients'); unlock(true); }
+  catch { toast('ADMIN_KEY が違います', true); }
 });
-
 $('#logout').addEventListener('click', () => unlock(false));
 
-// ---------- SA email ----------
+// ---------- SA ----------
 async function loadSA() {
-  try {
-    const d = await fetch('/api/config').then(r => r.json());
-    $('#sa-email').textContent = d.sa_email || '(未設定)';
-  } catch { $('#sa-email').textContent = '(取得失敗)'; }
+  try { const d = await fetch('/api/config').then(r => r.json()); $('#sa-email').textContent = d.sa_email || '(未設定)'; }
+  catch { $('#sa-email').textContent = '(取得失敗)'; }
 }
 $('#copy-sa').addEventListener('click', async () => {
   await navigator.clipboard.writeText($('#sa-email').textContent);
   toast('SAメールをコピーしました');
 });
 
-// ---------- Stats ----------
-function renderStats() {
-  $('#stat-total').textContent = state.clients.length;
-  const on = state.clients.filter(c => c.active).length;
-  $('#stat-active').textContent = on;
-  $('#stat-inactive').textContent = state.clients.length - on;
+// ---------- Aggregations ----------
+function last7Days() {
+  const days = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    days.push(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`);
+  }
+  return days;
 }
 
-// ---------- GitHub run status ----------
-function fmtDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-function fmtAgo(iso) {
-  if (!iso) return '';
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return 'たった今';
-  if (m < 60) return `${m}分前`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}時間前`;
-  return `${Math.floor(h / 24)}日前`;
+function trendByDay(runs, days) {
+  const map = Object.fromEntries(days.map(d => [d, { receipts: 0, invoices: 0, failed: 0, fatal: 0 }]));
+  for (const r of runs) {
+    const d = parseUTC(r.started_at);
+    if (!d) continue;
+    const key = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    if (!map[key]) continue;
+    if (r.kind === 'receipts') map[key].receipts += r.processed || 0;
+    if (r.kind === 'invoices') map[key].invoices += r.processed || 0;
+    map[key].failed += r.failed || 0;
+    if (r.fatal_error) map[key].fatal += 1;
+  }
+  return days.map(d => ({ date: d, ...map[d] }));
 }
 
+function kpi24h(runs) {
+  const now = Date.now();
+  const inWindow = (r, h1, h2) => {
+    const t = parseUTC(r.started_at); if (!t) return false;
+    const diffH = (now - t.getTime()) / 3600000;
+    return diffH >= h1 && diffH < h2;
+  };
+  const cur = runs.filter(r => inWindow(r, 0, 24));
+  const prev = runs.filter(r => inWindow(r, 24, 48));
+  const sumP = (rs) => rs.reduce((a, r) => a + (r.processed || 0), 0);
+  const sumF = (rs) => rs.reduce((a, r) => a + (r.failed || 0), 0);
+  const fatal = (rs) => rs.filter(r => r.fatal_error).length;
+  return {
+    processed: sumP(cur), prevProcessed: sumP(prev),
+    failed: sumF(cur), fatal: fatal(cur),
+    hasAnyRun: cur.length > 0,
+  };
+}
+
+function latestRunPerClient(runs, clientName) {
+  const result = { receipts: null, invoices: null };
+  for (const r of runs) {
+    if (r.client_name !== clientName) continue;
+    if (!result[r.kind] || (parseUTC(r.started_at) > parseUTC(result[r.kind].started_at))) {
+      result[r.kind] = r;
+    }
+  }
+  return result;
+}
+
+function clientWeeklyTotal(runs, days, clientName) {
+  const totals = days.map(_ => 0);
+  for (const r of runs) {
+    if (r.client_name !== clientName) continue;
+    const d = parseUTC(r.started_at); if (!d) continue;
+    const key = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const idx = days.indexOf(key);
+    if (idx < 0) continue;
+    totals[idx] += r.processed || 0;
+  }
+  return totals;
+}
+
+// ---------- Rendering: KPI ----------
+function renderKPIs() {
+  const k = kpi24h(state.runs);
+  $('#kpi-processed').textContent = k.hasAnyRun ? k.processed : '—';
+  const delta = k.processed - k.prevProcessed;
+  const dEl = $('#kpi-processed-delta');
+  if (!k.hasAnyRun) { dEl.textContent = ''; dEl.className = 'kpi-delta flat'; }
+  else if (delta > 0) { dEl.textContent = `▲ +${delta}`; dEl.className = 'kpi-delta up'; }
+  else if (delta < 0) { dEl.textContent = `▼ ${delta}`; dEl.className = 'kpi-delta down'; }
+  else { dEl.textContent = '± 0'; dEl.className = 'kpi-delta flat'; }
+  $('#kpi-processed-sub').textContent = k.hasAnyRun ? `前24h: ${k.prevProcessed} 枚` : 'データなし';
+
+  const failEl = $('#kpi-failed');
+  failEl.textContent = k.hasAnyRun ? (k.failed + k.fatal) : '—';
+  failEl.classList.toggle('bad', (k.failed + k.fatal) > 0);
+  failEl.classList.toggle('ok', k.hasAnyRun && (k.failed + k.fatal) === 0);
+  $('#kpi-failed-sub').textContent =
+    !k.hasAnyRun ? 'データなし' :
+    (k.fatal ? `FATAL ${k.fatal}件 / 個別失敗 ${k.failed}件` :
+     k.failed ? `個別失敗 ${k.failed}件` : '失敗なし');
+
+  const activeCount = state.clients.filter(c => c.active).length;
+  $('#kpi-clients').textContent = activeCount;
+  $('#kpi-clients-sub').textContent = `全 ${state.clients.length} 社中 (停止 ${state.clients.length - activeCount})`;
+}
+
+// ---------- Rendering: Chart ----------
+function niceCeil(n) {
+  if (n <= 5) return 5;
+  if (n <= 10) return 10;
+  const pow = Math.pow(10, Math.floor(Math.log10(n)));
+  return Math.ceil(n / pow) * pow;
+}
+
+function renderChart() {
+  const days = last7Days();
+  const data = trendByDay(state.runs, days);
+  const svg = $('#chart');
+  const W = 700, H = 200;
+  const pad = { t: 16, r: 12, b: 32, l: 36 };
+  const innerW = W - pad.l - pad.r;
+  const innerH = H - pad.t - pad.b;
+  const max = Math.max(1, ...data.map(d => d.receipts + d.invoices));
+  const niceMax = niceCeil(max);
+  const slot = innerW / data.length;
+  const barW = slot * 0.55;
+
+  let s = '';
+  // Y gridlines + labels
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + innerH - (i / 4) * innerH;
+    const v = Math.round((i / 4) * niceMax);
+    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y}" y2="${y}" stroke="${COLOR_GRID}" stroke-width="1"/>`;
+    s += `<text x="${pad.l - 6}" y="${y + 3}" text-anchor="end" font-size="10" fill="${COLOR_MUTED}">${v}</text>`;
+  }
+  // Bars
+  data.forEach((d, i) => {
+    const x = pad.l + slot * i + (slot - barW) / 2;
+    const y0 = pad.t + innerH;
+    const recH = (d.receipts / niceMax) * innerH;
+    const invH = (d.invoices / niceMax) * innerH;
+    if (d.receipts > 0) {
+      s += `<rect x="${x}" y="${y0 - recH}" width="${barW}" height="${recH}" fill="${COLOR_RECEIPTS}" rx="2"><title>${d.date.slice(5)} 領収書 ${d.receipts}件</title></rect>`;
+    }
+    if (d.invoices > 0) {
+      s += `<rect x="${x}" y="${y0 - recH - invH}" width="${barW}" height="${invH}" fill="${COLOR_INVOICES}" rx="2"><title>${d.date.slice(5)} 請求書 ${d.invoices}件</title></rect>`;
+    }
+    // x label (M/D)
+    const lab = d.date.slice(5).replace('-', '/');
+    s += `<text x="${x + barW / 2}" y="${H - pad.b + 14}" text-anchor="middle" font-size="10" fill="${COLOR_MUTED}">${lab}</text>`;
+  });
+  svg.innerHTML = s;
+
+  // freshness note
+  const latestRun = state.runs[0];
+  if (latestRun) {
+    $('#chart-foot').textContent = `データソース: 各クライアントの処理レポート · 最終更新: ${fmtAgo(parseUTC(latestRun.started_at))}`;
+  }
+}
+
+// Sparkline (per-client)
+function sparkSVG(values) {
+  if (!values.length) return '';
+  const W = 100, H = 26;
+  const max = Math.max(1, ...values);
+  const slot = W / values.length;
+  const barW = slot * 0.65;
+  let s = `<svg class="spark-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`;
+  values.forEach((v, i) => {
+    const x = i * slot + (slot - barW) / 2;
+    if (v > 0) {
+      const h = Math.max(2, (v / max) * (H - 2));
+      s += `<rect x="${x}" y="${H - h}" width="${barW}" height="${h}" fill="${COLOR_RECEIPTS}" rx="1"><title>${v}件</title></rect>`;
+    } else {
+      s += `<rect x="${x}" y="${H - 1}" width="${barW}" height="1" fill="${COLOR_GRID}"/>`;
+    }
+  });
+  s += '</svg>';
+  return s;
+}
+
+// ---------- Run panel ----------
 function renderRun() {
-  const el = $('#run-current');
+  const dotEl = $('#run-status');
+  const timeEl = $('#run-time');
   const ghLink = $('#gh-link');
   if (!state.ghRuns.length) {
-    el.innerHTML = '<span style="color:var(--muted)">実行履歴なし</span>';
+    dotEl.innerHTML = '<span class="dot idle"></span>実行履歴なし';
+    timeEl.textContent = '';
     ghLink.style.display = 'none';
     return;
   }
   const run = state.ghRuns[0];
-  ghLink.href = run.html_url;
-  ghLink.style.display = '';
-
-  const dotClass = run.status === 'completed' ? (run.conclusion === 'success' ? 'success' : 'failure') : run.status;
-  const label = run.status === 'completed' ?
-    (run.conclusion === 'success' ? '成功' : (run.conclusion || '失敗'))
-    : (run.status === 'in_progress' ? '実行中' : (run.status === 'queued' ? '待機中' : run.status));
-
-  // Aggregate processed/failed from D1 runs since this gh run started
-  const since = new Date(run.created_at).getTime();
-  const matched = state.runs.filter(r => new Date(r.started_at + 'Z').getTime() >= since - 60000);
-  const totalProcessed = matched.reduce((a, r) => a + (r.processed || 0), 0);
-  const totalFailed = matched.reduce((a, r) => a + (r.failed || 0), 0);
-  const hasFatal = matched.some(r => r.fatal_error);
-
-  let statsTxt = '';
-  if (matched.length) {
-    statsTxt = ` · ${totalProcessed}件処理`;
-    if (totalFailed) statsTxt += `, ${totalFailed}件失敗`;
-    if (hasFatal) statsTxt += `, FATALあり`;
-  }
-
-  el.innerHTML = `
-    <span class="run-dot ${dotClass}"></span>
-    <strong>${label}</strong>
-    <span class="run-meta">${fmtDate(run.created_at)} (${fmtAgo(run.created_at)})${statsTxt}</span>`;
-}
-
-async function loadGhRuns() {
-  try {
-    const d = await api('/api/admin/dispatch');
-    state.ghRuns = d.runs || [];
-  } catch (e) { state.ghRuns = []; }
-}
-
-async function loadRuns() {
-  try {
-    const d = await api('/api/admin/runs?limit=100');
-    state.runs = d.runs || [];
-  } catch (e) { state.runs = []; }
+  const dotCls = run.status === 'completed' ? (run.conclusion === 'success' ? 'success' : 'failure')
+               : (run.status === 'in_progress' ? 'running' : run.status === 'queued' ? 'queued' : 'idle');
+  const label = run.status === 'completed' ? (run.conclusion === 'success' ? '成功' : (run.conclusion || '失敗'))
+              : (run.status === 'in_progress' ? '実行中' : run.status === 'queued' ? '待機中' : run.status);
+  dotEl.innerHTML = `<span class="dot ${dotCls}"></span>${label}`;
+  const d = new Date(run.created_at);
+  timeEl.textContent = `${fmtDate(d)} (${fmtAgo(d)})`;
+  ghLink.href = run.html_url; ghLink.style.display = '';
 }
 
 $('#dispatch').addEventListener('click', async () => {
-  const btn = $('#dispatch');
-  btn.disabled = true;
-  btn.textContent = '起動中…';
+  const btn = $('#dispatch'); btn.disabled = true; btn.textContent = '起動中…';
   try {
     await api('/api/admin/dispatch', { method: 'POST' });
     toast('▶ ワークフローを起動しました');
-    setTimeout(refreshRuns, 2000);
-  } catch (e) {
-    toast('起動失敗: ' + e.message, true);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '▶ 今すぐ実行';
-  }
+    setTimeout(refreshAll, 2500);
+  } catch (e) { toast('起動失敗: ' + e.message, true); }
+  finally { btn.disabled = false; btn.textContent = '▶ 今すぐ実行'; }
 });
 
-async function refreshRuns() {
-  await Promise.all([loadRuns(), loadGhRuns()]);
-  renderRun();
-  renderList();
-}
-
-// ---------- Clients ----------
-async function loadClients() {
-  const d = await api('/api/admin/clients');
-  state.clients = d.clients || [];
-}
-
-function clientStats(c) {
-  // Latest run for receipts/invoices for this client
-  const latest = (kind) => state.runs.find(r => r.client_name === c.name && r.kind === kind);
-  return { receipts: latest('receipts'), invoices: latest('invoices') };
-}
-
-function resBlock(folder, sheet, run, icon, label) {
-  if (!folder && !sheet) return '';
-  const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank" rel="noopener">📁 Drive</a>` : '';
-  const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank" rel="noopener">📊 Sheet</a>` : '';
-  let stats = '';
-  if (run) {
-    const hasFail = run.failed > 0 || run.fatal_error;
-    stats = `<div class="res-stats${hasFail ? ' has-fail' : ''}">${run.fatal_error ? '⚠️ FATAL' : `${run.processed}件処理${run.failed ? `, ${run.failed}件失敗` : ''}`} · ${fmtAgo(run.started_at + 'Z')}</div>`;
+// ---------- Alert section ----------
+function renderAlert() {
+  const days = last7Days();
+  const now = Date.now();
+  // failures in last 36h
+  const recentFails = state.runs.filter(r => {
+    const t = parseUTC(r.started_at); if (!t) return false;
+    if ((now - t.getTime()) / 3600000 > 36) return false;
+    return r.failed > 0 || r.fatal_error;
+  });
+  const grouped = {};
+  for (const r of recentFails) {
+    const k = r.client_name;
+    if (!grouped[k]) grouped[k] = { name: k, fails: 0, fatal: false, kinds: new Set() };
+    grouped[k].fails += r.failed || 0;
+    if (r.fatal_error) grouped[k].fatal = true;
+    grouped[k].kinds.add(r.kind);
   }
-  return `
-    <div class="res-block">
-      <div class="res-label">${icon} ${label}</div>
-      <div class="res-links">${f}${s}</div>
-      ${stats}
+  const items = Object.values(grouped);
+  const el = $('#alert-area');
+  if (!items.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="alert-panel">
+      <div class="alert-head">⚠️ 直近で問題が発生したクライアント (${items.length}社)</div>
+      <div class="alert-list">
+        ${items.map(i => `
+          <div class="alert-item">
+            <span class="alert-name">${esc(i.name)}</span>
+            <span class="alert-detail">${i.fatal ? 'FATAL · ' : ''}${i.fails ? `失敗 ${i.fails}件 · ` : ''}対象: ${[...i.kinds].map(k => k === 'receipts' ? '領収書' : '請求書').join(', ')}</span>
+          </div>`).join('')}
+      </div>
     </div>`;
+}
+
+// ---------- Client list ----------
+function sortClients(list) {
+  const days = last7Days();
+  const computeWeekly = c => clientWeeklyTotal(state.runs, days, c.name).reduce((a,b)=>a+b, 0);
+
+  if (state.sort === 'name') return [...list].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'));
+  if (state.sort === 'new') return [...list].sort((a, b) => b.id - a.id);
+  if (state.sort === 'recent') return [...list].sort((a, b) => computeWeekly(b) - computeWeekly(a));
+
+  // default: 注意必要順
+  return [...list].sort((a, b) => {
+    const ar = latestRunPerClient(state.runs, a.name);
+    const br = latestRunPerClient(state.runs, b.name);
+    const ascore = (ar.receipts?.fatal_error || ar.invoices?.fatal_error) ? 100 :
+                   ((ar.receipts?.failed || 0) + (ar.invoices?.failed || 0)) > 0 ? 50 :
+                   computeWeekly(a);
+    const bscore = (br.receipts?.fatal_error || br.invoices?.fatal_error) ? 100 :
+                   ((br.receipts?.failed || 0) + (br.invoices?.failed || 0)) > 0 ? 50 :
+                   computeWeekly(b);
+    if (b.active !== a.active) return (b.active ? 1 : 0) - (a.active ? 1 : 0);
+    return bscore - ascore;
+  });
 }
 
 function renderList() {
   const list = $('#list');
-  const filtered = state.clients.filter(c => {
-    if (state.filter === 'active' && !c.active) return false;
-    if (state.filter === 'inactive' && c.active) return false;
+  let filtered = state.clients.filter(c => {
+    if (state.statusFilter === 'active' && !c.active) return false;
+    if (state.statusFilter === 'inactive' && c.active) return false;
     if (state.search) {
       const q = state.search.toLowerCase();
       if (!(c.name || '').toLowerCase().includes(q) && !(c.contact || '').toLowerCase().includes(q)) return false;
     }
     return true;
   });
+  filtered = sortClients(filtered);
+  $('#section-count').textContent = `${filtered.length} 件表示中 / 全 ${state.clients.length} 件`;
 
   if (!state.clients.length) {
-    list.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">📋</div>
-        <h3>クライアントがまだ登録されていません</h3>
-        <p>「+ 新規追加」から1件目を登録</p>
-      </div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><h3>クライアントがまだ登録されていません</h3><p>「+ 新規追加」から1件目を登録</p></div>`;
     return;
   }
   if (!filtered.length) {
@@ -608,8 +918,10 @@ function renderList() {
     return;
   }
 
+  const days = last7Days();
   const cl = document.createElement('div');
   cl.className = 'card-list';
+
   for (const c of filtered) {
     if (state.editingId === c.id) {
       const formEl = buildForm({
@@ -617,10 +929,7 @@ function renderList() {
         values: c,
         onSave: async (data) => {
           await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id: c.id, ...data, active: c.active }) });
-          state.editingId = null;
-          await loadClients();
-          renderStats(); renderList();
-          toast('保存しました');
+          state.editingId = null; await loadClients(); renderAll(); toast('保存しました');
         },
         onCancel: () => { state.editingId = null; renderList(); },
       });
@@ -628,21 +937,54 @@ function renderList() {
       continue;
     }
 
-    const st = clientStats(c);
+    const latest = latestRunPerClient(state.runs, c.name);
+    const hasFail = (latest.receipts?.failed || 0) + (latest.invoices?.failed || 0) > 0;
+    const hasFatal = latest.receipts?.fatal_error || latest.invoices?.fatal_error;
+    const weekly = clientWeeklyTotal(state.runs, days, c.name);
+    const weeklyTotal = weekly.reduce((a, b) => a + b, 0);
+
+    const resBlock = (folder, sheet, run, icon, label) => {
+      if (!folder && !sheet) {
+        return `<div class="res-block"><div class="res-label">${icon} ${label}</div><div class="res-empty">未登録</div></div>`;
+      }
+      const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank" rel="noopener">📁</a>` : '';
+      const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank" rel="noopener">📊</a>` : '';
+      let stat = '';
+      if (run) {
+        const failCls = (run.failed > 0 || run.fatal_error) ? ' fail' : '';
+        const t = parseUTC(run.started_at);
+        if (run.fatal_error) {
+          stat = `<div class="res-stat fail">⚠️ FATAL · ${fmtAgo(t)}</div>`;
+        } else {
+          stat = `<div class="res-stat${failCls}">${run.processed} 件処理${run.failed ? ` · ${run.failed} 件失敗` : ''} · ${fmtAgo(t)}</div>`;
+        }
+      } else {
+        stat = `<div class="res-stat">処理履歴なし</div>`;
+      }
+      return `<div class="res-block"><div class="res-label">${icon} ${label}</div><div class="res-links">${f}${s}</div>${stat}</div>`;
+    };
+
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className = `card${hasFatal ? ' has-fatal' : hasFail ? ' has-fail' : ''}${!c.active ? ' inactive' : ''}`;
     card.innerHTML = `
-      <div class="card-head">
+      <div class="card-grid">
         <div class="card-main">
           <div class="card-id">#${c.id}</div>
-          <div class="card-name">${esc(c.name)}</div>
+          <div class="card-name-row">
+            <span class="card-name">${esc(c.name)}</span>
+          </div>
           ${c.contact ? `<div class="card-contact">${esc(c.contact)}</div>` : ''}
         </div>
         <div class="card-resources">
-          ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, st.receipts, '🧾', '領収書') || '<div class="res-block"><div class="res-label">🧾 領収書</div><div class="res-empty">未登録</div></div>'}
-          ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, st.invoices, '📄', '請求書') || '<div class="res-block"><div class="res-label">📄 請求書</div><div class="res-empty">未登録</div></div>'}
+          ${resBlock(c.receipts_folder_id, c.receipts_sheet_id, latest.receipts, '🧾', '領収書')}
+          ${resBlock(c.invoices_folder_id, c.invoices_sheet_id, latest.invoices, '📄', '請求書')}
         </div>
-        <div class="card-meta">
+        <div class="card-trend">
+          <div class="card-trend-label">過去7日</div>
+          ${sparkSVG(weekly)}
+          <div class="card-trend-summary">${weeklyTotal} 件</div>
+        </div>
+        <div class="card-meta-col">
           <span class="badge ${c.active ? 'on' : 'off'}">${c.active ? '有効' : '停止'}</span>
           <span class="card-date">${(c.created_at || '').slice(0, 10)}</span>
         </div>
@@ -658,7 +1000,7 @@ function renderList() {
   list.appendChild(cl);
 }
 
-// ---------- Form (add + edit) ----------
+// ---------- Form ----------
 function buildForm({ title, values = {}, onSave, onCancel }) {
   const tpl = $('#form-tpl').content.cloneNode(true);
   const root = tpl.querySelector('.edit-form');
@@ -672,16 +1014,11 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
   setVal('invoices_sheet_url', values.invoices_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.invoices_sheet_id}` : '');
 
   root.querySelector('[data-act="save"]').addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
-    btn.disabled = true;
+    const btn = e.currentTarget; btn.disabled = true;
     const data = {};
     root.querySelectorAll('[data-field]').forEach(el => { data[el.dataset.field] = el.value; });
-    try {
-      await onSave(data);
-    } catch (err) {
-      toast(err.message || '保存失敗', true);
-      btn.disabled = false;
-    }
+    try { await onSave(data); }
+    catch (err) { toast(err.message || '保存失敗', true); btn.disabled = false; }
   });
   root.querySelector('[data-act="cancel"]').addEventListener('click', onCancel);
   return root;
@@ -689,85 +1026,124 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
 
 $('#add-toggle').addEventListener('click', () => {
   if (state.adding) {
-    state.adding = false;
-    $('#add-area').innerHTML = '';
-    $('#add-toggle').textContent = '+ 新規追加';
-    return;
+    state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').textContent = '+ 新規追加'; return;
   }
-  state.adding = true;
-  $('#add-toggle').textContent = '✕ 閉じる';
+  state.adding = true; $('#add-toggle').textContent = '✕ 閉じる';
   const formEl = buildForm({
     title: '➕ 新規クライアント追加',
     onSave: async (data) => {
       await api('/api/admin/clients', { method: 'POST', body: JSON.stringify(data) });
-      state.adding = false;
-      $('#add-area').innerHTML = '';
-      $('#add-toggle').textContent = '+ 新規追加';
-      await loadClients();
-      renderStats(); renderList();
-      toast('追加しました');
+      state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').textContent = '+ 新規追加';
+      await loadClients(); renderAll(); toast('追加しました');
     },
-    onCancel: () => {
-      state.adding = false;
-      $('#add-area').innerHTML = '';
-      $('#add-toggle').textContent = '+ 新規追加';
-    },
+    onCancel: () => { state.adding = false; $('#add-area').innerHTML = ''; $('#add-toggle').textContent = '+ 新規追加'; },
   });
-  $('#add-area').innerHTML = '';
-  $('#add-area').appendChild(formEl);
+  $('#add-area').innerHTML = ''; $('#add-area').appendChild(formEl);
 });
 
-// ---------- Card action handlers ----------
 $('#list').addEventListener('click', async (e) => {
   const btn = e.target.closest('button[data-act]');
   if (!btn) return;
   const id = Number(btn.dataset.id);
   const act = btn.dataset.act;
-  if (act === 'edit') {
-    state.editingId = id;
-    renderList();
-  } else if (act === 'toggle') {
+  if (act === 'edit') { state.editingId = id; renderList(); }
+  else if (act === 'toggle') {
     const active = btn.dataset.active === '1' ? 0 : 1;
     await api('/api/admin/clients', { method: 'PATCH', body: JSON.stringify({ id, active }) });
-    await loadClients();
-    renderStats(); renderList();
+    await loadClients(); renderAll();
     toast(active ? '再開しました' : '停止しました');
   } else if (act === 'delete') {
     const c = state.clients.find(x => x.id === id);
     if (!confirm(`「${c.name}」を削除しますか?\n復元はできません。`)) return;
     await api('/api/admin/clients', { method: 'DELETE', body: JSON.stringify({ id }) });
-    await loadClients();
-    renderStats(); renderList();
-    toast('削除しました');
+    await loadClients(); renderAll(); toast('削除しました');
   }
 });
 
-// ---------- Search / filter ----------
-$('#search').addEventListener('input', (e) => { state.search = e.target.value; renderList(); });
-$('#filter').addEventListener('change', (e) => { state.filter = e.target.value; renderList(); });
+$('#search').addEventListener('input', e => { state.search = e.target.value; renderList(); });
+$('#filter').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
+$('#status-filter').addEventListener('change', e => { state.statusFilter = e.target.value; renderList(); });
 
-// ---------- Reload ----------
-$('#reload-all').addEventListener('click', async () => {
-  await Promise.all([loadClients(), loadRuns(), loadGhRuns()]);
-  renderStats(); renderRun(); renderList();
-  toast('更新しました');
-});
+// ---------- Loaders ----------
+async function loadClients() { const d = await api('/api/admin/clients'); state.clients = d.clients || []; }
+async function loadRuns()    { try { const d = await api('/api/admin/runs?limit=200'); state.runs = d.runs || []; } catch { state.runs = []; } }
+async function loadGhRuns()  { try { const d = await api('/api/admin/dispatch'); state.ghRuns = d.runs || []; } catch { state.ghRuns = []; } }
 
-// ---------- Boot ----------
-async function boot() {
-  loadSA();
-  await Promise.all([loadClients(), loadRuns(), loadGhRuns()]);
-  renderStats(); renderRun(); renderList();
+function renderAll() {
+  renderKPIs(); renderChart(); renderRun(); renderAlert(); renderList();
+  $('#updated').textContent = `最終更新: ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;
 }
 
-// Auto-login if cached
+async function refreshAll() {
+  await Promise.all([loadClients(), loadRuns(), loadGhRuns()]);
+  renderAll();
+}
+
+$('#reload-all').addEventListener('click', async () => { await refreshAll(); toast('更新しました'); });
+
+async function boot() {
+  loadSA();
+  await refreshAll();
+}
+
+// ---------- Settings modal ----------
+const settingsModal = $('#settings-modal');
+function setToggle(el, on) {
+  el.classList.toggle('on', !!on);
+  el.setAttribute('aria-checked', !!on);
+}
+function getToggle(el) { return el.classList.contains('on'); }
+
+async function openSettings() {
+  try {
+    const d = await api('/api/admin/settings');
+    $('#set-webhook').value = d.settings.discord_webhook_url || '';
+    setToggle($('#set-success'), d.settings.notify_on_success === '1');
+    setToggle($('#set-failure'), d.settings.notify_on_failure === '1');
+    settingsModal.classList.add('show');
+  } catch (e) { toast('設定読み込み失敗: ' + e.message, true); }
+}
+function closeSettings() { settingsModal.classList.remove('show'); }
+
+$('#open-settings').addEventListener('click', openSettings);
+$('#settings-close').addEventListener('click', closeSettings);
+$('#settings-cancel').addEventListener('click', closeSettings);
+settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettings(); });
+
+$('#set-success').addEventListener('click', () => setToggle($('#set-success'), !getToggle($('#set-success'))));
+$('#set-failure').addEventListener('click', () => setToggle($('#set-failure'), !getToggle($('#set-failure'))));
+
+$('#settings-save').addEventListener('click', async () => {
+  const btn = $('#settings-save'); btn.disabled = true;
+  try {
+    await api('/api/admin/settings', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        discord_webhook_url: $('#set-webhook').value.trim(),
+        notify_on_success: getToggle($('#set-success')) ? '1' : '0',
+        notify_on_failure: getToggle($('#set-failure')) ? '1' : '0',
+      }),
+    });
+    toast('保存しました');
+    closeSettings();
+  } catch (e) { toast('保存失敗: ' + e.message, true); }
+  finally { btn.disabled = false; }
+});
+
+$('#settings-test').addEventListener('click', async () => {
+  const btn = $('#settings-test'); btn.disabled = true; const orig = btn.textContent; btn.textContent = '送信中…';
+  try {
+    await api('/api/admin/discord_test', {
+      method: 'POST',
+      body: JSON.stringify({ webhook_url: $('#set-webhook').value.trim() }),
+    });
+    toast('テスト通知を送信しました');
+  } catch (e) { toast('テスト失敗: ' + e.message, true); }
+  finally { btn.disabled = false; btn.textContent = orig; }
+});
+
 if (state.key) {
-  (async () => {
-    try {
-      await api('/api/admin/clients');
-      unlock(true);
-    } catch { unlock(false); }
-  })();
+  (async () => { try { await api('/api/admin/clients'); unlock(true); } catch { unlock(false); } })();
 }
 </script>
 </body>

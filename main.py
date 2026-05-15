@@ -6,7 +6,7 @@ import datetime
 import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from clients_loader import load_clients, report_run
+from clients_loader import load_clients, report_run, notify_discord
 
 PROCESSED_TAB = '_processed'
 GEMINI_MODEL = 'gemini-2.5-flash'
@@ -44,7 +44,7 @@ def main():
             print(f"[{c['name']}] FATAL: {e}")
             report_run('receipts', c['name'], 0, 0, fatal_error=str(e))
 
-    notify(summary)
+    notify_discord('経費OCR', summary)
 
 
 def run_for_client(drive, sheets, api_key, folder_id, sheet_id):
@@ -171,27 +171,6 @@ def append(sheets, sheet_id, range_, values):
         valueInputOption='USER_ENTERED',
         body={'values': values},
     ).execute()
-
-
-def notify(summary):
-    url = os.environ.get('DISCORD_WEBHOOK_URL')
-    if not url:
-        return
-    total_new = sum(n for _, n, _ in summary)
-    total_fail = sum(len(fails) for _, _, fails in summary)
-    if total_new == 0 and total_fail == 0:
-        return
-    lines = [f"経費OCR: 計{total_new}件処理 / 失敗{total_fail}件"]
-    for name, n, fails in summary:
-        if n or fails:
-            lines.append(f"- {name}: {n}件 (失敗{len(fails)})")
-            for x in fails[:3]:
-                lines.append(f"    · {x}")
-    msg = '\n'.join(lines)
-    try:
-        requests.post(url, json={'content': msg}, timeout=10)
-    except Exception as e:
-        print(f"Discord notify failed: {e}")
 
 
 if __name__ == '__main__':
