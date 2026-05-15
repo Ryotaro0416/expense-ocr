@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>経費OCR 管理</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, "Hiragino Sans", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; }
+  h1 { font-size: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+  th { background: #f5f5f5; font-weight: 600; }
+  td.muted { color: #888; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .badge.on { background: #c8e6c9; color: #1b5e20; }
+  .badge.off { background: #eee; color: #777; }
+  button { padding: 4px 10px; font-size: 12px; border-radius: 4px; border: 1px solid #888; background: #fff; cursor: pointer; margin-right: 4px; }
+  button.danger { color: #c00; border-color: #c00; }
+  .key-input { padding: 6px 10px; border: 1px solid #bbb; border-radius: 4px; width: 280px; }
+  a { color: #1976d2; text-decoration: none; word-break: break-all; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a1a; color: #eee; }
+    th { background: #2a2a2a; }
+    th, td { border-bottom-color: #333; }
+    button, .key-input { background: #2a2a2a; color: #eee; border-color: #555; }
+    .badge.off { background: #333; color: #aaa; }
+  }
+</style>
+</head>
+<body>
+<h1>経費OCR 管理</h1>
+<p><input type="password" class="key-input" id="key" placeholder="ADMIN_KEY"> <button id="load">読み込み</button></p>
+<table id="t" hidden>
+  <thead>
+    <tr><th>ID</th><th>名前 / 連絡先</th><th>領収書</th><th>請求書</th><th>状態</th><th>登録日</th><th></th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<p id="msg"></p>
+
+<script>
+const keyEl = document.getElementById('key');
+const tbody = document.querySelector('#t tbody');
+const msg = document.getElementById('msg');
+const t = document.getElementById('t');
+
+function ids(folder, sheet) {
+  if (!folder && !sheet) return '<span class="muted">—</span>';
+  const f = folder ? `<a href="https://drive.google.com/drive/folders/${folder}" target="_blank">folder</a>` : '';
+  const s = sheet ? `<a href="https://docs.google.com/spreadsheets/d/${sheet}" target="_blank">sheet</a>` : '';
+  return [f, s].filter(Boolean).join(' / ');
+}
+
+async function load() {
+  const key = keyEl.value;
+  if (!key) return;
+  sessionStorage.setItem('admin_key', key);
+  msg.textContent = '読み込み中...';
+  const res = await fetch('/api/admin/clients', { headers: { 'x-admin-key': key } });
+  if (!res.ok) { msg.textContent = '認証エラー'; return; }
+  const data = await res.json();
+  msg.textContent = `${data.clients.length}件`;
+  tbody.innerHTML = '';
+  for (const c of data.clients) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.id}</td>
+      <td><b>${escape(c.name)}</b><br><span class="muted">${escape(c.contact || '')}</span></td>
+      <td>${ids(c.receipts_folder_id, c.receipts_sheet_id)}</td>
+      <td>${ids(c.invoices_folder_id, c.invoices_sheet_id)}</td>
+      <td><span class="badge ${c.active ? 'on' : 'off'}">${c.active ? '有効' : '停止'}</span></td>
+      <td class="muted">${c.created_at}</td>
+      <td>
+        <button data-act="toggle" data-id="${c.id}" data-active="${c.active}">${c.active ? '停止' : '再開'}</button>
+        <button class="danger" data-act="delete" data-id="${c.id}">削除</button>
+      </td>`;
+    tbody.appendChild(tr);
+  }
+  t.hidden = false;
+}
+
+function escape(s) { return (s || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+document.getElementById('load').addEventListener('click', load);
+keyEl.addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+
+tbody.addEventListener('click', async (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const key = keyEl.value;
+  const id = Number(btn.dataset.id);
+  if (btn.dataset.act === 'toggle') {
+    const active = btn.dataset.active === '1' ? 0 : 1;
+    await fetch('/api/admin/clients', { method: 'PATCH', headers: { 'content-type': 'application/json', 'x-admin-key': key }, body: JSON.stringify({ id, active }) });
+  } else if (btn.dataset.act === 'delete') {
+    if (!confirm('削除しますか?')) return;
+    await fetch('/api/admin/clients', { method: 'DELETE', headers: { 'content-type': 'application/json', 'x-admin-key': key }, body: JSON.stringify({ id }) });
+  }
+  load();
+});
+
+const saved = sessionStorage.getItem('admin_key');
+if (saved) { keyEl.value = saved; load(); }
+</script>
+</body>
+</html>

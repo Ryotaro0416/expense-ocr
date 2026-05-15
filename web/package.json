@@ -1,0 +1,13 @@
+{
+  "name": "expense-ocr-portal",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev public --d1 DB=expense-ocr",
+    "deploy": "wrangler pages deploy public --project-name=expense-ocr-portal",
+    "db:init": "wrangler d1 execute expense-ocr --remote --file=schema.sql",
+    "db:init:local": "wrangler d1 execute expense-ocr --local --file=schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>経費OCR クライアント登録</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif; max-width: 680px; margin: 0 auto; padding: 24px; line-height: 1.7; }
+  h1 { font-size: 22px; margin-bottom: 8px; }
+  .sub { color: #666; font-size: 14px; margin-bottom: 24px; }
+  .sa-box { background: #fff8e1; border: 1px solid #f0c674; padding: 14px 16px; border-radius: 8px; margin-bottom: 24px; }
+  .sa-box .label { font-weight: 600; margin-bottom: 6px; font-size: 13px; }
+  .sa-row { display: flex; gap: 8px; align-items: center; }
+  .sa-row code { background: #fff; padding: 6px 10px; border-radius: 4px; flex: 1; font-size: 14px; word-break: break-all; }
+  button { padding: 8px 14px; border-radius: 6px; border: 1px solid #888; background: #fff; cursor: pointer; font-size: 14px; }
+  button.primary { background: #1976d2; color: #fff; border-color: #1976d2; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  label { display: block; margin-top: 16px; font-size: 13px; font-weight: 600; }
+  input { width: 100%; padding: 8px 10px; box-sizing: border-box; margin-top: 4px; border-radius: 6px; border: 1px solid #bbb; font-size: 14px; }
+  .section { border-top: 1px solid #eee; margin-top: 24px; padding-top: 16px; }
+  .section h2 { font-size: 16px; margin: 0 0 4px; }
+  .section .hint { color: #777; font-size: 12px; margin-bottom: 4px; }
+  .msg { margin-top: 16px; padding: 12px; border-radius: 6px; }
+  .msg.ok { background: #e8f5e9; color: #1b5e20; }
+  .msg.err { background: #ffebee; color: #b71c1c; }
+  ol.steps { padding-left: 20px; font-size: 14px; color: #444; }
+  ol.steps li { margin-bottom: 4px; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a1a; color: #eee; }
+    .sa-box { background: #3a2f10; border-color: #806020; }
+    .sa-row code { background: #222; color: #eee; }
+    input, button { background: #2a2a2a; color: #eee; border-color: #555; }
+    .section { border-top-color: #333; }
+    .msg.ok { background: #1b3a1f; color: #c8e6c9; }
+    .msg.err { background: #3b1818; color: #ffcdd2; }
+  }
+</style>
+</head>
+<body>
+<h1>経費OCR クライアント登録</h1>
+<p class="sub">Drive にアップした領収書/請求書を、自動で OCR してスプレッドシートに転記します。毎日 23:00 JST に処理されます。</p>
+
+<div class="sa-box">
+  <div class="label">① 以下のサービスアカウントに、Drive フォルダとシートを「編集者」として共有してください</div>
+  <div class="sa-row">
+    <code id="sa">読み込み中...</code>
+    <button type="button" id="copy">コピー</button>
+  </div>
+</div>
+
+<ol class="steps">
+  <li>Google Drive で領収書/請求書を入れるフォルダを作成 → 上のSAを共有</li>
+  <li>Google スプレッドシートを新規作成(領収書/請求書それぞれ) → 上のSAを共有</li>
+  <li>下のフォームに各URLを貼り付けて登録</li>
+</ol>
+
+<form id="form">
+  <label>登録パスコード <span style="color:#c00">*</span>
+    <input type="password" name="passcode" required autocomplete="off">
+  </label>
+  <label>クライアント名 <span style="color:#c00">*</span>
+    <input type="text" name="name" required placeholder="例: 株式会社サンプル" maxlength="60">
+  </label>
+  <label>連絡先(メール、任意)
+    <input type="email" name="contact" placeholder="お問い合わせ用">
+  </label>
+
+  <div class="section">
+    <h2>領収書(任意)</h2>
+    <p class="hint">領収書PDF/画像をDrive投入 → シートに転記</p>
+    <label>領収書フォルダURL
+      <input type="url" name="receipts_folder_url" placeholder="https://drive.google.com/drive/folders/XXXX">
+    </label>
+    <label>領収書シートURL
+      <input type="url" name="receipts_sheet_url" placeholder="https://docs.google.com/spreadsheets/d/XXXX/edit">
+    </label>
+  </div>
+
+  <div class="section">
+    <h2>請求書(任意)</h2>
+    <p class="hint">請求書PDF/画像をDrive投入 → シートに転記</p>
+    <label>請求書フォルダURL
+      <input type="url" name="invoices_folder_url" placeholder="https://drive.google.com/drive/folders/XXXX">
+    </label>
+    <label>請求書シートURL
+      <input type="url" name="invoices_sheet_url" placeholder="https://docs.google.com/spreadsheets/d/XXXX/edit">
+    </label>
+  </div>
+
+  <p style="font-size:12px;color:#777;margin-top:16px;">※ 領収書 / 請求書 のどちらか一方だけの登録も可能です</p>
+
+  <button type="submit" class="primary" id="submit" style="margin-top:20px;width:100%;padding:12px;font-size:15px;">登録する</button>
+  <div id="msg"></div>
+</form>
+
+<script>
+fetch('/api/config').then(r => r.json()).then(d => {
+  document.getElementById('sa').textContent = d.sa_email || '(未設定)';
+}).catch(() => { document.getElementById('sa').textContent = '(取得失敗)'; });
+
+document.getElementById('copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('sa').textContent);
+  const b = document.getElementById('copy'); const t = b.textContent;
+  b.textContent = 'コピー済'; setTimeout(() => b.textContent = t, 1500);
+});
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit');
+  const msg = document.getElementById('msg');
+  btn.disabled = true; msg.className = ''; msg.textContent = '';
+  const fd = new FormData(e.target);
+  const body = Object.fromEntries(fd.entries());
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      msg.className = 'msg ok';
+      msg.textContent = '登録しました。明日 23:00 JST から自動処理が始まります。';
+      e.target.reset();
+    } else {
+      msg.className = 'msg err';
+      msg.textContent = data.error || 'エラーが発生しました';
+    }
+  } catch (err) {
+    msg.className = 'msg err';
+    msg.textContent = '通信エラー: ' + err.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

@@ -4,9 +4,9 @@ import time
 import base64
 import datetime
 import requests
-import yaml
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from clients_loader import load_clients
 
 PROCESSED_TAB = '_processed'
 GEMINI_MODEL = 'gemini-2.5-flash'
@@ -25,8 +25,7 @@ def main():
     sheets = build('sheets', 'v4', credentials=creds)
     api_key = os.environ['GEMINI_API_KEY']
 
-    with open('clients.yml') as f:
-        clients = yaml.safe_load(f)['clients']
+    clients = load_clients()
 
     summary = []
     for c in clients:

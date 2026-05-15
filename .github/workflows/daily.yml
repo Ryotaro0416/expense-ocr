@@ -20,8 +20,12 @@ jobs:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          BACKEND_TOKEN: ${{ secrets.BACKEND_TOKEN }}
       - run: python invoice.py
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          BACKEND_TOKEN: ${{ secrets.BACKEND_TOKEN }}

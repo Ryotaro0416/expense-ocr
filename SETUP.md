@@ -219,4 +219,59 @@ gh workflow run daily.yml -R <ユーザー名>/expense-ocr
 - ユーザーが GCP コンソールに不慣れな前提で、URL は具体的にクリックできる形で提示する
 - SA の JSON 鍵は **絶対に Claude のチャットに貼らせない**(secrets 直登録のみ)
 - `clients.yml` の編集は実際にユーザーが取得した ID を貼り付けるだけ。間違えても致命的ではないので恐れず進める
+
+---
+
+## 7. 登録ポータル (Cloudflare Pages + D1)
+
+クライアントが自分で登録できるWebフォームを `web/` に用意している。`BACKEND_URL` / `BACKEND_TOKEN` を GitHub Actions secrets にセットすると、バッチは `clients.yml` ではなくポータル経由で取得する。
+
+### デプロイ手順
+
+```bash
+cd web
+npm install
+npx wrangler login              # 初回のみ
+
+# D1作成
+npx wrangler d1 create expense-ocr
+# 出力の database_id を wrangler.toml に貼る
+
+# スキーマ適用
+npm run db:init
+
+# シークレット設定 (Pages 環境変数)
+npx wrangler pages secret put REGISTER_PASSCODE --project-name=expense-ocr-portal
+npx wrangler pages secret put ADMIN_KEY --project-name=expense-ocr-portal
+npx wrangler pages secret put BACKEND_TOKEN --project-name=expense-ocr-portal
+npx wrangler pages secret put SA_EMAIL --project-name=expense-ocr-portal
+# SA_EMAIL は keihi-426@keihi-494805.iam.gserviceaccount.com
+
+# デプロイ
+npm run deploy
+```
+
+Pages のダッシュボードで D1 binding (`DB` → `expense-ocr`) を Production / Preview に紐付ける。
+
+### GitHub Actions 側
+
+リポジトリの Settings → Secrets に追加:
+- `BACKEND_URL`: `https://expense-ocr-portal.pages.dev` (デプロイ後のURL)
+- `BACKEND_TOKEN`: 上で設定した値
+
+両方セットされていればポータルから取得、未設定なら `clients.yml` を使う。
+
+### 運用
+
+- 登録URL: `https://<pages-url>/` (パスコード必須)
+- 管理URL: `https://<pages-url>/admin.html` (ADMIN_KEY 入力)
+
+### ローカル開発
+
+```bash
+cd web
+npm run db:init:local
+npm run dev
+# .dev.vars に REGISTER_PASSCODE/ADMIN_KEY/BACKEND_TOKEN/SA_EMAIL を書いておく
+```
 - 詰まったら GitHub Actions のログを見て原因を特定する

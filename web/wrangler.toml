@@ -1,0 +1,8 @@
+name = "expense-ocr-portal"
+compatibility_date = "2025-05-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "expense-ocr"
+database_id = "cff09698-6440-4884-9b16-accd7d741b16"
