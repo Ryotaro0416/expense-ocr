@@ -4,6 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>バックオフィスOCR Console</title>
+<meta name="description" content="領収書・請求書を毎日自動でデータ化。Drive にアップするだけで Gemini OCR でシート転記。複数クライアントを1つのコンソールで一元管理。">
+<meta name="theme-color" content="#0017c1">
+<meta name="color-scheme" content="light">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.svg">
+<!-- OG / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="バックオフィスOCR — 領収書・請求書を自動データ化">
+<meta property="og:description" content="Drive にアップするだけで Gemini OCR でスプレッドシートに転記。複数クライアントを1つのコンソールで一元管理。">
+<meta property="og:image" content="/og.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="バックオフィスOCR — 領収書・請求書を自動データ化">
+<meta name="twitter:description" content="Drive にアップするだけで Gemini OCR でスプレッドシートに転記。">
+<meta name="twitter:image" content="/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -507,6 +522,122 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.err { background: var(--c-danger); }
 
+  /* Skeleton */
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .skel {
+    background: linear-gradient(90deg, #ecf0f4 0px, #f6f8fa 40px, #ecf0f4 80px);
+    background-size: 400px 100%;
+    animation: shimmer 1.4s linear infinite;
+    border-radius: 6px;
+  }
+  .skel-line { height: 14px; margin: 6px 0; }
+  .skel-num { height: 32px; width: 80px; margin-top: 14px; }
+  .skel-chart { height: 200px; width: 100%; }
+  .skel-row { height: 56px; margin-bottom: 1px; border-radius: 0; }
+
+  /* Command palette */
+  .palette-overlay {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 80px 20px 20px; z-index: 200;
+  }
+  .palette-overlay.show { display: flex; animation: fadeIn 0.15s ease-out; }
+  .palette {
+    background: var(--c-surface); width: 100%; max-width: 560px;
+    border-radius: 14px; box-shadow: 0 24px 60px rgba(15,23,42,0.32);
+    overflow: hidden; display: flex; flex-direction: column;
+    max-height: 540px;
+  }
+  .palette-input-wrap {
+    display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+    border-bottom: 1px solid var(--c-border-soft);
+  }
+  .palette-input-wrap svg { width: 18px; height: 18px; color: var(--c-text-muted); flex-shrink: 0; }
+  .palette-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 15px; color: var(--c-text); padding: 4px 0;
+  }
+  .palette-input::placeholder { color: var(--c-text-faint); }
+  .palette-kbd {
+    font-size: 10px; color: var(--c-text-muted); background: var(--c-surface-2);
+    padding: 3px 6px; border-radius: 4px; font-family: ui-monospace, monospace;
+  }
+  .palette-list { overflow-y: auto; padding: 6px; }
+  .palette-section {
+    font-size: 10.5px; font-weight: 600; color: var(--c-text-faint);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 8px 10px 4px;
+  }
+  .palette-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: var(--r-sm); cursor: pointer;
+    font-size: 13.5px; color: var(--c-text);
+  }
+  .palette-item:hover, .palette-item.active { background: var(--c-primary-soft); color: var(--c-primary); }
+  .palette-item-icon {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: var(--c-surface-2); color: var(--c-text-muted);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .palette-item.active .palette-item-icon { background: var(--c-primary); color: #fff; }
+  .palette-item-label { flex: 1; }
+  .palette-item-hint { font-size: 11px; color: var(--c-text-faint); }
+  .palette-empty { padding: 32px 20px; text-align: center; color: var(--c-text-muted); font-size: 13px; }
+  .palette-foot {
+    padding: 8px 14px; font-size: 11px; color: var(--c-text-faint);
+    border-top: 1px solid var(--c-border-soft); display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  .palette-foot kbd {
+    font-family: ui-monospace, monospace; padding: 1px 5px;
+    background: var(--c-surface-2); border-radius: 3px; color: var(--c-text-muted);
+    font-size: 10.5px;
+  }
+
+  /* Onboarding modal */
+  .onb-overlay {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; z-index: 200;
+  }
+  .onb-overlay.show { display: flex; animation: fadeIn 0.25s ease-out; }
+  .onb {
+    background: var(--c-surface); width: 100%; max-width: 560px;
+    border-radius: 16px; box-shadow: 0 24px 60px rgba(15,23,42,0.32);
+    padding: 32px; position: relative;
+  }
+  .onb-eyebrow {
+    font-size: 11.5px; font-weight: 600; color: var(--c-primary);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .onb h2 { margin: 0 0 12px; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  .onb p.intro { margin: 0 0 24px; color: var(--c-text-muted); font-size: 14px; }
+  .onb-steps { display: grid; gap: 12px; margin-bottom: 24px; }
+  .onb-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 16px; background: var(--c-surface-2);
+    border-radius: var(--r-md); border: 1px solid var(--c-border-soft);
+  }
+  .onb-step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--c-primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .onb-step-text { flex: 1; }
+  .onb-step-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .onb-step-desc { font-size: 12.5px; color: var(--c-text-muted); }
+  .onb-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* Shortcut help */
+  .kbd-table { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; font-size: 13px; }
+  .kbd-table dt { color: var(--c-text-muted); font-family: ui-monospace, monospace; font-size: 12px; }
+  .kbd-table dd { margin: 0; color: var(--c-text); }
+
   /* Settings tab specific */
   .settings-grid { display: grid; grid-template-columns: 1fr; gap: 14px; max-width: 720px; }
   .section-card {
@@ -559,6 +690,10 @@
         </div>
       </div>
       <div class="top-actions">
+        <button class="btn ghost sm" id="open-palette" title="Cmd+K でジャンプ・アクション">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span style="font-size:11px;color:var(--c-text-faint);font-family:ui-monospace,monospace;">⌘K</span>
+        </button>
         <span class="health-chip" id="health-chip">稼働中</span>
         <span class="role-chip" id="role-chip">—</span>
         <button class="btn ghost sm" id="reload-all" title="再読み込み">
@@ -808,6 +943,80 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Command palette -->
+<div class="palette-overlay" id="palette-overlay">
+  <div class="palette" role="dialog" aria-label="コマンドパレット">
+    <div class="palette-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="palette-input" id="palette-input" placeholder="移動・実行・検索…" autocomplete="off">
+      <span class="palette-kbd">Esc</span>
+    </div>
+    <div class="palette-list" id="palette-list"></div>
+    <div class="palette-foot">
+      <span><kbd>↑↓</kbd> 選択</span>
+      <span><kbd>↵</kbd> 実行</span>
+      <span><kbd>Esc</kbd> 閉じる</span>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding modal -->
+<div class="onb-overlay" id="onb-overlay">
+  <div class="onb">
+    <div class="onb-eyebrow">ようこそ</div>
+    <h2>バックオフィスOCR のはじめ方</h2>
+    <p class="intro">最初の運用開始まで 3 ステップ。すぐ動かせます。</p>
+    <div class="onb-steps">
+      <div class="onb-step">
+        <div class="onb-step-num">1</div>
+        <div class="onb-step-text">
+          <div class="onb-step-title">サービスアカウントを共有</div>
+          <div class="onb-step-desc">「設定」タブの SA Email を、領収書/請求書を入れる Drive フォルダとシートに <b>編集者</b>として共有。</div>
+        </div>
+      </div>
+      <div class="onb-step">
+        <div class="onb-step-num">2</div>
+        <div class="onb-step-text">
+          <div class="onb-step-title">クライアントを登録</div>
+          <div class="onb-step-desc">「クライアント」タブで「新規追加」。名前と URL を貼るだけ。複数社まとめて管理。</div>
+        </div>
+      </div>
+      <div class="onb-step">
+        <div class="onb-step-num">3</div>
+        <div class="onb-step-text">
+          <div class="onb-step-title">通知設定 (任意)</div>
+          <div class="onb-step-desc">「設定」タブで Discord Webhook を登録すれば、毎日の結果が自動で通知されます。</div>
+        </div>
+      </div>
+    </div>
+    <div class="onb-actions">
+      <button class="btn ghost" id="onb-skip">あとで</button>
+      <button class="btn primary" id="onb-start">設定タブから始める</button>
+    </div>
+  </div>
+</div>
+
+<!-- Shortcuts help -->
+<div class="onb-overlay" id="kbd-overlay">
+  <div class="onb">
+    <div class="onb-eyebrow">キーボードショートカット</div>
+    <h2>素早く操作する</h2>
+    <dl class="kbd-table">
+      <dt>⌘K / Ctrl+K</dt><dd>コマンドパレットを開く</dd>
+      <dt>1 / 2 / 3</dt><dd>タブ切替 (ダッシュボード / クライアント / 設定)</dd>
+      <dt>N</dt><dd>新規クライアント追加</dd>
+      <dt>R</dt><dd>すべて再読み込み</dd>
+      <dt>/</dt><dd>検索ボックスへフォーカス</dd>
+      <dt>⌘S / Ctrl+S</dt><dd>編集中フォームを保存</dd>
+      <dt>Esc</dt><dd>モーダル / フォームを閉じる</dd>
+      <dt>?</dt><dd>このヘルプを表示</dd>
+    </dl>
+    <div class="onb-actions" style="margin-top: 20px;">
+      <button class="btn primary" id="kbd-close">閉じる</button>
+    </div>
+  </div>
+</div>
 
 <!-- Form template -->
 <template id="form-tpl">
@@ -1588,7 +1797,9 @@ $('#reload-all').addEventListener('click', async () => { await refreshAll(); toa
 async function boot() {
   switchTab(state.activeTab);
   loadSA();
+  renderSkeletonsInitial();
   await refreshAll();
+  maybeShowOnboarding();
 }
 
 // ---------- Settings tab ----------
@@ -1636,6 +1847,198 @@ $('#settings-test').addEventListener('click', async () => {
 $$('.tab').forEach(t => t.addEventListener('click', () => {
   if (t.dataset.tab === 'settings') loadSettings();
 }));
+
+// ---------- Skeleton loaders ----------
+function renderSkeletonsInitial() {
+  $('#list').innerHTML = `
+    <div class="client-table">
+      ${Array.from({length: 4}).map(() => '<div class="skel skel-row"></div>').join('')}
+    </div>`;
+  $('#activity-list').innerHTML = `
+    ${Array.from({length: 4}).map(() => '<div class="skel skel-line" style="height:18px;margin:8px 0;"></div>').join('')}`;
+  ['kpi-processed', 'kpi-failed', 'kpi-clients'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+  });
+  const chart = $('#chart');
+  chart.innerHTML = `<rect width="700" height="220" fill="#f3f5f9"/>`;
+}
+
+// ---------- Command palette ----------
+const palOverlay = $('#palette-overlay');
+const palInput = $('#palette-input');
+const palList = $('#palette-list');
+let palItems = [];
+let palActive = 0;
+
+function buildPalCommands() {
+  const cmds = [
+    { section: 'ジャンプ', icon: '📊', label: 'ダッシュボード', hint: '1', run: () => switchTab('dashboard') },
+    { section: 'ジャンプ', icon: '👥', label: 'クライアント', hint: '2', run: () => switchTab('clients') },
+    { section: 'ジャンプ', icon: '⚙', label: '設定', hint: '3', run: () => { switchTab('settings'); loadSettings(); } },
+    { section: 'アクション', icon: '+', label: '新規クライアントを追加', hint: 'N', run: () => { switchTab('clients'); if (!state.adding) $('#add-toggle').click(); } },
+    { section: 'アクション', icon: '▶', label: '今すぐ実行 (ワークフロー起動)', run: () => { switchTab('dashboard'); $('#dispatch').click(); } },
+    { section: 'アクション', icon: '↻', label: 'すべて再読み込み', hint: 'R', run: () => $('#reload-all').click() },
+    { section: 'アクション', icon: '?', label: 'キーボードショートカット', hint: '?', run: () => $('#kbd-overlay').classList.add('show') },
+    { section: 'アクション', icon: '⎋', label: 'ログアウト', run: () => unlock(false) },
+  ];
+  for (const c of state.clients) {
+    cmds.push({
+      section: 'クライアント',
+      icon: avatarFor(c.name).initials,
+      iconColor: avatarFor(c.name).color,
+      label: `${c.name} を編集`,
+      hint: c.private ? 'PRIVATE' : '',
+      run: () => { switchTab('clients'); state.editingId = c.id; renderList(); },
+    });
+  }
+  return cmds;
+}
+
+function filterPalCommands(q) {
+  const all = buildPalCommands();
+  if (!q) return all;
+  const lower = q.toLowerCase();
+  return all.filter(c => c.label.toLowerCase().includes(lower) || (c.section || '').toLowerCase().includes(lower));
+}
+
+function renderPalette(q = '') {
+  palItems = filterPalCommands(q);
+  if (palActive >= palItems.length) palActive = 0;
+  if (!palItems.length) {
+    palList.innerHTML = `<div class="palette-empty">該当なし</div>`;
+    return;
+  }
+  let html = ''; let lastSection = '';
+  palItems.forEach((c, i) => {
+    if (c.section !== lastSection) {
+      html += `<div class="palette-section">${esc(c.section)}</div>`;
+      lastSection = c.section;
+    }
+    const iconStyle = c.iconColor ? `style="background:${c.iconColor};color:#fff;font-size:11px;font-weight:700;"` : '';
+    html += `
+      <div class="palette-item${i === palActive ? ' active' : ''}" data-idx="${i}">
+        <div class="palette-item-icon" ${iconStyle}>${esc(c.icon)}</div>
+        <div class="palette-item-label">${esc(c.label)}</div>
+        ${c.hint ? `<span class="palette-item-hint">${esc(c.hint)}</span>` : ''}
+      </div>`;
+  });
+  palList.innerHTML = html;
+  const activeEl = palList.querySelector('.palette-item.active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+}
+
+function openPalette() {
+  palActive = 0;
+  palInput.value = '';
+  renderPalette();
+  palOverlay.classList.add('show');
+  setTimeout(() => palInput.focus(), 30);
+}
+function closePalette() { palOverlay.classList.remove('show'); }
+function runPalActive() {
+  const c = palItems[palActive];
+  if (!c) return;
+  closePalette();
+  setTimeout(() => c.run(), 50);
+}
+
+palInput.addEventListener('input', e => { palActive = 0; renderPalette(e.target.value); });
+palInput.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); palActive = Math.min(palItems.length - 1, palActive + 1); renderPalette(palInput.value); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); palActive = Math.max(0, palActive - 1); renderPalette(palInput.value); }
+  else if (e.key === 'Enter') { e.preventDefault(); runPalActive(); }
+  else if (e.key === 'Escape') { e.preventDefault(); closePalette(); }
+});
+palList.addEventListener('click', e => {
+  const item = e.target.closest('.palette-item');
+  if (!item) return;
+  palActive = Number(item.dataset.idx);
+  runPalActive();
+});
+palOverlay.addEventListener('click', e => { if (e.target === palOverlay) closePalette(); });
+$('#open-palette').addEventListener('click', openPalette);
+
+// ---------- Onboarding ----------
+function maybeShowOnboarding() {
+  if (localStorage.getItem('onb_done') === '1') return;
+  if (state.clients.length > 0) { localStorage.setItem('onb_done', '1'); return; }
+  $('#onb-overlay').classList.add('show');
+}
+$('#onb-skip').addEventListener('click', () => {
+  localStorage.setItem('onb_done', '1');
+  $('#onb-overlay').classList.remove('show');
+});
+$('#onb-start').addEventListener('click', () => {
+  localStorage.setItem('onb_done', '1');
+  $('#onb-overlay').classList.remove('show');
+  switchTab('settings');
+  loadSettings();
+});
+
+// ---------- Shortcut help ----------
+$('#kbd-close').addEventListener('click', () => $('#kbd-overlay').classList.remove('show'));
+$('#kbd-overlay').addEventListener('click', e => { if (e.target === $('#kbd-overlay')) $('#kbd-overlay').classList.remove('show'); });
+
+// ---------- Hotkeys ----------
+function isTyping(e) {
+  const t = e.target;
+  return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+}
+function anyModalOpen() {
+  return palOverlay.classList.contains('show') || $('#onb-overlay').classList.contains('show') || $('#kbd-overlay').classList.contains('show');
+}
+function closeAllModals() {
+  palOverlay.classList.remove('show');
+  $('#onb-overlay').classList.remove('show');
+  $('#kbd-overlay').classList.remove('show');
+}
+
+document.addEventListener('keydown', e => {
+  if (!$('#app').classList.contains('show')) return; // before login: only Esc inside palette etc
+
+  // Cmd+K / Ctrl+K: open palette
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault(); openPalette(); return;
+  }
+  // Cmd+S / Ctrl+S: save current form
+  if ((e.metaKey || e.ctrlKey) && (e.key === 's' || e.key === 'S')) {
+    const saveBtn = document.querySelector('.edit-card button[data-act="save"]');
+    if (saveBtn) { e.preventDefault(); saveBtn.click(); return; }
+  }
+  // Esc: close modals / forms
+  if (e.key === 'Escape') {
+    if (anyModalOpen()) { closeAllModals(); return; }
+    if (state.adding) { closeAdd(); return; }
+    if (state.editingId != null) { state.editingId = null; renderList(); return; }
+  }
+
+  if (isTyping(e)) return;
+
+  // 1 / 2 / 3: tabs
+  if (e.key === '1') { switchTab('dashboard'); }
+  else if (e.key === '2') { switchTab('clients'); }
+  else if (e.key === '3') { switchTab('settings'); loadSettings(); }
+  // n: new
+  else if (e.key === 'n' || e.key === 'N') {
+    switchTab('clients');
+    if (!state.adding) $('#add-toggle').click();
+  }
+  // r: reload
+  else if (e.key === 'r' || e.key === 'R') {
+    $('#reload-all').click();
+  }
+  // /: focus search
+  else if (e.key === '/') {
+    e.preventDefault();
+    switchTab('clients');
+    $('#search').focus();
+  }
+  // ?: shortcut help
+  else if (e.key === '?') {
+    $('#kbd-overlay').classList.add('show');
+  }
+});
 
 if (state.key) {
   (async () => {
