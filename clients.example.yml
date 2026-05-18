@@ -10,3 +10,4 @@ clients:
     invoices:
       folder_id: REPLACE_WITH_YOUR_INVOICES_FOLDER_ID
       sheet_id: REPLACE_WITH_YOUR_INVOICES_SHEET_ID
+      # tab: A社  # 任意。複数社で同じシートを共有する場合に指定。省略時は先頭タブ。

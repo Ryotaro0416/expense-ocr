@@ -8,7 +8,7 @@ export const onRequestGet: PagesFunction<Env> = async (ctx) => {
   }
 
   const { results } = await ctx.env.DB.prepare(
-    `SELECT name, receipts_folder_id, receipts_sheet_id, invoices_folder_id, invoices_sheet_id
+    `SELECT name, receipts_folder_id, receipts_sheet_id, invoices_folder_id, invoices_sheet_id, invoices_tab
        FROM clients
       WHERE active = 1
       ORDER BY id ASC`,
@@ -21,6 +21,7 @@ export const onRequestGet: PagesFunction<Env> = async (ctx) => {
     }
     if (r.invoices_folder_id && r.invoices_sheet_id) {
       c.invoices = { folder_id: r.invoices_folder_id, sheet_id: r.invoices_sheet_id };
+      if (r.invoices_tab) c.invoices.tab = r.invoices_tab;
     }
     return c;
   });

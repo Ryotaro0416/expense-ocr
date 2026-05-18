@@ -1154,6 +1154,12 @@
           <input data-field="invoices_sheet_url" type="url" placeholder="https://docs.google.com/spreadsheets/d/...">
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>書き込み先タブ名 <span style="color:var(--c-text-faint);font-weight:400;font-size:11px;">任意・複数社で同じシートを共有する場合に指定</span></label>
+          <input data-field="invoices_tab" type="text" maxlength="60" placeholder="例: A社">
+        </div>
+      </div>
     </div>
 
     <div class="switch-row owner-only" data-private-switch style="margin-top:14px;border-top:1px solid var(--c-border-soft);padding-top:14px;">
@@ -1817,6 +1823,7 @@ function buildForm({ title, values = {}, onSave, onCancel }) {
   setVal('receipts_sheet_url', values.receipts_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.receipts_sheet_id}` : '');
   setVal('invoices_folder_url', values.invoices_folder_id ? `https://drive.google.com/drive/folders/${values.invoices_folder_id}` : '');
   setVal('invoices_sheet_url', values.invoices_sheet_id ? `https://docs.google.com/spreadsheets/d/${values.invoices_sheet_id}` : '');
+  setVal('invoices_tab', values.invoices_tab);
 
   // Private toggle (only owner)
   const privSwitch = root.querySelector('[data-private-switch]');

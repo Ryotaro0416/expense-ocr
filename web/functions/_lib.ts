@@ -2,6 +2,7 @@ export interface Env {
   DB: D1Database;
   ADMIN_KEY: string;
   OWNER_KEY: string;
+  REGISTER_PASSCODE: string;
   BACKEND_TOKEN: string;
   SA_EMAIL: string;
   GH_TOKEN: string;

@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>経費OCR | クライアント登録</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --border: #e6e4df;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --text-faint: #9a9a9a;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: #eff4ff;
+    --warning-bg: #fff8e1;
+    --warning-border: #f0c674;
+    --warning-text: #6b4d0f;
+    --success-bg: #ecfdf5;
+    --success-border: #6ee7b7;
+    --success-text: #065f46;
+    --danger-bg: #fef2f2;
+    --danger-border: #fecaca;
+    --danger-text: #991b1b;
+    --radius: 12px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f0f10;
+      --surface: #1a1a1c;
+      --border: #2a2a2d;
+      --text: #ededed;
+      --text-muted: #a0a0a0;
+      --text-faint: #6b6b6b;
+      --accent: #60a5fa;
+      --accent-hover: #93c5fd;
+      --accent-soft: #1e2a4a;
+      --warning-bg: #2a2110;
+      --warning-border: #6b5020;
+      --warning-text: #fde68a;
+      --success-bg: #0f2a1f;
+      --success-border: #14532d;
+      --success-text: #86efac;
+      --danger-bg: #2a1414;
+      --danger-border: #5a1f1f;
+      --danger-text: #fca5a5;
+    }
+  }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "palt";
+  }
+  .container { max-width: 640px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* Header */
+  .hero { margin-bottom: 32px; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .hero h1 { font-size: 28px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .hero p { color: var(--text-muted); margin: 0; font-size: 15px; }
+
+  /* Step card */
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; flex-shrink: 0;
+  }
+  .step h2 { margin: 0; font-size: 16px; font-weight: 600; }
+  .step-desc { color: var(--text-muted); font-size: 14px; margin: 0 0 16px; }
+
+  /* SA box */
+  .sa-box {
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+  .sa-label { font-size: 12px; font-weight: 600; color: var(--warning-text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sa-row { display: flex; gap: 8px; align-items: stretch; }
+  .sa-email {
+    flex: 1;
+    background: var(--surface);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 13px;
+    word-break: break-all;
+    border: 1px solid var(--border);
+    display: flex; align-items: center;
+  }
+  .btn-copy {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-copy:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .btn-copy.copied { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); }
+
+  /* Permission hint */
+  .perm-hint {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .perm-hint::before { content: '💡'; flex-shrink: 0; }
+
+  /* Form */
+  .field { margin-bottom: 14px; }
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .field-label .req { color: #dc2626; margin-left: 2px; }
+  .field-hint { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
+  .input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .input::placeholder { color: var(--text-faint); }
+
+  /* Pair (folder+sheet) */
+  .pair { background: var(--bg); border: 1px dashed var(--border); border-radius: 10px; padding: 16px; margin-top: 8px; }
+  .pair-title { font-size: 13px; font-weight: 600; margin: 0 0 12px; display: flex; gap: 8px; align-items: center; }
+  .pair-icon { font-size: 18px; }
+  .pair-optional { font-size: 11px; color: var(--text-faint); font-weight: 400; margin-left: auto; }
+
+  /* Submit */
+  .submit-row { margin-top: 24px; }
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: inherit;
+  }
+  .btn-submit:hover:not(:disabled) { background: var(--accent-hover); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .submit-foot { font-size: 12px; color: var(--text-faint); text-align: center; margin: 12px 0 0; }
+
+  /* Messages */
+  .msg { padding: 14px 16px; border-radius: 10px; font-size: 14px; margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .msg.err { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); }
+  .msg.err::before { content: '⚠️'; }
+
+  /* Success */
+  .success-screen { display: none; text-align: center; padding: 40px 20px; }
+  .success-screen.show { display: block; }
+  .form-screen.hide { display: none; }
+  .success-icon {
+    width: 64px; height: 64px; margin: 0 auto 16px;
+    border-radius: 50%; background: var(--success-bg);
+    color: var(--success-text); border: 2px solid var(--success-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .success-screen h2 { font-size: 22px; margin: 0 0 12px; }
+  .success-screen p { color: var(--text-muted); margin: 8px 0; }
+  .success-detail {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; margin: 24px 0; text-align: left; font-size: 14px;
+  }
+  .success-detail li { margin: 4px 0; }
+  .btn-secondary {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+  }
+
+  /* Inline note */
+  .note { font-size: 12px; color: var(--text-muted); background: var(--accent-soft); padding: 10px 12px; border-radius: 6px; margin-top: 8px; line-height: 1.5; }
+  .note strong { color: var(--text); }
+
+  /* Footer */
+  .footer { text-align: center; font-size: 12px; color: var(--text-faint); margin-top: 32px; }
+
+  @media (max-width: 480px) {
+    .container { padding: 20px 16px 60px; }
+    .step { padding: 20px 16px; }
+    .hero h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ============== Form Screen ============== -->
+  <div class="form-screen" id="form-screen">
+
+    <header class="hero">
+      <div class="hero-eyebrow">経費OCR 自動化</div>
+      <h1>クライアント登録</h1>
+      <p>Drive にアップした領収書 / 請求書を、毎日 23:00 JST に自動で OCR してシートに転記します。</p>
+    </header>
+
+    <!-- Step 1: Share SA -->
+    <section class="step">
+      <div class="step-header">
+        <span class="step-num">1</span>
+        <h2>サービスアカウントを Drive とシートに共有</h2>
+      </div>
+      <p class="step-desc">処理を行うサービスアカウント(下記)を、これから登録する Drive フォルダと スプレッドシートに <strong>「編集者」</strong> として共有してください。</p>
+
+      <div class="sa-box">
+        <div class="sa-label">共有先メールアドレス</div>
+        <div class="sa-row">
+          <div class="sa-email" id="sa">読み込み中…</div>
+          <button type="button" class="btn-copy" id="copy">コピー</button>
+        </div>
+      </div>
+
+      <p class="perm-hint">権限は <strong>「編集者」</strong> を選んでください(閲覧者だとシートに書き込めません)</p>
+    </section>
+
+    <!-- Step 2: Form -->
+    <section class="step">
+      <div class="step-header">
+        <span class="step-num">2</span>
+        <h2>情報を入力する</h2>
+      </div>
+
+      <form id="form" autocomplete="off" novalidate>
+
+        <div class="field">
+          <label class="field-label" for="passcode">登録パスコード<span class="req">*</span></label>
+          <input class="input" type="password" id="passcode" name="passcode" required>
+          <p class="field-hint">管理者から受け取ったパスコードを入力</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="name">クライアント名<span class="req">*</span></label>
+          <input class="input" type="text" id="name" name="name" required maxlength="60" placeholder="例: 株式会社サンプル">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="contact">連絡先メール</label>
+          <input class="input" type="email" id="contact" name="contact" placeholder="taro@example.com">
+          <p class="field-hint">問い合わせ用(任意)</p>
+        </div>
+
+        <p class="note">
+          <strong>領収書 / 請求書 は片方だけでもOK。</strong> 必要な方のフォルダとシートURLを貼ってください。両方使う場合は両方入力。
+        </p>
+
+        <!-- Receipts -->
+        <div class="pair">
+          <h3 class="pair-title"><span class="pair-icon">🧾</span> 領収書 <span class="pair-optional">片方だけでも可</span></h3>
+          <div class="field">
+            <label class="field-label" for="receipts_folder_url">領収書フォルダURL</label>
+            <input class="input" type="url" id="receipts_folder_url" name="receipts_folder_url" placeholder="https://drive.google.com/drive/folders/...">
+          </div>
+          <div class="field">
+            <label class="field-label" for="receipts_sheet_url">領収書スプレッドシートURL</label>
+            <input class="input" type="url" id="receipts_sheet_url" name="receipts_sheet_url" placeholder="https://docs.google.com/spreadsheets/d/...">
+          </div>
+        </div>
+
+        <!-- Invoices -->
+        <div class="pair">
+          <h3 class="pair-title"><span class="pair-icon">📄</span> 請求書 <span class="pair-optional">片方だけでも可</span></h3>
+          <div class="field">
+            <label class="field-label" for="invoices_folder_url">請求書フォルダURL</label>
+            <input class="input" type="url" id="invoices_folder_url" name="invoices_folder_url" placeholder="https://drive.google.com/drive/folders/...">
+          </div>
+          <div class="field">
+            <label class="field-label" for="invoices_sheet_url">請求書スプレッドシートURL</label>
+            <input class="input" type="url" id="invoices_sheet_url" name="invoices_sheet_url" placeholder="https://docs.google.com/spreadsheets/d/...">
+          </div>
+          <div class="field">
+            <label class="field-label" for="invoices_tab">書き込み先タブ名(任意)</label>
+            <input class="input" type="text" id="invoices_tab" name="invoices_tab" maxlength="60" placeholder="例: A社">
+            <p class="field-hint">複数社で同じシートを共有する場合に指定(例: A社/B社/C社)。空欄なら先頭タブを使用。</p>
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button type="submit" class="btn-submit" id="submit">登録する</button>
+          <p class="submit-foot">登録すると 翌日 23:00 JST から自動処理が始まります</p>
+        </div>
+        <div id="msg"></div>
+      </form>
+    </section>
+
+    <p class="footer">問題があれば管理者に連絡してください</p>
+  </div>
+
+  <!-- ============== Success Screen ============== -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>登録完了しました</h2>
+    <p>明日 23:00 JST から自動処理が始まります。</p>
+
+    <div class="success-detail">
+      <strong>次にやること</strong>
+      <ul>
+        <li>領収書 / 請求書を登録した Drive フォルダにアップロード</li>
+        <li>翌日 23:00 JST 以降にシートを確認</li>
+        <li>OCR は <code>PDF / 画像</code> 両方対応しています</li>
+      </ul>
+    </div>
+
+    <button type="button" class="btn-secondary" id="another">もう1件登録する</button>
+  </div>
+
+</div>
+
+<script>
+  // Load SA email
+  fetch('/api/config').then(r => r.json()).then(d => {
+    document.getElementById('sa').textContent = d.sa_email || '(未設定)';
+  }).catch(() => {
+    document.getElementById('sa').textContent = '(取得失敗・管理者に連絡)';
+  });
+
+  // Copy SA
+  document.getElementById('copy').addEventListener('click', async () => {
+    const sa = document.getElementById('sa').textContent;
+    try { await navigator.clipboard.writeText(sa); } catch {}
+    const btn = document.getElementById('copy');
+    btn.classList.add('copied');
+    btn.textContent = 'コピー済';
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'コピー'; }, 1600);
+  });
+
+  // Submit
+  const form = document.getElementById('form');
+  const msg = document.getElementById('msg');
+  const submit = document.getElementById('submit');
+
+  function showError(text) {
+    msg.className = 'msg err';
+    msg.textContent = text;
+  }
+  function clearMsg() { msg.className = ''; msg.textContent = ''; }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearMsg();
+    submit.disabled = true;
+    submit.textContent = '登録中…';
+
+    const body = Object.fromEntries(new FormData(form).entries());
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('form-screen').classList.add('hide');
+        document.getElementById('success-screen').classList.add('show');
+        form.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        showError(data.error || 'エラーが発生しました');
+      }
+    } catch (err) {
+      showError('通信エラー: ' + err.message);
+    } finally {
+      submit.disabled = false;
+      submit.textContent = '登録する';
+    }
+  });
+
+  document.getElementById('another').addEventListener('click', () => {
+    document.getElementById('success-screen').classList.remove('show');
+    document.getElementById('form-screen').classList.remove('hide');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>

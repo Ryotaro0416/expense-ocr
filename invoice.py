@@ -40,7 +40,7 @@ def main():
         if not cfg:
             continue
         try:
-            n, fails = run_for_client(drive, sheets, api_key, cfg['folder_id'], cfg['sheet_id'])
+            n, fails = run_for_client(drive, sheets, api_key, cfg['folder_id'], cfg['sheet_id'], cfg.get('tab'))
             summary.append((c['name'], n, fails))
             print(f"[{c['name']}] invoices: {n} new, {len(fails)} failed")
             for x in fails:
@@ -54,8 +54,8 @@ def main():
     notify_discord('請求書OCR', summary)
 
 
-def run_for_client(drive, sheets, api_key, folder_id, sheet_id):
-    main_tab = ensure_tabs(sheets, sheet_id)
+def run_for_client(drive, sheets, api_key, folder_id, sheet_id, tab=None):
+    main_tab = ensure_tabs(sheets, sheet_id, tab)
     seen = load_seen(sheets, sheet_id)
     files = list_images(drive, folder_id)
 
@@ -180,12 +180,19 @@ def extract(drive, f, api_key):
     return json.loads(text)
 
 
-def ensure_tabs(sheets, sheet_id):
+def ensure_tabs(sheets, sheet_id, tab=None):
     meta = sheets.spreadsheets().get(spreadsheetId=sheet_id).execute()
     titles = [s['properties']['title'] for s in meta['sheets']]
-    main_tab = next((t for t in titles if t != PROCESSED_TAB), None)
-    if main_tab is None:
-        raise RuntimeError('No main tab found in spreadsheet')
+    if tab:
+        main_tab = tab
+        if main_tab not in titles:
+            sheets.spreadsheets().batchUpdate(spreadsheetId=sheet_id, body={
+                'requests': [{'addSheet': {'properties': {'title': main_tab}}}],
+            }).execute()
+    else:
+        main_tab = next((t for t in titles if t != PROCESSED_TAB), None)
+        if main_tab is None:
+            raise RuntimeError('No main tab found in spreadsheet')
     if PROCESSED_TAB not in titles:
         sheets.spreadsheets().batchUpdate(spreadsheetId=sheet_id, body={
             'requests': [{'addSheet': {'properties': {'title': PROCESSED_TAB}}}],
