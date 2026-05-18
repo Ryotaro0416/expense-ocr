@@ -108,6 +108,8 @@ def list_images(drive, root_id):
                 fields='nextPageToken, files(id, name, mimeType)',
                 pageToken=page_token,
                 pageSize=200,
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True,
             ).execute()
             for f in res.get('files', []):
                 if f['mimeType'] == 'application/vnd.google-apps.folder':
@@ -121,7 +123,7 @@ def list_images(drive, root_id):
 
 
 def extract(drive, f, api_key):
-    blob = drive.files().get_media(fileId=f['id']).execute()
+    blob = drive.files().get_media(fileId=f['id'], supportsAllDrives=True).execute()
     prompt = (
         'この請求書(invoice)から以下を抽出してJSON出力。\n'
         '- issue_date: 請求日/発行日(YYYY-MM-DD)\n'
