@@ -1,0 +1,26 @@
+name: discord receipt intake
+
+# Discord「経費管理」チャンネルに投稿された領収書画像を巡回して読み取り、経費シートへ追記。
+on:
+  schedule:
+    - cron: '15 */3 * * *'   # 3時間おき
+  workflow_dispatch: {}
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python discord_intake.py
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          RECEIPT_CHANNEL_ID: ${{ secrets.RECEIPT_CHANNEL_ID }}
+          RECEIPT_REPLY_WEBHOOK: ${{ secrets.RECEIPT_REPLY_WEBHOOK }}
