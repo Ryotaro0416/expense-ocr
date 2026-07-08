@@ -64,11 +64,13 @@ def ensure_month_folder(drive, parent_id, ym):
 
 
 def archive_image(drive, parent_id, ym, name, blob, mime):
+    """月別フォルダへ保存し、Drive のファイルIDを返す。"""
     from googleapiclient.http import MediaInMemoryUpload
     fid = ensure_month_folder(drive, parent_id, ym)
     media = MediaInMemoryUpload(blob, mimetype=mime or 'image/jpeg')
-    drive.files().create(body={'name': name, 'parents': [fid]}, media_body=media,
-                         fields='id', supportsAllDrives=True).execute()
+    created = drive.files().create(body={'name': name, 'parents': [fid]}, media_body=media,
+                                   fields='id', supportsAllDrives=True).execute()
+    return created['id']
 
 
 def _titles(svc, sid):
@@ -190,25 +192,28 @@ def main():
                 data = gemini_ocr(blob, a.get('content_type') or 'image/jpeg', api_key)
                 now = datetime.datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')
                 cat = normalize_category(data.get('category'))
-                append(svc, sid, f"'{tab}'!A:F", [[
-                    data.get('date') or '',
-                    data.get('amount') if data.get('amount') is not None else '',
-                    data.get('store') or '', a['url'], now, cat,
-                ]])
-                amt = data.get('amount')
-                amt_s = f"¥{int(amt):,}" if isinstance(amt, (int, float)) else '¥?'
-                reply(webhook, f"✅ 読み取り: {data.get('date') or '?'} {data.get('store') or '?'} {amt_s}（{cat}）")
-                processed += 1
+                # DiscordのCDN URLは約24hで失効するため、Drive保管できたらそのリンクをシートに残す
+                link = a['url']
                 if drive:
                     try:
                         d0 = data.get('date') or ''
                         ym = d0[:7] if len(d0) >= 7 else datetime.datetime.now(JST).strftime('%Y-%m')
                         store = (data.get('store') or 'store').replace('/', '_')[:20]
                         ext = os.path.splitext(a.get('filename', ''))[1] or '.jpg'
-                        archive_image(drive, archive_parent, ym,
-                                      f"{d0 or 'nodate'}_{store}_{mid}{ext}", blob, a.get('content_type'))
+                        fid = archive_image(drive, archive_parent, ym,
+                                            f"{d0 or 'nodate'}_{store}_{mid}{ext}", blob, a.get('content_type'))
+                        link = f'https://drive.google.com/file/d/{fid}/view'
                     except Exception as e:  # noqa: BLE001 - 保管失敗でOCR/シートは止めない
                         print(f'archive failed {mid}: {e}')
+                append(svc, sid, f"'{tab}'!A:F", [[
+                    data.get('date') or '',
+                    data.get('amount') if data.get('amount') is not None else '',
+                    data.get('store') or '', link, now, cat,
+                ]])
+                amt = data.get('amount')
+                amt_s = f"¥{int(amt):,}" if isinstance(amt, (int, float)) else '¥?'
+                reply(webhook, f"✅ 読み取り: {data.get('date') or '?'} {data.get('store') or '?'} {amt_s}（{cat}）")
+                processed += 1
             except Exception as e:
                 reply(webhook, f"⚠️ 読み取り失敗: {a.get('filename', 'image')} — {str(e)[:120]}")
                 print(f'fail {mid}: {e}')
