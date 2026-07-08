@@ -34,6 +34,43 @@ def sheets_service():
     return build('sheets', 'v4', credentials=creds, cache_discovery=False)
 
 
+def drive_service():
+    creds = service_account.Credentials.from_service_account_info(
+        json.loads(os.environ['GCP_SA_KEY']),
+        scopes=['https://www.googleapis.com/auth/drive'])
+    return build('drive', 'v3', credentials=creds, cache_discovery=False)
+
+
+_folder_cache = {}
+
+
+def ensure_month_folder(drive, parent_id, ym):
+    """保管親フォルダ配下に 'YYYY-MM' フォルダを見つける/無ければ作る。folder_id を返す。"""
+    if ym in _folder_cache:
+        return _folder_cache[ym]
+    q = (f"'{parent_id}' in parents and name = '{ym}' and "
+         "mimeType = 'application/vnd.google-apps.folder' and trashed = false")
+    res = drive.files().list(q=q, fields='files(id)', supportsAllDrives=True,
+                             includeItemsFromAllDrives=True).execute()
+    files = res.get('files', [])
+    if files:
+        fid = files[0]['id']
+    else:
+        meta = {'name': ym, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_id]}
+        fid = drive.files().create(body=meta, fields='id', supportsAllDrives=True).execute()['id']
+        print(f'created month folder: {ym}')
+    _folder_cache[ym] = fid
+    return fid
+
+
+def archive_image(drive, parent_id, ym, name, blob, mime):
+    from googleapiclient.http import MediaInMemoryUpload
+    fid = ensure_month_folder(drive, parent_id, ym)
+    media = MediaInMemoryUpload(blob, mimetype=mime or 'image/jpeg')
+    drive.files().create(body={'name': name, 'parents': [fid]}, media_body=media,
+                         fields='id', supportsAllDrives=True).execute()
+
+
 def _titles(svc, sid):
     meta = svc.spreadsheets().get(spreadsheetId=sid).execute()
     return [s['properties']['title'] for s in meta['sheets']]
@@ -134,6 +171,10 @@ def main():
     tab = main_tab(svc, sid)
     seen = load_seen(svc, sid)
 
+    # 領収書画像を月別フォルダに保管(任意)。既存OCRスキャンと干渉しない別フォルダを指定すること。
+    archive_parent = os.environ.get('RECEIPT_ARCHIVE_FOLDER_ID', '')
+    drive = drive_service() if archive_parent else None
+
     msgs = list(reversed(fetch_messages(channel_id, token)))  # 古い順
     processed = 0
     for m in msgs:
@@ -158,6 +199,16 @@ def main():
                 amt_s = f"¥{int(amt):,}" if isinstance(amt, (int, float)) else '¥?'
                 reply(webhook, f"✅ 読み取り: {data.get('date') or '?'} {data.get('store') or '?'} {amt_s}（{cat}）")
                 processed += 1
+                if drive:
+                    try:
+                        d0 = data.get('date') or ''
+                        ym = d0[:7] if len(d0) >= 7 else datetime.datetime.now(JST).strftime('%Y-%m')
+                        store = (data.get('store') or 'store').replace('/', '_')[:20]
+                        ext = os.path.splitext(a.get('filename', ''))[1] or '.jpg'
+                        archive_image(drive, archive_parent, ym,
+                                      f"{d0 or 'nodate'}_{store}_{mid}{ext}", blob, a.get('content_type'))
+                    except Exception as e:  # noqa: BLE001 - 保管失敗でOCR/シートは止めない
+                        print(f'archive failed {mid}: {e}')
             except Exception as e:
                 reply(webhook, f"⚠️ 読み取り失敗: {a.get('filename', 'image')} — {str(e)[:120]}")
                 print(f'fail {mid}: {e}')
