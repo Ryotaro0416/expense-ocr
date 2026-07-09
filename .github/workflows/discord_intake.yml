@@ -3,8 +3,13 @@ name: discord receipt intake
 # Discord「経費管理」チャンネルに投稿された領収書画像を巡回して読み取り、経費シートへ追記。
 on:
   schedule:
-    - cron: '0 20 * * *'     # 翌朝5:00 JST(前日ぶんの領収書をまとめて処理)→ 7:00にフリートが報告
+    - cron: '*/10 * * * *'   # 10分ごとに巡回(パブリックリポ=Actions無料のため常時)。投稿から約10-20分で✅返信
   workflow_dispatch: {}      # 手動実行(テスト用)
+
+# 巡回が重なっても二重処理しない(前の巡回が終わるまで次を待たせる)
+concurrency:
+  group: discord-intake
+  cancel-in-progress: false
 
 jobs:
   intake:
