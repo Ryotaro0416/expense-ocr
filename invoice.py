@@ -110,7 +110,7 @@ def list_images(drive, root_id):
                 pageSize=200,
                 supportsAllDrives=True,
                 includeItemsFromAllDrives=True,
-            ).execute()
+            ).execute(num_retries=3)
             for f in res.get('files', []):
                 if f['mimeType'] == 'application/vnd.google-apps.folder':
                     stack.append(f['id'])
@@ -123,7 +123,7 @@ def list_images(drive, root_id):
 
 
 def extract(drive, f, api_key):
-    blob = drive.files().get_media(fileId=f['id'], supportsAllDrives=True).execute()
+    blob = drive.files().get_media(fileId=f['id'], supportsAllDrives=True).execute(num_retries=3)
     prompt = (
         'この請求書(invoice)から以下を抽出してJSON出力。\n'
         '- issue_date: 請求日/発行日(YYYY-MM-DD)\n'
@@ -181,14 +181,14 @@ def extract(drive, f, api_key):
 
 
 def ensure_tabs(sheets, sheet_id, tab=None):
-    meta = sheets.spreadsheets().get(spreadsheetId=sheet_id).execute()
+    meta = sheets.spreadsheets().get(spreadsheetId=sheet_id).execute(num_retries=3)
     titles = [s['properties']['title'] for s in meta['sheets']]
     if tab:
         main_tab = tab
         if main_tab not in titles:
             sheets.spreadsheets().batchUpdate(spreadsheetId=sheet_id, body={
                 'requests': [{'addSheet': {'properties': {'title': main_tab}}}],
-            }).execute()
+            }).execute(num_retries=3)
     else:
         main_tab = next((t for t in titles if t != PROCESSED_TAB), None)
         if main_tab is None:
@@ -196,7 +196,7 @@ def ensure_tabs(sheets, sheet_id, tab=None):
     if PROCESSED_TAB not in titles:
         sheets.spreadsheets().batchUpdate(spreadsheetId=sheet_id, body={
             'requests': [{'addSheet': {'properties': {'title': PROCESSED_TAB}}}],
-        }).execute()
+        }).execute(num_retries=3)
         append(sheets, sheet_id, f"'{PROCESSED_TAB}'!A1", [['fileId', 'processedAt']])
     ensure_header(sheets, sheet_id, main_tab)
     return main_tab
@@ -205,21 +205,21 @@ def ensure_tabs(sheets, sheet_id, tab=None):
 def ensure_header(sheets, sheet_id, tab):
     res = sheets.spreadsheets().values().get(
         spreadsheetId=sheet_id, range=f"'{tab}'!A1:K1",
-    ).execute()
+    ).execute(num_retries=3)
     if not res.get('values'):
         sheets.spreadsheets().values().update(
             spreadsheetId=sheet_id,
             range=f"'{tab}'!A1",
             valueInputOption='USER_ENTERED',
             body={'values': [HEADER]},
-        ).execute()
+        ).execute(num_retries=3)
 
 
 def load_seen(sheets, sheet_id):
     try:
         res = sheets.spreadsheets().values().get(
             spreadsheetId=sheet_id, range=f"'{PROCESSED_TAB}'!A2:A",
-        ).execute()
+        ).execute(num_retries=3)
     except Exception:
         return set()
     return {r[0] for r in res.get('values', []) if r}
@@ -231,7 +231,7 @@ def append(sheets, sheet_id, range_, values):
         range=range_,
         valueInputOption='USER_ENTERED',
         body={'values': values},
-    ).execute()
+    ).execute(num_retries=3)
 
 
 if __name__ == '__main__':

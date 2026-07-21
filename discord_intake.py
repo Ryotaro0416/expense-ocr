@@ -51,13 +51,13 @@ def ensure_month_folder(drive, parent_id, ym):
     q = (f"'{parent_id}' in parents and name = '{ym}' and "
          "mimeType = 'application/vnd.google-apps.folder' and trashed = false")
     res = drive.files().list(q=q, fields='files(id)', supportsAllDrives=True,
-                             includeItemsFromAllDrives=True).execute()
+                             includeItemsFromAllDrives=True).execute(num_retries=3)
     files = res.get('files', [])
     if files:
         fid = files[0]['id']
     else:
         meta = {'name': ym, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_id]}
-        fid = drive.files().create(body=meta, fields='id', supportsAllDrives=True).execute()['id']
+        fid = drive.files().create(body=meta, fields='id', supportsAllDrives=True).execute(num_retries=3)['id']
         print(f'created month folder: {ym}')
     _folder_cache[ym] = fid
     return fid
@@ -69,12 +69,12 @@ def archive_image(drive, parent_id, ym, name, blob, mime):
     fid = ensure_month_folder(drive, parent_id, ym)
     media = MediaInMemoryUpload(blob, mimetype=mime or 'image/jpeg')
     created = drive.files().create(body={'name': name, 'parents': [fid]}, media_body=media,
-                                   fields='id', supportsAllDrives=True).execute()
+                                   fields='id', supportsAllDrives=True).execute(num_retries=3)
     return created['id']
 
 
 def _titles(svc, sid):
-    meta = svc.spreadsheets().get(spreadsheetId=sid).execute()
+    meta = svc.spreadsheets().get(spreadsheetId=sid).execute(num_retries=3)
     return [s['properties']['title'] for s in meta['sheets']]
 
 
@@ -85,13 +85,13 @@ def main_tab(svc, sid):
 def ensure_seen_tab(svc, sid):
     if SEEN_TAB not in _titles(svc, sid):
         svc.spreadsheets().batchUpdate(spreadsheetId=sid, body={
-            'requests': [{'addSheet': {'properties': {'title': SEEN_TAB}}}]}).execute()
+            'requests': [{'addSheet': {'properties': {'title': SEEN_TAB}}}]}).execute(num_retries=3)
 
 
 def load_seen(svc, sid):
     try:
         vals = svc.spreadsheets().values().get(
-            spreadsheetId=sid, range=f"'{SEEN_TAB}'!A:A").execute().get('values', [])
+            spreadsheetId=sid, range=f"'{SEEN_TAB}'!A:A").execute(num_retries=3).get('values', [])
         return {r[0] for r in vals if r}
     except Exception:
         return set()
@@ -100,7 +100,7 @@ def load_seen(svc, sid):
 def append(svc, sid, rng, values):
     svc.spreadsheets().values().append(
         spreadsheetId=sid, range=rng, valueInputOption='USER_ENTERED',
-        body={'values': values}).execute()
+        body={'values': values}).execute(num_retries=3)
 
 
 def gemini_ocr(blob, mime, api_key):

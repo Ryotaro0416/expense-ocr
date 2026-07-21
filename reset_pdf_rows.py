@@ -17,7 +17,7 @@ creds = service_account.Credentials.from_service_account_info(
 )
 sheets = build('sheets', 'v4', credentials=creds)
 
-meta = sheets.spreadsheets().get(spreadsheetId=SHEET_ID).execute()
+meta = sheets.spreadsheets().get(spreadsheetId=SHEET_ID).execute(num_retries=3)
 sheet_id_by_title = {s['properties']['title']: s['properties']['sheetId'] for s in meta['sheets']}
 main_title = next(t for t in sheet_id_by_title if t != PROCESSED_TAB)
 
@@ -37,5 +37,5 @@ requests = [
         'endIndex': 20,
     }}},
 ]
-sheets.spreadsheets().batchUpdate(spreadsheetId=SHEET_ID, body={'requests': requests}).execute()
+sheets.spreadsheets().batchUpdate(spreadsheetId=SHEET_ID, body={'requests': requests}).execute(num_retries=3)
 print('Deleted PDF rows from both tabs.')
