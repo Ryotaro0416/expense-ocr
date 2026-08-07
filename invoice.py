@@ -20,7 +20,7 @@ JST = datetime.timezone(datetime.timedelta(hours=9))
 HEADER = [
     '請求日', '支払期限', '請求元', '宛先',
     '小計(税抜)', '消費税', '合計(税込)',
-    '請求書番号', '品目', 'リンク', '処理日時',
+    '請求書番号', '品目', 'リンク', '処理日時', '勘定科目',
 ]
 
 
@@ -204,7 +204,7 @@ def ensure_tabs(sheets, sheet_id, tab=None):
 
 def ensure_header(sheets, sheet_id, tab):
     res = sheets.spreadsheets().values().get(
-        spreadsheetId=sheet_id, range=f"'{tab}'!A1:K1",
+        spreadsheetId=sheet_id, range=f"'{tab}'!A1:L1",
     ).execute(num_retries=3)
     if not res.get('values'):
         sheets.spreadsheets().values().update(
