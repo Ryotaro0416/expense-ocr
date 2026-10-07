@@ -1,0 +1,25 @@
+name: keepalive
+
+# GitHub はリポジトリに 60 日間コミットが無いと schedule を自動停止する(disabled_inactivity)。
+# 毎月1日に空更新コミットを入れて活動扱いにし、daily / discord_intake の cron を生かし続ける。
+on:
+  schedule:
+    - cron: "0 0 1 * *"   # 毎月1日 00:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Touch keepalive timestamp and commit
+        run: |
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .keepalive
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .keepalive
+          git commit -m "chore: keepalive $(date -u +%Y-%m-%d)" || exit 0
+          git push
